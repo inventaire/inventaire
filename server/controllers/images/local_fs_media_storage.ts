@@ -3,13 +3,22 @@
 // expect the pictures' files to be in ${localStorageFolder}/${container}/
 
 import parseUrl from 'parseurl'
+import { uploadContainersNames } from '#controllers/images/lib/containers'
 import { localStorageFolder } from '#controllers/images/lib/local_client'
 import { absolutePath } from '#lib/absolute_path'
 import { bundleError } from '#lib/error/pre_filled'
+import { mkdirp } from '#lib/fs'
 import * as regex_ from '#lib/regex'
 import { logError } from '#lib/utils/logs'
 
 const imagesAssetsFolder = absolutePath('server', 'assets/images')
+
+async function createLocalImageStorageSubFolder (container: string) {
+  const folderPath = `${localStorageFolder}/${container}`
+  await mkdirp(folderPath)
+}
+
+await Promise.all(uploadContainersNames.map(createLocalImageStorageSubFolder))
 
 export default {
   get: (req, res) => {
