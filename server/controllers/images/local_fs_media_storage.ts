@@ -1,13 +1,15 @@
-// retrieves pictures stocked on the server itself under the 'local' mediaStorage mode
+// Retrieves pictures stored on the server itself, when mediaStorage mode=local.
+// Images urls look like /img/${container}/${hash}"
+// expect the pictures' files to be in ${localStorageFolder}/${container}/
+
 import parseUrl from 'parseurl'
 import { localStorageFolder } from '#controllers/images/lib/local_client'
+import { absolutePath } from '#lib/absolute_path'
 import { bundleError } from '#lib/error/pre_filled'
-// to be used in development only
 import * as regex_ from '#lib/regex'
 import { logError } from '#lib/utils/logs'
 
-// images urls look like /img/${container}/${hash}"
-// expect the pictures' files to be in ${localStorageFolder}/${container}/
+const imagesAssetsFolder = absolutePath('server', 'assets/images')
 
 export default {
   get: (req, res) => {
@@ -37,7 +39,12 @@ export default {
       return bundleError(req, res, 'invalid image hash', 400, { filename, hash, extension })
     }
 
-    const filepath = `${localStorageFolder}/${container}/${filename}`
+    let filepath
+    if (container === 'assets') {
+      filepath = `${imagesAssetsFolder}/${filename}`
+    } else {
+      filepath = `${localStorageFolder}/${container}/${filename}`
+    }
 
     res.sendFile(filepath, options, err => {
       if (err != null) {
