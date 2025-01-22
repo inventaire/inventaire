@@ -12,7 +12,7 @@ run
 dumps/bnf
 dumps/inv
 dumps/wd
-storage
+storage*
 inventaire-i18n
 config/.sessions_keys
 *.ndjson
