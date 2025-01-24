@@ -10,12 +10,13 @@
 // - Instance general information
 // - Instance specifics
 // - Databases
+// - Specific to instances with local entities (i.e. inventaire.io)
+// - Logs
 // - Emails
 // - Other internal services
 // - Remote services
 // - Storage
-// - Test and development environments
-// - Inventaire.io specific
+// - Test and development environments tweaks
 
 /** @type {Config} */
 const config = {
@@ -45,10 +46,9 @@ const config = {
   // ~~~~~~~
 
   // Only http is supported: in production, TLS is delegated to Nginx
-  // see http://github.com/inventaire/inventaire-deploy
-  verbose: true,
-  hostname: 'localhost',
+  // See http://github.com/inventaire/inventaire-deploy
   protocol: 'http',
+  hostname: 'localhost',
   port: 3006,
 
   publicProtocol: 'http',
@@ -83,13 +83,9 @@ const config = {
   },
 
   federation: {
-    // Is set to 'https://inventaire.io' in ./local-dev.cjs
-    // in order to use inventaire.io entities locally
+    // Set to 'https://inventaire.io' in ./local-dev.cjs
+    // in order to use inventaire.io entities in development
     remoteEntitiesOrigin: null,
-  },
-
-  oauthServer: {
-    authorizationCodeLifetimeMs: 5 * 60 * 1000,
   },
 
   // ~~~~~~~
@@ -144,6 +140,21 @@ const config = {
   },
 
   // ~~~~~~~
+  // Logs
+  // ~~~~~~~
+
+  verbose: true,
+
+  requestsLogger: {
+    // Use to mute some noisy requests or to focus on a specific scope
+    // Possible values: [ "js", "css", "img", "api" ]
+    mutedDomains: [],
+    mutedPath: [
+      '/api/reports?action=online',
+    ],
+  },
+
+  // ~~~~~~~
   // Emails
   // ~~~~~~~
 
@@ -189,13 +200,13 @@ const config = {
   // ~~~~~~~
 
   i18n: {
-    // Developpement purpose: allow to automatically fin missing i18n keys to translate
+    // Developpement purpose: allow to automatically find missing i18n keys to translate
     // It enables the api/i18n endpoint and its i18nMissingKeys controller
     autofix: false,
     srcFolderPath: '../inventaire-i18n/src',
   },
 
-  // RSS feed configuration
+  // Users inventories, shelves, and groups RSS feed configuration
   feed: {
     limitLength: 50,
     image: 'https://inventaire.io/public/icon/120.png',
@@ -204,6 +215,7 @@ const config = {
   // Triggers a report in the user database document
   // when inserting the suspectKeywords during some events
   // (ie: updating user description (called bio), items comments, lists description, etc.)
+  // Those reports can then be inspected by a user with admin rights at /users/latest
   spam: {
     suspectKeywords: [
       'SEO',
@@ -231,16 +243,16 @@ const config = {
     rec: 1,
   },
 
-  // Use mapbox to display leaflet map
-  // See: https://console.mapbox.com/account/access-tokens/
+  // Required to use MapBox tiles within leaflet maps
+  // See https://console.mapbox.com/account/access-tokens/
   mapTilesAccessToken: 'youraccesstoken',
 
   // ~~~~~~~
-  // Storage
+  // Media storage
   // ~~~~~~~
 
-  // Mostly images from users and groups for instances
-  // Entities images are stored on inventaire.io
+  // Images stored by all instances: users profil pictures and groups cover images
+  // Images stored by instances with local entities (i.e. inventaire.io): book covers
   mediaStorage: {
     images: {
       // In pixels
@@ -253,7 +265,7 @@ const config = {
       },
     },
     // By default, media are saved locally instead of using a remote
-    // object storage service such as Swift
+    // object storage service such as OpenStack Swift
     mode: 'local',
     local: {
       // Storage path relative to the project root
@@ -279,12 +291,8 @@ const config = {
     useProdCachedImages: true,
   },
 
-  // Depending on the server performance,
-  // one can adjust the waiting time with this multipling factor
-  waitFactor: 1,
-
   // ~~~~~~~
-  // Test and development environments
+  // Test and development environments tweaks
   // ~~~~~~~
 
   snapshotsDebounceTime: 5000,
@@ -293,32 +301,31 @@ const config = {
   // But does otherwise
   deduplicateRequests: true,
 
-  // Known case: create test users faster
+  // Use-case: create test users faster
   useSlowPasswordHashFunction: true,
 
-  // Display full filepaths in development purpose,
-  // false in production.cjs
+  // Serve client files, typically used in development
+  // while production environment would leave that to a more optimized file server such as Nginx
   serveStaticFiles: true,
 
   // Override in ./local.js when working offline to prevent trying to fetch remote resources (like images) when possible
   offline: false,
-
-  requestsLogger: {
-    // Use to mute some noisy requests or to focus on a specific scope
-    // Possible values: [ "js", "css", "img", "api" ]
-    mutedDomains: [],
-    mutedPath: [
-      '/api/reports?action=online',
-    ],
-  },
 
   activitypub: {
     sanitizeUrls: true,
     activitiesDebounceTime: 60 * 1000,
   },
 
+  oauthServer: {
+    authorizationCodeLifetimeMs: 5 * 60 * 1000,
+  },
+
+  // Depending on the host machine resources and load,
+  // one can adjust the waiting time with this multipling factor
+  waitFactor: 1,
+
   // ~~~~~~~
-  // Inventaire.io specific
+  // Specific to instances with local entities (i.e. inventaire.io)
   // ~~~~~~~
 
   entitiesRelationsTemporaryCache: {
@@ -330,7 +337,8 @@ const config = {
     minimumScoreToAutogenerate: 350,
   },
 
-  // Managed by https://www.npmjs.com/package/level-jobs
+  // Jobs are stored in LevelDB using https://www.npmjs.com/package/level-jobs
+  // See server/db/level/jobs.ts
   jobs: {
     'inv:deduplicate': {
       run: true,
@@ -343,7 +351,7 @@ const config = {
     },
   },
 
-  // Keys for users OAuth
+  // Keys for users Wikidata OAuth
   // See: https://www.mediawiki.org/wiki/OAuth/For_Developers
   // REgister to request some tokens:
   // https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose
