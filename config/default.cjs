@@ -5,9 +5,27 @@
 
 /** @typedef { import('../types/types.ts').Config } Config */
 
+// Summary
+
+// - Instance general information
+// - Instance specifics
+// - Databases
+// - Emails
+// - Other internal services
+// - Remote services
+// - Storage
+// - Test and development environments
+// - Inventaire.io specific
+
 /** @type {Config} */
 const config = {
+  // Environment definition,
+  // set in production.cjs, development.cjs and tests-*.cjs
   env: 'default',
+
+  // ~~~~~~~
+  // Instance general information
+  // ~~~~~~~
 
   // Will be displayed as menu title on large screens
   instanceName: 'My Inventaire Instance',
@@ -22,16 +40,17 @@ const config = {
   // Displayed in userAgent and in local logs
   softwareName: 'inventaire',
 
+  // ~~~~~~~
+  // Instance specifics
+  // ~~~~~~~
+
   // Only http is supported: in production, TLS is delegated to Nginx
   // see http://github.com/inventaire/inventaire-deploy
-  // protocol: 'http'
   verbose: true,
   hostname: 'localhost',
   protocol: 'http',
   port: 3006,
 
-  // Override in ./local.js when working offline to prevent trying to fetch remote resources (like images) when possible
-  offline: false,
   publicProtocol: 'http',
   publicHostname: 'localhost',
   publicPort: 3006,
@@ -62,6 +81,20 @@ const config = {
     ipFamily: undefined,
     rejectPrivateUrls: true,
   },
+
+  federation: {
+    // Is set to 'https://inventaire.io' in ./local-dev.cjs
+    // in order to use inventaire.io entities locally
+    remoteEntitiesOrigin: null,
+  },
+
+  oauthServer: {
+    authorizationCodeLifetimeMs: 5 * 60 * 1000,
+  },
+
+  // ~~~~~~~
+  // Databases
+  // ~~~~~~~
 
   // CouchDB settings
   db: {
@@ -110,39 +143,9 @@ const config = {
     minReindexationInterval: 60 * 60 * 1000,
   },
 
-  federation: {
-    // Set to 'https://inventaire.io' in ./local-dev.cjs to use inventaire.io entities locally
-    remoteEntitiesOrigin: null,
-  },
-
-  // See server/data/dataseed/dataseed.js
-  // and https://wiki.inventaire.io/wiki/Entities_data#Data_sources
-  dataseed: {
-    enabled: false,
-    origin: 'http://localhost:9898',
-  },
-
-  // Display full filepaths in development purpose,
-  // false in production.cjs
-  serveStaticFiles: true,
-
-  // Known case: create test users faster
-  useSlowPasswordHashFunction: true,
-  requestsLogger: {
-    // Use to mute some noisy requests or to focus on a specific scope
-    // Possible values: [ "js", "css", "img", "api" ]
-    mutedDomains: [],
-    mutedPath: [
-      '/api/reports?action=online',
-    ],
-  },
-
-  i18n: {
-    // Developpement purpose: allow to automatically fin missing i18n keys to translate
-    // It enables the api/i18n endpoint and its i18nMissingKeys controller
-    autofix: false,
-    srcFolderPath: '../inventaire-i18n/src',
-  },
+  // ~~~~~~~
+  // Emails
+  // ~~~~~~~
 
   // parameters for Nodemailer
   mailer: {
@@ -161,6 +164,7 @@ const config = {
     },
     initDelay: 10000,
   },
+
   debouncedEmail: {
     crawlPeriod: 10 * 60 * 1000,
     debounceDelay: 30 * 60 * 1000,
@@ -179,6 +183,61 @@ const config = {
 
   // Time of validity for email validation tokens
   tokenDaysToLive: 3,
+
+  // ~~~~~~~
+  // Other internal services
+  // ~~~~~~~
+
+  i18n: {
+    // Developpement purpose: allow to automatically fin missing i18n keys to translate
+    // It enables the api/i18n endpoint and its i18nMissingKeys controller
+    autofix: false,
+    srcFolderPath: '../inventaire-i18n/src',
+  },
+
+  // RSS feed configuration
+  feed: {
+    limitLength: 50,
+    image: 'https://inventaire.io/public/icon/120.png',
+  },
+
+  // Triggers a report in the user database document
+  // when inserting the suspectKeywords during some events
+  // (ie: updating user description (called bio), items comments, lists description, etc.)
+  spam: {
+    suspectKeywords: [
+      'SEO',
+      'marketing',
+      'shopping',
+    ],
+  },
+
+  // ~~~~~~~
+  // Remote services
+  // ~~~~~~~
+
+  // See server/data/dataseed/dataseed.js
+  // and https://wiki.inventaire.io/wiki/Entities_data#Data_sources
+  dataseed: {
+    enabled: false,
+    origin: 'http://localhost:9898',
+  },
+
+  // Analytics service. See http://matomo.org
+  piwik: {
+    enabled: false,
+    endpoint: 'https://yourpiwikendpoint/piwik.php',
+    idsite: 1,
+    rec: 1,
+  },
+
+  // Use mapbox to display leaflet map
+  // See: https://console.mapbox.com/account/access-tokens/
+  mapTilesAccessToken: 'youraccesstoken',
+
+  // ~~~~~~~
+  // Storage
+  // ~~~~~~~
 
   // Mostly images from users and groups for instances
   // Entities images are stored on inventaire.io
@@ -220,22 +279,69 @@ const config = {
     useProdCachedImages: true,
   },
 
-  // Analytics service. See http://matomo.org
-  piwik: {
-    enabled: false,
-    endpoint: 'https://yourpiwikendpoint/piwik.php',
-    idsite: 1,
-    rec: 1,
-  },
+  // Depending on the server performance,
+  // one can adjust the waiting time with this multipling factor
+  waitFactor: 1,
 
-  // RSS feed configuration
-  feed: {
-    limitLength: 50,
-    image: 'https://inventaire.io/public/icon/120.png',
-  },
+  // ~~~~~~~
+  // Test and development environments
+  // ~~~~~~~
 
-  // Tests purposes
+  snapshotsDebounceTime: 5000,
+
+  // Do not block erronous request during test
+  // But does otherwise
   deduplicateRequests: true,
+
+  // Known case: create test users faster
+  useSlowPasswordHashFunction: true,
+
+  // Display full filepaths in development purpose,
+  // false in production.cjs
+  serveStaticFiles: true,
+
+  // Override in ./local.js when working offline to prevent trying to fetch remote resources (like images) when possible
+  offline: false,
+
+  requestsLogger: {
+    // Use to mute some noisy requests or to focus on a specific scope
+    // Possible values: [ "js", "css", "img", "api" ]
+    mutedDomains: [],
+    mutedPath: [
+      '/api/reports?action=online',
+    ],
+  },
+
+  activitypub: {
+    sanitizeUrls: true,
+    activitiesDebounceTime: 60 * 1000,
+  },
+
+  // ~~~~~~~
+  // Inventaire.io specific
+  // ~~~~~~~
+
+  entitiesRelationsTemporaryCache: {
+    checkFrequency: 10 * 60 * 1000,
+    ttl: 4 * 60 * 60 * 1000,
+  },
+
+  tasks: {
+    minimumScoreToAutogenerate: 350,
+  },
+
+  // Managed by https://www.npmjs.com/package/level-jobs
+  jobs: {
+    'inv:deduplicate': {
+      run: true,
+    },
+    'entity:popularity': {
+      run: true,
+    },
+    'wd:entity:indexation': {
+      run: true,
+    },
+  },
 
   // Keys for users OAuth
   // See: https://www.mediawiki.org/wiki/OAuth/For_Developers
@@ -259,63 +365,6 @@ const config = {
   wikidataEdit: {
     maxlag: undefined,
   },
-
-  snapshotsDebounceTime: 5000,
-
-  // Managed by https://www.npmjs.com/package/level-jobs
-  jobs: {
-    'inv:deduplicate': {
-      run: true,
-    },
-    'entity:popularity': {
-      run: true,
-    },
-    'wd:entity:indexation': {
-      run: true,
-    },
-  },
-
-  // Give priority to more urgent matters
-  // Disabled in devlopement
-  nice: true,
-
-  entitiesRelationsTemporaryCache: {
-    checkFrequency: 10 * 60 * 1000,
-    ttl: 4 * 60 * 60 * 1000,
-  },
-
-  oauthServer: {
-    authorizationCodeLifetimeMs: 5 * 60 * 1000,
-  },
-
-  activitypub: {
-    sanitizeUrls: true,
-    activitiesDebounceTime: 60 * 1000,
-  },
-
-  // Triggers a report in the user database document
-  // when inserting the suspectKeywords during some events
-  // (ie: updating user description (called bio), items comments, lists description, etc.)
-  spam: {
-    suspectKeywords: [
-      'SEO',
-      'marketing',
-      'shopping',
-    ],
-  },
-
-  // Use mapbox to display leaflet map
-  // See: https://console.mapbox.com/account/access-tokens/
-  mapTilesAccessToken: 'youraccesstoken',
-
-  // Inventaire.io specific
-  tasks: {
-    minimumScoreToAutogenerate: 350,
-  },
-
-  // Depending on the server performance,
-  // one can adjust the waiting time with this multipling factor
-  waitFactor: 1,
 }
 
 module.exports = config
