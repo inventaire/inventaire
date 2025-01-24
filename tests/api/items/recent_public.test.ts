@@ -1,8 +1,9 @@
 import 'should'
 import { some } from 'lodash-es'
 import { populate } from '#fixtures/populate'
+import { createShelfWithItem } from '#fixtures/shelves'
 import { expired } from '#lib/time'
-import { publicReq } from '#tests/api/utils/utils'
+import { authReqB, publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 const recentPublicUrl = '/api/items?action=recent-public'
@@ -51,6 +52,22 @@ describe('items:recent-public', () => {
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('invalid lang: blablabla')
+    })
+  })
+
+  describe('shelves', () => {
+    it('should include shelves id', async () => {
+      const { shelf, item } = await createShelfWithItem({ visibility: [ 'public' ] })
+      const res = await publicReq('get', recentPublicUrl)
+      res.items.find(i => i._id === item._id).shelves.should.deepEqual([ shelf._id ])
+    })
+
+    it('should not include private shelf id', async () => {
+      const shelfData = { visibility: [] }
+      const itemData = { visibility: [ 'public' ] }
+      const { item } = await createShelfWithItem(shelfData, itemData)
+      const res = await authReqB('get', recentPublicUrl)
+      res.items.find(i => i._id === item._id).shelves.should.deepEqual([])
     })
   })
 })

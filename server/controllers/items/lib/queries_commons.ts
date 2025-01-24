@@ -38,7 +38,7 @@ export async function addAssociatedData (page, reqParams) {
   return page
 }
 
-async function removeUnauthorizedShelves (items, reqUserId) {
+export async function removeUnauthorizedShelves (items, reqUserId) {
   const shelvesIds = uniq(map(items, 'shelves').flat())
   const shelves = await getShelvesByIds(shelvesIds)
   const authorizedShelves = await filterVisibleDocs(shelves, reqUserId)

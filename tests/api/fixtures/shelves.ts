@@ -23,7 +23,7 @@ export const createShelf = async (userPromise, shelfData: Partial<Shelf> = {}) =
   return { shelf, user }
 }
 
-export const createShelfWithItem = async (shelfData: Partial<Shelf> = {}, itemData, userPromise) => {
+export const createShelfWithItem = async (shelfData: Partial<Shelf> = {}, itemData?, userPromise?) => {
   userPromise = userPromise || getUser()
   const { shelf, user } = await createShelf(userPromise, shelfData)
   let item
