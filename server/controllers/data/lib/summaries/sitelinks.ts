@@ -1,4 +1,5 @@
 import { getSitelinkData, getSitelinkUrl } from 'wikibase-sdk'
+import { someMatch } from '#lib/utils/base'
 import { logError } from '#lib/utils/logs'
 
 export function getWikipediaSitelinksData (sitelinks) {
@@ -8,7 +9,7 @@ export function getWikipediaSitelinksData (sitelinks) {
 
 function getWikipediaSummaryData ([ key, { title, badges } ]) {
   try {
-    if (badges.includes(redirectionBadge)) return
+    if (someMatch(badges, redirectionBadges)) return
     const { lang, project } = getSitelinkData(key)
     if (project === 'wikipedia') {
       const link = getSitelinkUrl({ site: key, title })
@@ -29,4 +30,7 @@ function getWikipediaSummaryData ([ key, { title, badges } ]) {
   }
 }
 
-const redirectionBadge = 'Q70893996'
+export const redirectionBadges = [
+  'Q70893996', // sitelink to redirect
+  'Q70894304', // intentional sitelink to redirect
+] as const
