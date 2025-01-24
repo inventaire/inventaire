@@ -53,7 +53,8 @@ const config = {
 
   publicProtocol: 'http',
   publicHostname: 'localhost',
-  publicPort: 3006,
+  // Defaults to the port value. Set to null to not have a port specified in the publicOrigin url
+  publicPort: undefined,
 
   // See https://expressjs.com/en/api.html#trust.proxy.options.table
   trustProxy: 'loopback, uniquelocal',
