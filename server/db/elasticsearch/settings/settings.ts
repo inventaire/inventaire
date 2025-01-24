@@ -4,7 +4,7 @@
 // - Close index
 //   curl -XPOST ${elastic_host}/${index_name}/_close
 // - Update index settings:
-//   settings_json=$(./scripts/print_module_exports.js server/db/elasticsearch/settings/settings.js default)
+//   settings_json=$(./scripts/print_module_exports.sh server/db/elasticsearch/settings/settings.js default)
 //   curl -XPUT ${elastic_host}/${index_name}/_settings -d "$settings_json" -H "Content-Type: application/json"
 // - Reopen index
 //   curl -XPOST ${elastic_host}/${index_name}/_open
