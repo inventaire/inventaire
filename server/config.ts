@@ -26,7 +26,7 @@ if (publicPort === null) {
 }
 
 export const publicHost = publicOrigin.split('://')[1]
-export const localOrigin = `${protocol}://${hostname}:${port}`
+export const localOrigin = `${protocol}://${hostname}:${port}` as AbsoluteUrl
 
 export const federatedMode = config.federation.remoteEntitiesOrigin != null
 
