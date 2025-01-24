@@ -14,7 +14,17 @@ const {
   publicPort,
 } = config
 
-export const publicOrigin: AbsoluteUrl = publicPort ? `${publicProtocol}://${publicHostname}:${publicPort}` : `${publicProtocol}://${publicHostname}`
+export let publicOrigin: AbsoluteUrl
+
+if (publicPort === null) {
+  publicOrigin = `${publicProtocol}://${publicHostname}`
+} else if (publicPort) {
+  publicOrigin = `${publicProtocol}://${publicHostname}:${publicPort}`
+} else {
+  // If the config doesn't specify a publicPort, not even null, fallback on the config.port
+  publicOrigin = `${publicProtocol}://${publicHostname}:${port}`
+}
+
 export const publicHost = publicOrigin.split('://')[1]
 export const localOrigin = `${protocol}://${hostname}:${port}` as AbsoluteUrl
 
