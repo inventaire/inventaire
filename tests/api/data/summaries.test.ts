@@ -1,10 +1,13 @@
 import should from 'should'
+import { redirectionBadges } from '#controllers/data/lib/summaries/sitelinks'
 import { createEdition, createHuman, existsOrCreate } from '#fixtures/entities'
 import { normalizeIsbn } from '#lib/isbn/isbn'
 import { requests_ } from '#lib/requests'
+import { someMatch } from '#lib/utils/base'
 import { getByUri } from '#tests/api/utils/entities'
 import { publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
+import type { SerializedWdEntity } from '#types/entity'
 
 const endpoint = '/api/data?action=summaries'
 
@@ -190,9 +193,10 @@ describe('summaries', () => {
 
     it('should ignore sitelinks that are redirections', async () => {
       const uri = 'wd:Q3020076'
-      const entity = await getByUri(uri)
-      if (!entity.sitelinks.frwiki?.badges.includes('Q70893996')) {
-        throw new Error('Obsolete test: this test depends on the fact that wd:Q3020076 frwiki sitelink has a Q70893996 badge')
+      const entity = (await getByUri(uri)) as SerializedWdEntity
+      const badges = entity.sitelinks.frwiki?.badges
+      if (!(badges && someMatch(badges, redirectionBadges))) {
+        throw new Error('Obsolete test: this test depends on the fact that wd:Q3020076 frwiki sitelink has a Q70894304 badge')
       }
       const { summaries } = await publicReq('get', `${endpoint}&uri=${uri}`)
       const frwikiSitelinkData = summaries.find(summaryData => summaryData.key === 'frwiki')
