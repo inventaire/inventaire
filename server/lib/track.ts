@@ -1,13 +1,12 @@
 // Doc: http://developer.piwik.org/api-reference/tracking-api
 import { LogError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
-import config from '#server/config'
+import config, { publicOrigin } from '#server/config'
 import type { LocalActorUrl } from '#types/activity'
 import type { Req, Res } from '#types/server'
 import { requests_ } from './requests.js'
 
 const { enabled, endpoint, idsite, rec } = config.piwik
-const origin = config.getPublicOrigin()
 const placeholderUrl = '/unknown'
 
 interface PseudoReq {
@@ -33,7 +32,7 @@ export function track (req: Req | PseudoReq, actionArray: string[]) {
   // a url is required so we use a placeholder if not provided in parameter
   if (!url) url = placeholderUrl
   // allow to pass a relative path to let this module turn it into the expected full url
-  if (url[0] === '/') url = `${origin}${url}`
+  if (url[0] === '/') url = `${publicOrigin}${url}`
 
   const data = {
     idsite,

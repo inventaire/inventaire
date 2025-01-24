@@ -5,38 +5,63 @@
 
 /** @typedef { import('../types/types.ts').Config } Config */
 
-const path = require('node:path')
+// Summary
 
-const root = path.resolve(__dirname, '..')
-const port = 3006
-const contactAddress = 'hello@inventaire.io'
+// - Instance general information
+// - Instance specifics
+// - Databases
+// - Emails
+// - Other internal services
+// - Remote services
+// - Storage
+// - Test and development environments
+// - Inventaire.io specific
 
 /** @type {Config} */
 const config = {
-  name: 'inventaire',
+  // Environment definition,
+  // set in production.cjs, development.cjs and tests-*.cjs
   env: 'default',
+
+  // ~~~~~~~
+  // Instance general information
+  // ~~~~~~~
+
+  // Will be displayed as menu title on large screens
+  instanceName: 'My Inventaire Instance',
+
+  // Will be displayed on landing screen
+  orgName: 'Example Organization',
+  orgUrl: 'https://inventaire.example.org',
+
+  // Users receiving emails from the instance can reply to this
+  contactAddress: 'contact@inventaire.example.org',
+
+  // Displayed in userAgent and in local logs
+  softwareName: 'inventaire',
+
+  // ~~~~~~~
+  // Instance specifics
+  // ~~~~~~~
+
   // Only http is supported: in production, TLS is delegated to Nginx
   // see http://github.com/inventaire/inventaire-deploy
-  // protocol: 'http'
   verbose: true,
   hostname: 'localhost',
   protocol: 'http',
-  port,
-  // Override in ./local.js when working offline to prevent trying to fetch remote resources (like images) when possible
-  offline: false,
-  getLocalOrigin: function () {
-    return `${this.protocol}://${this.hostname}:${this.port}`
-  },
+  port: 3006,
+
   publicProtocol: 'http',
   publicHostname: 'localhost',
-  getPublicOrigin: function () {
-    return `${this.publicProtocol}://${this.publicHostname}:${this.port}`
-  },
+  publicPort: 3006,
+
   // See https://expressjs.com/en/api.html#trust.proxy.options.table
   trustProxy: 'loopback, uniquelocal',
+
   // To allow fallback between servers, they need to share the same session keys:
   // one should have autoRotateKeys=true and the others autoRotateKeys=false
   autoRotateKeys: true,
+
   // Force to renew cookies at least every 6 months
   cookieMaxAge: 180 * 24 * 3600 * 1000,
   incomingRequests: {
@@ -56,6 +81,21 @@ const config = {
     ipFamily: undefined,
     rejectPrivateUrls: true,
   },
+
+  federation: {
+    // Is set to 'https://inventaire.io' in ./local-dev.cjs
+    // in order to use inventaire.io entities locally
+    remoteEntitiesOrigin: null,
+  },
+
+  oauthServer: {
+    authorizationCodeLifetimeMs: 5 * 60 * 1000,
+  },
+
+  // ~~~~~~~
+  // Databases
+  // ~~~~~~~
+
   // CouchDB settings
   db: {
     protocol: 'http',
@@ -102,29 +142,9 @@ const config = {
     minReindexationInterval: 60 * 60 * 1000,
   },
 
-  // See server/data/dataseed/dataseed.js
-  dataseed: {
-    enabled: false,
-    origin: 'http://localhost:9898',
-  },
-
-  serveStaticFiles: true,
-
-  useSlowPasswordHashFunction: true,
-  requestsLogger: {
-    // Use to mute certain requests if it gets too noisy or you want to focus on a certain domain
-    // Possible values: js, css, img, api
-    mutedDomains: [],
-    mutedPath: [
-      '/api/reports?action=online',
-    ],
-  },
-
-  i18n: {
-    // enable the api/i18n endpoint and its i18nMissingKeys controller
-    autofix: false,
-    srcFolderPath: '../inventaire-i18n/src',
-  },
+  // ~~~~~~~
+  // Emails
+  // ~~~~~~~
 
   // parameters for Nodemailer
   mailer: {
@@ -141,16 +161,16 @@ const config = {
         pass: 'somepassword',
       },
     },
-    defaultFrom: `inventaire.io <${contactAddress}>`,
     initDelay: 10000,
   },
+
   debouncedEmail: {
     crawlPeriod: 10 * 60 * 1000,
     debounceDelay: 30 * 60 * 1000,
     disabled: false,
   },
 
-  contactAddress,
+  // Regular automatic newletter
   activitySummary: {
     disabled: true,
     disableUserUpdate: false,
@@ -159,9 +179,67 @@ const config = {
     newsKey: 'news_1',
     didYouKnowKeys: [ 1, 2, 4, 5 ],
   },
-  // time of validity for email validation tokens
+
+  // Time of validity for email validation tokens
   tokenDaysToLive: 3,
 
+  // ~~~~~~~
+  // Other internal services
+  // ~~~~~~~
+
+  i18n: {
+    // Developpement purpose: allow to automatically fin missing i18n keys to translate
+    // It enables the api/i18n endpoint and its i18nMissingKeys controller
+    autofix: false,
+    srcFolderPath: '../inventaire-i18n/src',
+  },
+
+  // RSS feed configuration
+  feed: {
+    limitLength: 50,
+    image: 'https://inventaire.io/public/icon/120.png',
+  },
+
+  // Triggers a report in the user database document
+  // when inserting the suspectKeywords during some events
+  // (ie: updating user description (called bio), items comments, lists description, etc.)
+  spam: {
+    suspectKeywords: [
+      'SEO',
+      'marketing',
+      'shopping',
+    ],
+  },
+
+  // ~~~~~~~
+  // Remote services
+  // ~~~~~~~
+
+  // See server/data/dataseed/dataseed.js
+  // and https://wiki.inventaire.io/wiki/Entities_data#Data_sources
+  dataseed: {
+    enabled: false,
+    origin: 'http://localhost:9898',
+  },
+
+  // Analytics service. See http://matomo.org
+  piwik: {
+    enabled: false,
+    endpoint: 'https://yourpiwikendpoint/piwik.php',
+    idsite: 1,
+    rec: 1,
+  },
+
+  // Use mapbox to display leaflet map
+  // See: https://console.mapbox.com/account/access-tokens/
+  mapTilesAccessToken: 'youraccesstoken',
+
+  // ~~~~~~~
+  // Storage
+  // ~~~~~~~
+
+  // Mostly images from users and groups for instances
+  // Entities images are stored on inventaire.io
   mediaStorage: {
     images: {
       // In pixels
@@ -177,8 +255,8 @@ const config = {
     // object storage service such as Swift
     mode: 'local',
     local: {
-      folder: () => `${root}/storage`,
-      internalEndpoint: () => `http://localhost:${port}/local/`,
+      // Storage path relative to the project root
+      folder: './storage',
     },
     // Swift parameters are required only when mediaStorage mode is set to 'swift'
     swift: {
@@ -190,9 +268,6 @@ const config = {
       publicURL: 'https://swiftPublicURL/',
       tenantName: '12345678',
       region: 'SBG-1',
-      internalEndpoint: function () {
-        return `${this.publicURL}/`
-      },
     },
   },
 
@@ -203,26 +278,73 @@ const config = {
     useProdCachedImages: true,
   },
 
-  // Analytics service
-  piwik: {
-    enabled: false,
-    endpoint: 'https://yourpiwikendpoint/piwik.php',
-    idsite: 1,
-    rec: 1,
-  },
+  // Depending on the server performance,
+  // one can adjust the waiting time with this multipling factor
+  waitFactor: 1,
 
-  searchTimeout: 10000,
+  // ~~~~~~~
+  // Test and development environments
+  // ~~~~~~~
 
-  feed: {
-    limitLength: 50,
-    image: 'https://inventaire.io/public/icon/120.png',
-  },
+  snapshotsDebounceTime: 5000,
 
+  // Do not block erronous request during test
+  // But does otherwise
   deduplicateRequests: true,
 
+  // Known case: create test users faster
+  useSlowPasswordHashFunction: true,
+
+  // Display full filepaths in development purpose,
+  // false in production.cjs
+  serveStaticFiles: true,
+
+  // Override in ./local.js when working offline to prevent trying to fetch remote resources (like images) when possible
+  offline: false,
+
+  requestsLogger: {
+    // Use to mute some noisy requests or to focus on a specific scope
+    // Possible values: [ "js", "css", "img", "api" ]
+    mutedDomains: [],
+    mutedPath: [
+      '/api/reports?action=online',
+    ],
+  },
+
+  activitypub: {
+    sanitizeUrls: true,
+    activitiesDebounceTime: 60 * 1000,
+  },
+
+  // ~~~~~~~
+  // Inventaire.io specific
+  // ~~~~~~~
+
+  entitiesRelationsTemporaryCache: {
+    checkFrequency: 10 * 60 * 1000,
+    ttl: 4 * 60 * 60 * 1000,
+  },
+
+  tasks: {
+    minimumScoreToAutogenerate: 350,
+  },
+
+  // Managed by https://www.npmjs.com/package/level-jobs
+  jobs: {
+    'inv:deduplicate': {
+      run: true,
+    },
+    'entity:popularity': {
+      run: true,
+    },
+    'wd:entity:indexation': {
+      run: true,
+    },
+  },
+
   // Keys for users OAuth
-  // Doc: https://www.mediawiki.org/wiki/OAuth/For_Developers
-  // Request tokens at
+  // See: https://www.mediawiki.org/wiki/OAuth/For_Developers
+  // REgister to request some tokens:
   // https://meta.wikimedia.org/wiki/Special:OAuthConsumerRegistration/propose
   wikidataOAuth: {
     consumer_key: 'your-consumer-key',
@@ -242,52 +364,6 @@ const config = {
   wikidataEdit: {
     maxlag: undefined,
   },
-
-  snapshotsDebounceTime: 5000,
-
-  jobs: {
-    'inv:deduplicate': {
-      run: true,
-    },
-    'entity:popularity': {
-      run: true,
-    },
-    'wd:entity:indexation': {
-      run: true,
-    },
-  },
-
-  // give priority to more urgent matters
-  nice: true,
-
-  entitiesRelationsTemporaryCache: {
-    checkFrequency: 10 * 60 * 1000,
-    ttl: 4 * 60 * 60 * 1000,
-  },
-
-  oauthServer: {
-    authorizationCodeLifetimeMs: 5 * 60 * 1000,
-  },
-
-  activitypub: {
-    sanitizeUrls: true,
-    activitiesDebounceTime: 60 * 1000,
-  },
-
-  spam: {
-    suspectKeywords: [
-      'SEO',
-      'marketing',
-      'shopping',
-    ],
-  },
-
-  mapTilesAccessToken: 'youraccesstoken',
-
-  tasks: {
-    minimumScoreToAutogenerate: 350,
-  },
-  waitFactor: 1,
 }
 
 module.exports = config

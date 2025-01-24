@@ -1,13 +1,13 @@
 import 'should'
-import config from '#server/config'
+import { localOrigin } from '#server/config'
 import { parseSessionCookies, parseBase64EncodedJson } from '#tests/api/utils/auth'
 import { rawRequest } from '#tests/api/utils/request'
 import { getUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
+import type { AbsoluteUrl } from '#types/common'
 
-const origin = config.getLocalOrigin()
-const endpoint = `${origin}/api/auth?action=logout`
-const authentifiedEndpoint = `${origin}/api/user`
+const endpoint = `${localOrigin}/api/auth?action=logout` as AbsoluteUrl
+const authentifiedEndpoint = `${localOrigin}/api/user` as AbsoluteUrl
 
 describe('auth:logout', () => {
   it('should logout and unable to access an authentified endpoint', async () => {

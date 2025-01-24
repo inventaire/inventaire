@@ -3,7 +3,7 @@ import Rss from 'rss'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { imgSrc } from '#lib/emails/handlebars_helpers'
 import { i18n } from '#lib/emails/i18n/i18n'
-import config from '#server/config'
+import config, { publicOrigin } from '#server/config'
 import type { RelativeUrl, Url } from '#types/common'
 import type { ImagePath } from '#types/image'
 import type { Item, ItemId } from '#types/item'
@@ -11,7 +11,6 @@ import type { User } from '#types/user'
 import getItemDescription from './get_item_description.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
-const root = config.getPublicOrigin()
 const { feed: feedConfig } = config
 const oneDayInMinutes = 24 * 60
 
@@ -37,8 +36,8 @@ export default (feedOptions: FeedOptions, users: User[], items: Item[], lang: Wi
     title,
     // Arbitrary limiting the description to 300 characters as it should stay short
     description: description && description.slice(0, 300),
-    feed_url: `${root}/api/feeds?${queryString}`,
-    site_url: `${root}/${pathname}`,
+    feed_url: `${publicOrigin}/api/feeds?${queryString}`,
+    site_url: `${publicOrigin}/${pathname}`,
     image_url: image,
     // Not always respected, we probably need to cache generated feeds anyway
     // source: http://www.therssweblog.com/?guid=20070529130637
@@ -67,8 +66,8 @@ interface FeedSerializedItem {
 const serializeItem = (usersIndex, lang) => item => {
   const { owner } = item
   const user = usersIndex[owner]
-  user.href = `${root}/users/${user._id}`
-  item.href = `${root}/items/${item._id}`
+  user.href = `${publicOrigin}/users/${user._id}`
+  item.href = `${publicOrigin}/items/${item._id}`
 
   const data: FeedSerializedItem = {
     title: getItemTitle(item, user, lang),

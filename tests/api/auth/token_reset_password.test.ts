@@ -1,12 +1,11 @@
 import 'should'
 import { createUserEmail } from '#fixtures/users'
 import { getRandomString } from '#lib/utils/random_string'
-import config from '#server/config'
+import { publicOrigin } from '#server/config'
 import { rawRequest } from '#tests/api/utils/request'
 import { publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
-const origin = config.getPublicOrigin()
 const endpoint = '/api/token?action=reset-password'
 
 describe('token:reset-password', () => {
@@ -42,7 +41,7 @@ describe('token:reset-password', () => {
     const email = createUserEmail()
     const token = getRandomString(32)
     const { headers } = await rawRequest('get', `${endpoint}&email=${email}&token=${token}`)
-    headers.location.should.equal(`${origin}/login/forgot-password?resetPasswordFail=true`)
+    headers.location.should.equal(`${publicOrigin}/login/forgot-password?resetPasswordFail=true`)
   })
 
   it('should reject HEAD requests', async () => {

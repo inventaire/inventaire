@@ -6,17 +6,22 @@ import type { Email, OAuthConsumer, OwnerOnlyOAuthConsumer } from '#types/user'
 import type { ReadonlyDeep } from 'type-fest'
 
 export type Config = ReadonlyDeep<{
-  name: string
   env: 'default' | 'dev' | 'production' | 'tests' | 'tests-api' | 'tests-integration' | 'tests-unit'
+
+  softwareName: string
+  instanceName: string
+  orgName: string
+  orgUrl: AbsoluteUrl
+  contactAddress: Email
+
   verbose: boolean
   hostname: string
   protocol: 'http' | 'https'
   port: number
   offline: boolean
-  getLocalOrigin: () => AbsoluteUrl
   publicProtocol: 'http' | 'https'
   publicHostname: string
-  getPublicOrigin: () => AbsoluteUrl
+  publicPort: number | null
   /** See https://expressjs.com/en/api.html#trust.proxy.options.table */
   trustProxy: string
   autoRotateKeys: boolean
@@ -73,6 +78,10 @@ export type Config = ReadonlyDeep<{
     minReindexationInterval: number
   }
 
+  federation: {
+    remoteEntitiesOrigin: AbsoluteUrl
+  }
+
   // See server/data/dataseed/dataseed.js
   dataseed: {
     enabled: boolean
@@ -105,10 +114,8 @@ export type Config = ReadonlyDeep<{
         pass: string
       }
     }
-    defaultFrom: string
     initDelay: number
   }
-  contactAddress: Email
   activitySummary: {
     disabled: boolean
     disableUserUpdate: boolean
@@ -137,8 +144,7 @@ export type Config = ReadonlyDeep<{
     }
     mode: 'local' | 'swift'
     local: {
-      folder: () => Path
-      internalEndpoint: () => AbsoluteUrl
+      folder?: Path
     }
     swift: {
       username: string
@@ -149,7 +155,6 @@ export type Config = ReadonlyDeep<{
       publicURL: AbsoluteUrl
       tenantName: string
       region: string
-      internalEndpoint: () => AbsoluteUrl
     }
   }
 
@@ -173,8 +178,6 @@ export type Config = ReadonlyDeep<{
     idsite: number
     rec: number
   }
-
-  searchTimeout: number
 
   feed: {
     limitLength: number

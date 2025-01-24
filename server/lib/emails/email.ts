@@ -4,13 +4,11 @@ import { assertObjects } from '#lib/utils/assert_types'
 import { shortLang } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
-import config from '#server/config'
+import { defaultFrom, publicOrigin } from '#server/config'
+import type { AbsoluteUrl } from '#types/common'
 import type { TransactionUserRole } from '#types/transaction'
 import checkUserNotificationsSettings from './check_user_notifications_settings.js'
 import { i18n } from './i18n/i18n.js'
-
-const origin = config.getPublicOrigin()
-const { defaultFrom } = config.mailer
 
 export default {
   validationEmail: (user, token) => {
@@ -214,8 +212,8 @@ function transactionEmail (transactionEmailViewModel: TransactionEmailViewModel,
     subject: i18n(lang, `${label}_title`, titleContext),
     template: 'transaction_update',
     context: Object.assign(transactionEmailViewModel, {
-      origin,
-      link: `${origin}/transactions/${transaction._id}`,
+      origin: publicOrigin,
+      link: `${publicOrigin}/transactions/${transaction._id}`,
       title: itemTitle,
       username: other.username,
       subject: `${label}_subject`,
@@ -235,5 +233,6 @@ function validateOptions (options) {
 }
 
 function buildTokenUrl (action, email, token) {
-  return buildUrl(`${origin}/api/token`, { action, email, token })
+  const pathname: AbsoluteUrl = `${publicOrigin}/api/token`
+  return buildUrl(pathname, { action, email, token })
 }

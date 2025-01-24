@@ -7,6 +7,7 @@ import type { Username } from '#types/user'
 export type ActivityType = 'Create' | 'Delete' | 'Follow' | 'Undo' | 'Accept' | 'Follow' | 'Note'
 export type Context = 'https://www.w3.org/ns/activitystreams' | 'https://w3id.org/security/v1'
 export type LocalActorUrl = AbsoluteUrl
+export type ActorUrl = AbsoluteUrl
 
 export interface PropertyValueAttachment {
   type: 'PropertyValue'
@@ -15,35 +16,38 @@ export interface PropertyValueAttachment {
   url?: Url
 }
 
-export interface Attachment{
+export interface ImageAttachment {
   mediaType: 'image/jpeg'
   type: 'Image' | 'Document'
   url: string
 }
 
+export type Attachment = PropertyValueAttachment | ImageAttachment
+
 export type ShelfActorName = `shelf-${CouchUuid}`
 export type EntityActorName = `${EntityUriPrefix}-${CouchUuid}`
 
 export type ActorName = ShelfActorName | EntityActorName | Username
+export type ActorKeyId = AbsoluteUrl
 
 export interface ActorActivity {
   '@context': Context[]
   type: 'Person'
-  id: LocalActorUrl
+  id: ActorUrl
   name: ActorName
   preferredUsername: string
   summary: string
-  inbox: Url
-  sharedInbox: Url
+  inbox: AbsoluteUrl
+  sharedInbox: AbsoluteUrl
   outbox: Url
   publicKey: {
-    id: string
-    owner: LocalActorUrl
+    id: ActorKeyId
+    owner: ActorUrl
     publicKeyPem?: {
       publicKeyHash: string
     }
   }
-  icon?: Attachment
+  icon?: ImageAttachment
   attachment?: PropertyValueAttachment[]
 }
 
@@ -127,7 +131,13 @@ export interface ItemNote extends Note {
 
 export interface ActivityLink {
   name: 'shelf' | 'inventory' | 'wikidata.org' | string
-  url: Url
+  url: AbsoluteUrl
+}
+
+export interface PublicKeyObject {
+  id: string
+  owner: ActorUrl
+  publicKeyPem: string
 }
 
 export interface ActorParams {
