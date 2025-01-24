@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-databases=$(./scripts/print_module_exports.ts server/db/couchdb/databases.ts databases | jq 'keys[]' -cr | sed 's/$/-tests/' | tr '\n' ' ')
+databases=$(./scripts/print_module_exports.sh server/db/couchdb/databases.ts databases | jq 'keys[]' -cr | sed 's/$/-tests/' | tr '\n' ' ')
 couchdb_origin=$(node -p "require('config').db.getOrigin()")
 elastic_origin=$(node -p "require('config').elasticsearch.origin")
 leveldb_path_base=$(tsx ./server/lib/absolute_path.ts root db/leveldb)

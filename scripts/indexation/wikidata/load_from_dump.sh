@@ -20,7 +20,7 @@ indexed_types_ids=$(mktemp)
 
 ./scripts/entities_extended_types_aliases/check_extended_aliases_freshness.ts 1
 
-./scripts/print_module_exports.ts ./server/db/elasticsearch/indexes.ts indexedEntitiesTypesAliases |
+./scripts/print_module_exports.sh ./server/db/elasticsearch/indexes.ts indexedEntitiesTypesAliases |
   jq '.[]' -cr |
   sed --regexp-extended 's/wd:(Q.*)/"\1"/' > "$indexed_types_ids"
 
