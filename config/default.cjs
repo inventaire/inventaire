@@ -228,8 +228,6 @@ const config = {
     rec: 1,
   },
 
-  searchTimeout: 10000,
-
   // RSS feed configuration
   feed: {
     limitLength: 50,

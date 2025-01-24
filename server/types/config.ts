@@ -180,8 +180,6 @@ export type Config = ReadonlyDeep<{
     rec: number
   }
 
-  searchTimeout: number
-
   feed: {
     limitLength: number
     image: ImagePath
