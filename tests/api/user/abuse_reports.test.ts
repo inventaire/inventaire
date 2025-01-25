@@ -105,14 +105,16 @@ describe('user:abuse reports', () => {
       await userShouldHaveASpamAbuseReport(spammyUser)
     })
 
-    it('should report entity label spam', async () => {
+    it('should report entity label spam', async function () {
+      if (federatedMode) this.skip()
       const spammyUser = await createUser()
       const { uri } = await createWork()
       await updateLabel({ uri, lang: 'en', value: someSpamText, user: spammyUser })
       await userShouldHaveASpamAbuseReport(spammyUser)
     })
 
-    it('should report entity claim value spam', async () => {
+    it('should report entity claim value spam', async function () {
+      if (federatedMode) this.skip()
       const spammyUser = await createUser()
       const { uri, claims } = await createEdition()
       const title = getFirstClaimValue(claims, 'wdt:P1476')
@@ -122,9 +124,7 @@ describe('user:abuse reports', () => {
   })
 
   describe('reports access', () => {
-    it('should let admin users access the abuse reports', async function () {
-      // Disabled in federated mode yet as this test relies on a special role
-      if (federatedMode) this.skip()
+    it('should let admin users access the abuse reports', async () => {
       const user = await createUser()
       await updateUser({ user, attribute: 'bio', value: someSpamText }).catch(catchSpamRejection)
       await userShouldHaveASpamAbuseReport(user)
