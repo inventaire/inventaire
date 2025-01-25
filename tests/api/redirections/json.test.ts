@@ -102,7 +102,7 @@ describe('json redirections', () => {
       const parsedLocation = new URL(location)
       const { searchParams } = parsedLocation
       const paramsUsersIds = searchParams.get('users').split('|')
-      parsedLocation.origin.should.equal(origin)
+      parsedLocation.origin.should.equal(publicOrigin)
       parsedLocation.pathname.should.equal('/api/items')
       searchParams.get('action').should.equal('by-users')
       searchParams.get('filter').should.equal('group')
@@ -118,7 +118,7 @@ describe('json redirections', () => {
       const parsedLocation = new URL(location)
       const { searchParams } = parsedLocation
       const paramsUsersIds = searchParams.get('users').split('|')
-      parsedLocation.origin.should.equal(origin)
+      parsedLocation.origin.should.equal(publicOrigin)
       parsedLocation.pathname.should.equal('/api/lists')
       searchParams.get('action').should.equal('by-creators')
       paramsUsersIds.length.should.equal(allUsersIds.length)
