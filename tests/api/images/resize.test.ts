@@ -7,8 +7,8 @@ import type { RelativeUrl } from '#types/common'
 
 describe('images:resize', () => {
   it('should return a resized local image', async () => {
-    const { hash } = await uploadSomeImage({ container: 'entities', preventAutoRemove: true })
-    const { statusCode, headers, body } = await rawRequest('get', `/img/entities/10x10/${hash}`)
+    const { hash } = await uploadSomeImage({ container: 'users', preventAutoRemove: true })
+    const { statusCode, headers, body } = await rawRequest('get', `/img/users/10x10/${hash}`)
     statusCode.should.equal(200)
     headers['content-type'].should.equal('image/jpeg')
     body.length.should.be.below(1000)

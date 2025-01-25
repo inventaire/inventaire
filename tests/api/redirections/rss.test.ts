@@ -37,8 +37,10 @@ describe('rss redirections', () => {
   })
 
   it('should redirect to a shelf feed by id', async () => {
-    const { _id } = await createShelf()
+    const { shelf } = await createShelf()
+    const { _id } = shelf
     const { headers } = await rawRequest('get', `/shelves/${_id}.rss`)
+    console.log('headers.location', headers.location)
     headers.location.should.equal(`${publicOrigin}/api/feeds?shelf=${_id}`)
   })
 })
