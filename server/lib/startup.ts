@@ -9,7 +9,7 @@ export function beforeStartup () {
   logErrorsCount()
   log(`node: ${process.version}`)
   log(`pid: ${process.pid}`)
-  log(`NODE_ENV=${process.env.NODE_ENV} NODE_APP_INSTANCE=${process.env.NODE_APP_INSTANCE}`)
+  log(`NODE_ENV=${process.env.NODE_ENV || '<none>'} NODE_APP_INSTANCE=${process.env.NODE_APP_INSTANCE || '<none>'}`)
   log(`env: ${config.env}`)
   log(`local origin: ${localOrigin}`)
   log(`public origin: ${publicOrigin}`)
