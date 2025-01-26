@@ -38,7 +38,7 @@ const config = {
 
   // Makes tests run faster
   useSlowPasswordHashFunction: false,
-  piwik: {
+  matomo: {
     enabled: false,
   },
   dataseed: {

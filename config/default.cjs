@@ -237,9 +237,9 @@ const config = {
   },
 
   // Analytics service. See http://matomo.org
-  piwik: {
+  matomo: {
     enabled: false,
-    endpoint: 'https://yourpiwikendpoint/piwik.php',
+    endpoint: 'https://yourmatomoendpoint/matomo.php',
     idsite: 1,
     rec: 1,
   },

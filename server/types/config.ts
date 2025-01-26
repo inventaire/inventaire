@@ -173,7 +173,7 @@ export type Config = ReadonlyDeep<{
   }
 
   // Analytics service
-  piwik: {
+  matomo: {
     enabled: boolean
     endpoint: AbsoluteUrl
     idsite: number
