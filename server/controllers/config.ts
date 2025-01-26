@@ -1,17 +1,17 @@
 import { sendStaticJson } from '#lib/responses'
 import config, { publicHost } from '#server/config'
 
-const { instanceName, orgName, orgUrl, piwik, mapTilesAccessToken } = config
+const { instanceName, orgName, orgUrl, matomo, mapTilesAccessToken } = config
 const { remoteEntitiesOrigin } = config.federation
 
-const endpoint = piwik.enabled ? piwik.endpoint : null
+const endpoint = matomo.enabled ? matomo.endpoint : null
 
 const clientConfig = JSON.stringify({
   instanceName,
   orgName,
   orgUrl,
   remoteEntitiesOrigin,
-  piwik: endpoint && endpoint.replace('/piwik.php', ''),
+  matomo: endpoint && endpoint.replace('/matomo.php', ''),
   mapTilesAccessToken,
   publicHost,
 })

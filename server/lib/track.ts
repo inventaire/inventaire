@@ -1,4 +1,4 @@
-// Doc: http://developer.piwik.org/api-reference/tracking-api
+// Doc: http://developer.matomo.org/api-reference/tracking-api
 import { LogError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
 import config, { publicOrigin } from '#server/config'
@@ -6,7 +6,7 @@ import type { LocalActorUrl } from '#types/activity'
 import type { Req, Res } from '#types/server'
 import { requests_ } from './requests.js'
 
-const { enabled, endpoint, idsite, rec } = config.piwik
+const { enabled, endpoint, idsite, rec } = config.matomo
 const placeholderUrl = '/unknown'
 
 interface PseudoReq {
@@ -41,7 +41,7 @@ export function track (req: Req | PseudoReq, actionArray: string[]) {
     uid: userId,
     e_c: category,
     // prefixing the action with the category
-    // as Piwik don't allow multicriteria Objectifs such as
+    // as Matomo don't allow multicriteria Objectifs such as
     // Category is a and Action is b
     e_a: `${category}:${action}`,
     e_n: name,

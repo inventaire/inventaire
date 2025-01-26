@@ -15,7 +15,7 @@ const config = {
   dataseed: {
     enabled: true,
   },
-  piwik: {
+  matomo: {
     enabled: false,
   },
   i18n: {
