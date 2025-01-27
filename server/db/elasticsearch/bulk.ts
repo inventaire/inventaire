@@ -1,3 +1,4 @@
+import { elasticReqOptions } from '#lib/elasticsearch'
 import { requests_ } from '#lib/requests'
 import { assertString } from '#lib/utils/assert_types'
 import { warn, logError } from '#lib/utils/logs'
@@ -28,6 +29,7 @@ export async function postBatch (batch) {
     const res = await requests_.post(url, {
       headers,
       body,
+      ...elasticReqOptions,
     })
     logBulkRes(res, 'bulk post res')
   } catch (err) {

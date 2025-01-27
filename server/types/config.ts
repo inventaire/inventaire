@@ -69,6 +69,7 @@ export type Config = ReadonlyDeep<{
 
   elasticsearch: {
     origin: AbsoluteUrl
+    selfSignedCertificate: boolean
     updateDelay: number
     minReindexationInterval: number
   }

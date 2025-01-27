@@ -98,6 +98,7 @@ const config = {
 
   elasticsearch: {
     origin: 'http://localhost:9200',
+    selfSignedCertificate: false,
     updateDelay: 1000,
     minReindexationInterval: 60 * 60 * 1000,
   },

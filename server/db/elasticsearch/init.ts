@@ -1,4 +1,6 @@
 import { indexesList, syncIndexesList } from '#db/elasticsearch/indexes'
+import { elasticReqOptions } from '#lib/elasticsearch'
+import { newError } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { get } from '#lib/requests'
 import { warn } from '#lib/utils/logs'
@@ -28,7 +30,7 @@ function ensureIndexesExist () {
 
 function ensureIndexExists (index) {
   const indexUrl = `${elasticOrigin}/${index}` as AbsoluteUrl
-  return get(indexUrl)
+  return get(indexUrl, elasticReqOptions)
   .catch(err => {
     if (err.statusCode === 404) return createIndex(index)
     else throw err
@@ -42,14 +44,16 @@ interface WaitForElasticOptions {
 async function waitForElastic (path: RelativeUrl = '/', options: WaitForElasticOptions = {}) {
   try {
     const url = elasticOrigin + path as AbsoluteUrl
-    await get(url, { noRetry: true })
+    await get(url, { noRetry: true, ...elasticReqOptions })
   } catch (err) {
     if (err.statusCode === 503 || err.code === 'ECONNREFUSED' || err.code === 'ECONNRESET') {
       warn(`waiting for Elasticsearch on ${elasticOrigin}`)
       await wait(500)
       return waitForElastic(path, options)
     } else if (!(options.expectedStatusCode && err.statusCode === options.expectedStatusCode)) {
-      throw err
+      const localErr = newError('failed to connect to Elasticsearch', 500, { path, options, elasticReqOptions })
+      localErr.cause = err
+      throw localErr
     }
   }
 }

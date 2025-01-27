@@ -1,12 +1,13 @@
 import { isArray, map } from 'lodash-es'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { waitForElasticsearchInit } from '#db/elasticsearch/init'
-import { getIndexedDocUrl } from '#lib/elasticsearch'
+import { elasticReqOptions, getIndexedDocUrl } from '#lib/elasticsearch'
 import { wait } from '#lib/promises'
 import { assertObject, assertString } from '#lib/utils/assert_types'
 import { warn, success } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
 import config from '#server/config'
+import type { AbsoluteUrl } from '#types/common'
 import { customAuthReq, rawRequest } from './request.js'
 import { publicReq } from './utils.js'
 import type { IndexName, VersionNumber, Id } from '@elastic/elasticsearch/lib/api/types.js'
@@ -31,7 +32,7 @@ export async function getIndexedDoc (index, id, options: GetIndexedDocOptions = 
   const { retry = true, attempt = 0 } = options
   const url = getIndexedDocUrl(index, id)
   try {
-    const { body } = await rawRequest('get', url)
+    const { body } = await rawRequest('get', url, elasticReqOptions)
     return JSON.parse(body)
   } catch (err) {
     if (err.statusCode === 404) {
@@ -52,9 +53,10 @@ export async function getAnalyze ({ indexBaseName, text, analyzer }) {
   assertString(text)
   assertString(analyzer)
   const index = indexesNamesByBaseNames[indexBaseName]
-  const url = `${elasticOrigin}/${index}/_analyze`
+  const url = `${elasticOrigin}/${index}/_analyze` as AbsoluteUrl
   const { body } = await rawRequest('post', url, {
     body: { text, analyzer },
+    ...elasticReqOptions,
   })
   return JSON.parse(body)
 }
@@ -145,7 +147,7 @@ export async function deindex (index, id) {
   assertString(id)
   const url = `${elasticOrigin}/${index}/_doc/${id}`
   try {
-    await rawRequest('delete', url)
+    await rawRequest('delete', url, elasticReqOptions)
     success(url, 'deindexed')
   } catch (err) {
     if (err.statusCode === 404) {
@@ -160,7 +162,7 @@ export async function indexPlaceholder (index, id) {
   assertString(index)
   assertString(id)
   const url = `${elasticOrigin}/${index}/_doc/${id}`
-  await rawRequest('put', url, { body: { testPlaceholder: true } })
+  await rawRequest('put', url, { body: { testPlaceholder: true }, ...elasticReqOptions })
   success(url, 'placeholder added')
 }
 

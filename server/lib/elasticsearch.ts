@@ -7,7 +7,11 @@ import config from '#server/config'
 import type { AbsoluteUrl } from '#types/common'
 import type { SearchRequest, SearchResponse } from '@elastic/elasticsearch/lib/api/types.js'
 
-const { origin: elasticOrigin } = config.elasticsearch
+const { origin: elasticOrigin, selfSignedCertificate } = config.elasticsearch
+
+export const elasticReqOptions = {
+  ignoreCertificateErrors: elasticOrigin.startsWith('https') && selfSignedCertificate,
+} as const
 
 export function buildSearcher (params) {
   const { dbBaseName, queryBuilder } = params
@@ -20,7 +24,7 @@ export function buildSearcher (params) {
     const body: SearchRequest = queryBuilder(params)
     const { limit, offset } = params
     try {
-      const res: SearchResponse = await requests_.post(url, { body })
+      const res: SearchResponse = await requests_.post(url, { body, ...elasticReqOptions })
       const { hits, total } = getHitsAndTotal(res)
       let continu
       if (isNumber(limit) && isNumber(offset)) {

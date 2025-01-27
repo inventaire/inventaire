@@ -4,7 +4,7 @@ import {
   indexedEntitiesTypes,
   socialTypes,
 } from '#db/elasticsearch/indexes'
-import { formatError, getHitsAndTotal } from '#lib/elasticsearch'
+import { elasticReqOptions, formatError, getHitsAndTotal } from '#lib/elasticsearch'
 import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { assertString, assertStrings } from '#lib/utils/assert_types'
@@ -52,7 +52,7 @@ export async function typeSearch (params) {
 
   const url = `${elasticOrigin}/${queryIndexes.join(',')}/_search` as AbsoluteUrl
 
-  return requests_.post(url, { body })
+  return requests_.post(url, { body, ...elasticReqOptions })
   .then(getHitsAndTotal)
   .catch(formatError)
   .catch(err => {

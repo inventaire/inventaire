@@ -2,7 +2,7 @@ import { getAggregatedWdEntityLayers } from '#controllers/entities/lib/get_wikid
 import { waitForElasticsearchInit } from '#db/elasticsearch/init'
 import { initJobQueue } from '#db/level/jobs'
 import { isWdEntityId } from '#lib/boolean_validations'
-import { getIndexedDocUrl } from '#lib/elasticsearch'
+import { elasticReqOptions, getIndexedDocUrl } from '#lib/elasticsearch'
 import { newError } from '#lib/error/error'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { wait } from '#lib/promises'
@@ -64,7 +64,7 @@ async function entitiesIndexationWorker (jobId, wdId: WdEntityId) {
 async function getIndexedEntity (wdId: WdEntityId) {
   const url = getIndexedDocUrl(indexName, wdId)
   try {
-    const { _source } = await requests_.get(url)
+    const { _source } = await requests_.get(url, elasticReqOptions)
     return _source
   } catch (err) {
     if (err.statusCode !== 404) throw err

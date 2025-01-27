@@ -1,5 +1,6 @@
 import mappings from '#db/elasticsearch/mappings/mappings'
 import settings from '#db/elasticsearch/settings/settings'
+import { elasticReqOptions } from '#lib/elasticsearch'
 import { requests_ } from '#lib/requests'
 import { warn, success } from '#lib/utils/logs'
 import config from '#server/config'
@@ -13,7 +14,7 @@ export default async function (index) {
   const indexMappings = mappings[indexBaseName]
   const body = { settings, mappings: indexMappings }
   try {
-    const res = await requests_.put(url, { body })
+    const res = await requests_.put(url, { body, ...elasticReqOptions })
     success(res, `elasticsearch index created: ${url}`)
   } catch (err) {
     ignoreAlreadyExisting(url, err)

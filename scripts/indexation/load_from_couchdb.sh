@@ -23,12 +23,13 @@ couchdb_auth_origin=$(node -p "require('config').db.getOrigin()")
 
 elastic_origin=$(node -p "require('config').elasticsearch.origin")
 elastic_index_url="${elastic_origin}/${database_name}"
+elastic_curl_options=$(node -p "require('config').elasticsearch.selfSignedCertificate ? '--insecure' : ''")
 
 leveldb_folder_path_base=$(tsx ./server/lib/absolute_path.ts root db/leveldb)
 leveldb_folder_path=$(node -p "require('config').db.name('$leveldb_folder_path_base')")
 
 docs_indexed(){
-  curl -s "${elastic_index_url}/_stats" | jq ".indices[\"${database_name}\"].total.docs.count // 0"
+  curl "$elastic_curl_options" -s "${elastic_index_url}/_stats" | jq ".indices[\"${database_name}\"].total.docs.count // 0"
 }
 
 echo -e "\e[0;30m
@@ -53,7 +54,7 @@ fi
 echo -ne "\nReset Elasticsearch index ${elastic_index_url}? y/N "
 read response_b
 if [ "$response_b" == 'y' ] ; then
-  curl -XDELETE "$elastic_index_url"
+  curl "$elastic_curl_options" -XDELETE "$elastic_index_url"
   echo -e "\n$elastic_index_url was deleted and will be re-created by the indexation/load.js script"
 fi
 
