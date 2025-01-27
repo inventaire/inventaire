@@ -1,8 +1,9 @@
 import { findOrIndexEntities } from '#tests/api/utils/entities'
 import { search } from '#tests/api/utils/search'
+import type { EntityUri } from '#types/entity'
 import 'should'
 
-const wikidataUris = [ 'wd:Q10134', 'wd:Q19852850', 'wd:Q33111', 'wd:Q42365', 'wd:Q1860' ]
+const wikidataUris = [ 'wd:Q10134', 'wd:Q19852850', 'wd:Q33111', 'wd:Q42365', 'wd:Q1860' ] as EntityUri[]
 
 describe('entities:languages:search', () => {
   before(async () => {
