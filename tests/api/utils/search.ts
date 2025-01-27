@@ -2,6 +2,7 @@ import { isArray, map } from 'lodash-es'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { waitForElasticsearchInit } from '#db/elasticsearch/init'
 import { elasticReqOptions, getIndexedDocUrl } from '#lib/elasticsearch'
+import { newError } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { assertObject, assertString } from '#lib/utils/assert_types'
 import { warn, success } from '#lib/utils/logs'
@@ -36,9 +37,13 @@ export async function getIndexedDoc (index, id, options: GetIndexedDocOptions = 
     return JSON.parse(body)
   } catch (err) {
     if (err.statusCode === 404) {
-      if (retry && attempt < 5) {
-        await wait(1000)
-        return getIndexedDoc(index, id, { attempt: attempt + 1 })
+      if (retry) {
+        if (attempt < 5) {
+          await wait(1000)
+          return getIndexedDoc(index, id, { attempt: attempt + 1 })
+        } else {
+          throw newError('doc indexation timeout', 500, { index, id, options })
+        }
       } else {
         return JSON.parse(err.context.resBody)
       }
