@@ -106,6 +106,7 @@
     "subleveldown": "^6.0.1",
     "through": "^2.3.8",
     "tiny-chalk": "^3.0.2",
+    "tsx": "^4.19.1",
     "turtle-validator": "^1.0.2",
     "type-fest": "^4.29.0",
     "typescript": "^5.6.2",
@@ -127,8 +128,7 @@
     "form-data": "^4.0.0",
     "mocha": "^10.3.0",
     "papaparse": "^5.2.0",
-    "should": "^13.2.3",
-    "tsx": "^4.19.1"
+    "should": "^13.2.3"
   },
   "engines": {
     "node": ">= 18"
