@@ -4,15 +4,13 @@ import { isEntityUri, isUsername } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { trackActor } from '#lib/track'
 import { parseQuery } from '#lib/utils/url'
-import config from '#server/config'
+import { publicOrigin } from '#server/config'
 import type { FollowActivity, ActivityDoc, AcceptActivity, LocalActorUrl, UriObj, NameObj, ActivityType, Context, BodyTo } from '#types/activity'
 import type { AbsoluteUrl, Url } from '#types/common'
 import type { CouchUuid } from '#types/couchdb'
 import { makeUrl, getEntityUriFromActorName, context, serializeFollowActivity } from './lib/helpers.js'
 import { postActivity, fetchInboxUri } from './lib/post_activity.js'
 import { validateUser, validateShelf, validateEntity } from './lib/validations.js'
-
-const origin = config.getPublicOrigin()
 
 interface FollowArgs {
   id: Url
@@ -25,8 +23,8 @@ interface FollowArgs {
 export async function follow (params: FollowArgs) {
   const { id: externalId, type } = params
   const { actor: actorUrl, object: objectUrl } = params
-  if (!objectUrl?.startsWith(origin)) {
-    throw newError(`invalid object, string should start with ${origin}`, 400, { objectUrl })
+  if (!objectUrl?.startsWith(publicOrigin)) {
+    throw newError(`invalid object, string should start with ${publicOrigin}`, 400, { objectUrl })
   }
   const { name: requestedObjectName } = parseQuery(objectUrl)
 

@@ -1,9 +1,7 @@
 import 'should'
 import { isLocalActivityPubActorUrl } from '#lib/boolean_validations'
 import { buildUrl } from '#lib/utils/url'
-import config from '#server/config'
-
-const origin = config.getPublicOrigin()
+import { publicOrigin } from '#server/config'
 
 describe('boolean validations', () => {
   describe('isLocalActivityPubActorUrl', () => {
@@ -21,19 +19,19 @@ describe('boolean validations', () => {
     })
 
     it('should reject a URL targeting another endpoint', () => {
-      const url = buildUrl(`${origin}/api/tests`, { action: 'actor', name: 'someusername' })
+      const url = buildUrl(`${publicOrigin}/api/tests`, { action: 'actor', name: 'someusername' })
       isLocalActivityPubActorUrl(url).should.be.false()
-      const url2 = buildUrl(`${origin}/tests`, { action: 'actor', name: 'someusername' })
+      const url2 = buildUrl(`${publicOrigin}/tests`, { action: 'actor', name: 'someusername' })
       isLocalActivityPubActorUrl(url2).should.be.false()
     })
 
     it('should reject a URL without a name parameter', () => {
-      const url = buildUrl(`${origin}/api/activitypub`, { action: 'actor', name: '' })
+      const url = buildUrl(`${publicOrigin}/api/activitypub`, { action: 'actor', name: '' })
       isLocalActivityPubActorUrl(url).should.be.false()
     })
 
     it('should accept an actor URL', () => {
-      const url = buildUrl(`${origin}/api/activitypub`, { action: 'actor', name: 'someusername' })
+      const url = buildUrl(`${publicOrigin}/api/activitypub`, { action: 'actor', name: 'someusername' })
       isLocalActivityPubActorUrl(url).should.be.true()
     })
   })

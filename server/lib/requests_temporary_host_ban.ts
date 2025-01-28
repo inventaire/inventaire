@@ -1,11 +1,20 @@
-import { debounce, noop } from 'lodash-es'
+import { compact, debounce, noop } from 'lodash-es'
 import { leveldbFactory } from '#db/level/get_sub_db'
 import { newError } from '#lib/error/error'
 import type { ContextualizedError } from '#lib/error/format_error'
+import { getHost } from '#lib/network/helpers'
 import { serverMode } from '#lib/server_mode'
 import { warn, success, logError, LogError } from '#lib/utils/logs'
-import config from '#server/config'
+import config, { localOrigin, publicOrigin } from '#server/config'
 import type { Host } from '#types/common'
+
+const unbannableServicesHosts = new Set(compact([
+  getHost(localOrigin),
+  getHost(publicOrigin),
+  `${config.db.hostname}:${config.db.port}`,
+  getHost(config.elasticsearch.origin),
+  config.dataseed.enabled ? getHost(config.dataseed.origin) : null,
+]))
 
 const db = leveldbFactory('hosts-bans', 'json')
 const { baseBanTime, banTimeIncreaseFactor, maxBanTime } = config.outgoingRequests
@@ -58,15 +67,20 @@ export function resetBanData (host: Host) {
   lazyBackup()
 }
 
-export function recordPossibleTimeoutError (host: Host, err: ContextualizedError) {
-  if (err.type === 'request-timeout' || err.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE') {
+interface ConditionallyDeclareHostErrorOptions {
+  noHostBanOnTimeout?: boolean
+}
+
+export function conditionallyDeclareHostError (host: Host, err: ContextualizedError, options: ConditionallyDeclareHostErrorOptions = {}) {
+  if (err.type === 'request-timeout') {
+    if (!options.noHostBanOnTimeout) declareHostError(host)
+  } else if (err.code === 'UNABLE_TO_VERIFY_LEAF_SIGNATURE' || err.code === 'ECONNREFUSED') {
     declareHostError(host)
   }
 }
 
 export function declareHostError (host: Host) {
-  // Never ban local services
-  if (host.startsWith('localhost')) return
+  if (unbannableServicesHosts.has(host)) return
 
   let hostBanData = banData[host]
 

@@ -11,7 +11,7 @@ export const shelfDescription = () => {
   return randomWords(3, ' shelf')
 }
 
-export const createShelf = async (userPromise, shelfData: Partial<Shelf> = {}) => {
+export const createShelf = async (userPromise?, shelfData: Partial<Shelf> = {}) => {
   userPromise = userPromise || getUser()
   shelfData.name = shelfData.name || shelfName()
   shelfData.visibility = shelfData.visibility || [ 'public' ]

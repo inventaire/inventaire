@@ -8,7 +8,7 @@ import { createEdition } from '#fixtures/entities'
 import { createGroup } from '#fixtures/groups'
 import { assertString } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
-import config from '#server/config'
+import config, { publicOrigin } from '#server/config'
 import { getSomePlaceholderImageUrl } from '#tests/api/utils/placeholder_images'
 import { waitForTestServer } from '#tests/api/utils/request'
 import type { ImageContainer } from '#types/image'
@@ -18,9 +18,8 @@ import { updateUser } from './users.js'
 import { authReq, getUser } from './utils.js'
 
 const { mediaStorage } = config
-const origin = config.getPublicOrigin()
 mediaStorage.mode.should.equal('local')
-const localStorageFolder = mediaStorage.local.folder()
+const localStorageFolder = mediaStorage.local.folder
 
 const uploadImageFromUrl = async ({ container, url }) => {
   return authReq('post', '/api/images?action=convert-url', { container, url })
@@ -48,7 +47,7 @@ export async function uploadSomeImage ({ container, imageFilePath, preventAutoRe
   const form = new FormData()
   form.append('somefile', createReadStream(imageFilePath))
   await waitForTestServer
-  const res = await fetch(`${origin}/api/images?action=upload&container=${container}`, {
+  const res = await fetch(`${publicOrigin}/api/images?action=upload&container=${container}`, {
     method: 'post',
     headers: { cookie, ...form.getHeaders() },
     body: form,

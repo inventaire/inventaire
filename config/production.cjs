@@ -1,6 +1,6 @@
 // Production config
 // This config file will be used if: NODE_ENV=production
-// Override locally in ./local-production.js
+// Override locally in ./local-production.cjs
 
 /** @typedef { import('../types/types.ts').Config } Config */
 /** @typedef { import('type-fest').PartialDeep } PartialDeep */
@@ -11,9 +11,7 @@ const config = {
   verbose: true,
   publicHostname: 'OVERRIDE',
   publicProtocol: 'https',
-  getPublicOrigin: function () {
-    return `${this.publicProtocol}://${this.publicHostname}`
-  },
+  publicPort: null,
   // Let Nginx serve the static files
   // https://github.com/inventaire/inventaire-deploy/blob/main/nginx/inventaire.original.nginx
   serveStaticFiles: false,

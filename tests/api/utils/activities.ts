@@ -1,9 +1,7 @@
 import { getRandomBytes } from '#lib/crypto'
-import config from '#server/config'
+import config, { publicOrigin } from '#server/config'
 
-const origin = config.getPublicOrigin()
-
-export const randomActivityId = (customOrigin = origin) => `${customOrigin}/${getRandomBytes(20, 'hex')}`
+export const randomActivityId = (customOrigin = publicOrigin) => `${customOrigin}/${getRandomBytes(20, 'hex')}`
 
 export function randomActivity ({ externalId, emitterActorUrl, activityObject, type }) {
   if (!externalId) externalId = randomActivityId(config.publicHost)

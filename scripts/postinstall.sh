@@ -21,11 +21,8 @@ mkdir -p logs run db/leveldb keys
 touch ./logs/server.log ./logs/error.log
 # Expected by scripts/actions/backup_databases.ts
 mkdir -p ./db/couchdb/backups
-# Expected by scripts/test_api.sh
-mkdir -p run
 # Create folders for when mediaStorage is in local mode (which is the default)
 mkdir -p ./storage/users ./storage/groups ./storage/entities
-touch run/3006 run/3009
 
 # If the client folder already exist, assume that it's a re-install
 # and that all the following isn't needed

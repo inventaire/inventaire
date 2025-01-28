@@ -1,14 +1,12 @@
-import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
+import { getEntitiesList } from '#controllers/entities/lib/federation/instance_agnostic_entities'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { prefixifyInv } from '#controllers/entities/lib/prefix'
 import { i18n } from '#lib/emails/i18n/i18n'
 import { getBestLangValue } from '#lib/get_best_lang_value'
-import config from '#server/config'
+import { publicOrigin } from '#server/config'
 import type { CreateActivity, NoteActivity } from '#types/activity'
-import type { Url } from '#types/common'
+import type { AbsoluteUrl } from '#types/common'
 import { makeUrl, getEntityActorName, getActivityIdFromPatchId, context } from './helpers.js'
-
-const origin = config.getPublicOrigin()
 
 export default rows => {
   rows = rows.filter(hasActivityText)
@@ -32,11 +30,11 @@ async function formatEntityPatchActivity (row, rowIndex) {
   const subjectLabel = getLabel(subjectEntity)
   const objectLabel = getLabel(objectEntity)
   const activityId = getActivityIdFromPatchId(patchId, rowIndex)
-  const id: Url = `${origin}/api/activitypub?action=activity&id=${activityId}`
+  const id: AbsoluteUrl = `${publicOrigin}/api/activitypub?action=activity&id=${activityId}`
   const name = getEntityActorName(objectUri)
-  const actor: Url = makeUrl({ params: { action: 'actor', name } })
-  const subjectUrl = `${origin}/entity/${subjectUri}`
-  const objectUrl = `${origin}/entity/${objectUri}`
+  const actor: AbsoluteUrl = makeUrl({ params: { action: 'actor', name } })
+  const subjectUrl = `${publicOrigin}/entity/${subjectUri}`
+  const objectUrl = `${publicOrigin}/entity/${objectUri}`
 
   const object: NoteActivity = {
     id,

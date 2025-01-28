@@ -7,6 +7,7 @@ import { createElement, createListing, updateElement, updateListing } from '#fix
 import { createShelf } from '#fixtures/shelves'
 import { createUser, someSpamText, type UserWithCookie } from '#fixtures/users'
 import { buildUrl } from '#lib/utils/url'
+import { federatedMode } from '#server/config'
 import { updateClaim, updateLabel } from '#tests/api/utils/entities'
 import { updateGroup } from '#tests/api/utils/groups'
 import { updateItem, updateItems } from '#tests/api/utils/items'
@@ -104,14 +105,16 @@ describe('user:abuse reports', () => {
       await userShouldHaveASpamAbuseReport(spammyUser)
     })
 
-    it('should report entity label spam', async () => {
+    it('should report entity label spam', async function () {
+      if (federatedMode) this.skip()
       const spammyUser = await createUser()
       const { uri } = await createWork()
       await updateLabel({ uri, lang: 'en', value: someSpamText, user: spammyUser })
       await userShouldHaveASpamAbuseReport(spammyUser)
     })
 
-    it('should report entity claim value spam', async () => {
+    it('should report entity claim value spam', async function () {
+      if (federatedMode) this.skip()
       const spammyUser = await createUser()
       const { uri, claims } = await createEdition()
       const title = getFirstClaimValue(claims, 'wdt:P1476')

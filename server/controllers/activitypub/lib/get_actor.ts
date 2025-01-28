@@ -1,6 +1,6 @@
 import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
 import { unprefixify } from '#controllers/entities/lib/prefix'
-import config from '#server/config'
+import { publicOrigin } from '#server/config'
 import type { PropertyValueAttachment, ActivityLink, ActorActivity, ActorParams, LocalActorUrl, ShelfActorName, EntityActorName } from '#types/activity'
 import type { AbsoluteUrl } from '#types/common'
 import type { Username } from '#types/user'
@@ -9,8 +9,7 @@ import { buildLink, getActorTypeFromName, defaultLabel, entityUrl } from './help
 import { getSharedKeyPair } from './shared_key_pair.js'
 import { validateShelf, validateUser, validateEntity } from './validations.js'
 
-const origin = config.getPublicOrigin()
-const publicOrigin = origin.split('://')[1]
+const host = publicOrigin.split('://')[1]
 
 async function getShelfActor (name: ShelfActorName) {
   const { shelf, owner } = await validateShelf(name)
@@ -18,7 +17,7 @@ async function getShelfActor (name: ShelfActorName) {
   const links: ActivityLink[] = [
     {
       name: 'shelf',
-      url: `${origin}/shelves/${shelf._id}`,
+      url: `${publicOrigin}/shelves/${shelf._id}`,
     },
   ]
   return buildActorObject({
@@ -33,7 +32,7 @@ async function getUserActor (username: Username) {
   const { user } = await validateUser(username)
   const { picture, stableUsername, bio } = user
   const links: ActivityLink[] = [
-    { name: 'inventory', url: `${origin}/users/${username}` as AbsoluteUrl },
+    { name: 'inventory', url: `${publicOrigin}/users/${username}` as AbsoluteUrl },
   ]
   return buildActorObject({
     actorName: stableUsername,
@@ -52,7 +51,7 @@ async function getEntityActor (name: EntityActorName) {
   const url = entityUrl(uri)
   const links: ActivityLink[] = [
     {
-      name: publicOrigin,
+      name: host,
       url,
     },
   ]
@@ -78,11 +77,19 @@ async function getEntityActor (name: EntityActorName) {
   })
 }
 
+export function makeActorUrl (actorName: string) {
+  return `${publicOrigin}/api/activitypub?action=actor&name=${actorName}` as LocalActorUrl
+}
+
+export function makeActorKeyUrl (actorName: string, publicKeyHash: string) {
+  return `${makeActorUrl(actorName)}#${publicKeyHash}` as AbsoluteUrl
+}
+
 async function buildActorObject ({ actorName, displayName, summary, imagePath, links, attachment = [] }: ActorParams) {
   const { publicKey, publicKeyHash } = await getSharedKeyPair()
-  const actorUrl: LocalActorUrl = `${origin}/api/activitypub?action=actor&name=${actorName}`
+  const actorUrl = makeActorUrl(actorName)
   // Use the key hash to bust any cached version of an old key
-  const keyUrl: LocalActorUrl = `${actorUrl}#${publicKeyHash}`
+  const keyUrl = makeActorKeyUrl(actorName, publicKeyHash)
 
   const actor: ActorActivity = {
     '@context': [
@@ -94,9 +101,9 @@ async function buildActorObject ({ actorName, displayName, summary, imagePath, l
     name: displayName,
     preferredUsername: actorName,
     summary,
-    inbox: `${origin}/api/activitypub?action=inbox&name=${actorName}`,
-    sharedInbox: `${origin}/api/activitypub?action=shared-inbox`,
-    outbox: `${origin}/api/activitypub?action=outbox&name=${actorName}`,
+    inbox: `${publicOrigin}/api/activitypub?action=inbox&name=${actorName}`,
+    sharedInbox: `${publicOrigin}/api/activitypub?action=shared-inbox`,
+    outbox: `${publicOrigin}/api/activitypub?action=outbox&name=${actorName}`,
     // TODO: experiment with a shared publicKey id and owner, to invite caching system to re-use
     // shared public keys they already know
     publicKey: {
@@ -107,7 +114,7 @@ async function buildActorObject ({ actorName, displayName, summary, imagePath, l
   }
 
   if (imagePath) {
-    const url = imagePath.startsWith('http') ? imagePath : `${origin}${imagePath}`
+    const url = imagePath.startsWith('http') ? imagePath : `${publicOrigin}${imagePath}`
     actor.icon = {
       mediaType: 'image/jpeg',
       type: 'Image',

@@ -1,24 +1,22 @@
 import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { newError } from '#lib/error/error'
 import { wait } from '#lib/promises'
-import { requests_, type ReqOptions } from '#lib/requests'
+import { requests_, type RequestOptions } from '#lib/requests'
 import { assertObject, assertType, assertString } from '#lib/utils/assert_types'
 import { log, success } from '#lib/utils/logs'
 import { stringifyQuery } from '#lib/utils/url'
-import config from '#server/config'
+import config, { publicOrigin } from '#server/config'
 import type { AbsoluteUrl, HttpHeaders, HttpMethod, Url } from '#types/common'
 import type { BearerToken } from '#types/oauth'
 import type { OverrideProperties } from 'type-fest'
 
-const origin: AbsoluteUrl = config.getPublicOrigin()
-
-type RequestOptions = OverrideProperties<ReqOptions, { headers?: HttpHeaders }>
+type RawRequestOptions = OverrideProperties<RequestOptions, { headers?: HttpHeaders }>
 
 async function testServerAvailability () {
   if (!config.waitForServer) return
 
   try {
-    await requests_.get(`${origin}/api/tests`, { timeout: 1000 })
+    await requests_.get(`${publicOrigin}/api/tests`, { timeout: 1000 })
     success('tests server is ready')
   } catch (err) {
     if (err.code !== 'ECONNREFUSED' && err.name !== 'TimeoutError') throw err
@@ -30,23 +28,23 @@ async function testServerAvailability () {
 
 export const waitForTestServer = testServerAvailability()
 
-export async function rawRequest (method: HttpMethod, url: Url, reqParams: RequestOptions = {}) {
+export async function rawRequest (method: HttpMethod, url: Url, reqParams: RawRequestOptions = {}) {
   assertString(method)
   assertString(url)
   await waitForTestServer
   reqParams.returnBodyOnly = false
   reqParams.redirect = 'manual'
   reqParams.parseJson = reqParams.parseJson || false
-  if (url[0] === '/') url = `${origin}${url}`
+  if (url[0] === '/') url = `${publicOrigin}${url}`
   return requests_[method](url as AbsoluteUrl, reqParams)
 }
 
-export async function request (method: HttpMethod, endpoint: Url, body?: unknown, cookie?: string) {
+export async function request (method: HttpMethod, endpoint: Url, body?: unknown, headers: HttpHeaders = {}) {
   assertString(method)
   assertString(endpoint)
-  const url = (endpoint.startsWith('/') ? origin + endpoint : endpoint) as AbsoluteUrl
-  const options: ReqOptions = {
-    headers: { cookie },
+  const url = (endpoint.startsWith('/') ? publicOrigin + endpoint : endpoint) as AbsoluteUrl
+  const options: RequestOptions = {
+    headers,
     redirect: 'error',
     body,
   }
@@ -65,13 +63,14 @@ export async function request (method: HttpMethod, endpoint: Url, body?: unknown
   }
 }
 
-export async function customAuthReq (user: AwaitableUserWithCookie, method: HttpMethod, endpoint: Url, body?: unknown) {
+export async function customAuthReq (user: AwaitableUserWithCookie, method: HttpMethod, endpoint: Url, body?: unknown, headers: HttpHeaders = {}) {
   assertType('object|promise', user)
   assertString(method)
   assertString(endpoint)
   user = await user
   // Gets a user doc to which tests/api/fixtures/users added a cookie attribute
-  return request(method, endpoint, body, user.cookie)
+  headers.cookie = user.cookie
+  return request(method, endpoint, body, headers)
 }
 
 interface RawCustomAuthReqOptions {
