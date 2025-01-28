@@ -41,7 +41,10 @@ interface GetCachedRelationsParams <T> {
 export async function getCachedRelations <T> ({ valueUri, properties, formatEntity }: GetCachedRelationsParams<T>) {
   const subjectsUris = await getSubjectsUris(valueUri, properties)
   // Always request refreshed data to be able to confirm or not the cached relation
-  let entities = await getEntitiesList(subjectsUris, { refresh: true })
+  // Set noSideEffects=true to prevent triggering a loop, via for instance items snapshot refresh
+  // or entities reindexation, which, by requesting related entites might end up calling
+  // getCachedRelations with the same valueUri as presently
+  let entities = await getEntitiesList(subjectsUris, { refresh: true, noSideEffects: true })
   entities = await Promise.all(entities.map(relationIsConfirmedByPrimaryData(properties, valueUri)))
   return compact(entities).map(formatEntity)
 }
@@ -64,7 +67,8 @@ export function relationIsConfirmedByPrimaryData (properties: PropertyUri[], val
 
 async function getResolvedUris (uris: EntityUri[]) {
   if (!uris) return []
-  const entities = await getEntitiesList(uris, { refresh: true })
+  // Set noSideEffects=true to prevent triggering a loop
+  const entities = await getEntitiesList(uris, { refresh: true, noSideEffects: true })
   return map(entities, 'uri')
 }
 

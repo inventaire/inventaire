@@ -24,6 +24,7 @@ export interface EntitiesGetterParams {
   dry?: boolean
   autocreate?: boolean
   includeReferences?: boolean
+  noSideEffects?: boolean
 }
 
 export interface GetEntitiesByUrisParams extends EntitiesGetterParams {
