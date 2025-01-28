@@ -279,7 +279,7 @@ const config = {
       // Auth URL Without the version section, which is hard coded
       // by server/controllers/images/lib/get_swift_token.js
       authUrl: 'https://openstackEndpointToCustomize',
-      publicURL: 'https://swiftPublicURL/',
+      publicURL: 'https://swiftPublicURL',
       tenantName: '12345678',
       region: 'SBG-1',
     },

@@ -37,7 +37,9 @@ const { mode } = mediaStorage
 if (mode === 'local') {
   mediaStorageEndpoint = `${localOrigin}/local/`
 } else {
-  mediaStorageEndpoint = config.mediaStorage[mode].publicURL
+  let { publicURL } = config.mediaStorage[mode]
+  if (!publicURL.endsWith('/')) publicURL += '/'
+  mediaStorageEndpoint = publicURL
 }
 
 export default config
