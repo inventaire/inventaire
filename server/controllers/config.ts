@@ -1,17 +1,14 @@
 import { sendStaticJson } from '#lib/responses'
 import config, { publicHost } from '#server/config'
 
-const { instanceName, orgName, orgUrl, matomo, mapTilesAccessToken } = config
+const { instanceName, orgName, orgUrl, mapTilesAccessToken } = config
 const { remoteEntitiesOrigin } = config.federation
-
-const endpoint = matomo.enabled ? matomo.endpoint : null
 
 const clientConfig = JSON.stringify({
   instanceName,
   orgName,
   orgUrl,
   remoteEntitiesOrigin,
-  matomo: endpoint && endpoint.replace('/matomo.php', ''),
   mapTilesAccessToken,
   publicHost,
 })
