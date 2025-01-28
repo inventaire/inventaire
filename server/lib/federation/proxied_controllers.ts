@@ -55,12 +55,15 @@ function proxiedControllerFunctionFactory (accessLevel: AccessLevel, method: Htt
   }
 }
 
+// Current use-case: /api/entities?action=images
 async function proxyPublicJsonRequest (req: Req, res: Res, method: HttpMethod, action: string) {
   const { url } = req
   if (!isRelativeUrl(url)) throw newError('invalid relative url', 500, { method, action })
   const body = httpMethodHasBody(method) ? req.body : undefined
   const remoteRes = await federatedRequest(method, url, { body })
-  runPostProxiedRequestHooks(method, url, action, req.query as SanitizedParameters)
+  // Commenting out as current use-cases don't need runPostProxiedRequestHooks
+  // and passing req.query triggers a type error
+  // runPostProxiedRequestHooks(method, url, action, req.query)
   return res.json(remoteRes)
 }
 
