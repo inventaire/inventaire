@@ -13,6 +13,7 @@ const unbannableServicesHosts = new Set(compact([
   getHost(publicOrigin),
   `${config.db.hostname}:${config.db.port}`,
   getHost(config.elasticsearch.origin),
+  getHost(config.federation.remoteEntitiesOrigin),
   config.dataseed.enabled ? getHost(config.dataseed.origin) : null,
 ]))
 
