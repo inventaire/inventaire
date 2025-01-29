@@ -10,6 +10,8 @@ import type { TransactionUserRole } from '#types/transaction'
 import checkUserNotificationsSettings from './check_user_notifications_settings.js'
 import { i18n } from './i18n/i18n.js'
 
+const origin = publicOrigin
+
 export default {
   validationEmail: (user, token) => {
     // purposedly not checking notifications settings
