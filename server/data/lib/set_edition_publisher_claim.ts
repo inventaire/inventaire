@@ -1,4 +1,5 @@
 import { resolvePublisher } from '#controllers/entities/lib/resolver/resolve_publisher'
+import type { EntityValue } from '#types/entity'
 import type { EntityLooseSeed, ResolverEntry } from '#types/resolver'
 
 export async function setEditionPublisherClaim (entry: ResolverEntry & { publishers?: EntityLooseSeed[] }) {
@@ -9,6 +10,6 @@ export async function setEditionPublisherClaim (entry: ResolverEntry & { publish
   const { isbn } = entry.edition
   const publisherLabel = Object.values(publisher.labels)[0]
   const publisherUri = await resolvePublisher(isbn, publisherLabel)
-  if (publisherUri) entry.edition.claims['wdt:P123'] = publisherUri
+  if (publisherUri) entry.edition.claims['wdt:P123'] = [ publisherUri as EntityValue ]
   delete entry.publishers
 }

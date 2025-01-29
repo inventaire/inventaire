@@ -3,10 +3,11 @@ import { uniq } from 'lodash-es'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { getReverseClaims } from '#controllers/entities/lib/reverse_claims'
 import { parseIsbn } from '#lib/isbn/parse'
+import type { SerializedEntity } from '#types/entity'
 // Arbitrary tolerance threshold to accept, for instance, accents differences in publishers names
 const maximumNameDistance = 3
 
-export async function resolvePublisher (isbn, publisherLabel) {
+export async function resolvePublisher (isbn: string, publisherLabel: string) {
   const isbnData = parseIsbn(isbn)
   if (!isbnData) throw new Error(`invalid isbn: ${isbn}`)
   const { publisherPrefix } = isbnData
@@ -17,17 +18,17 @@ export async function resolvePublisher (isbn, publisherLabel) {
   if (matchingPublishers.length === 1) return matchingPublishers[0].uri
 }
 
-function getMatchingPublishers (publisherLabel, isbnPrefixPublishers) {
+function getMatchingPublishers (publisherLabel: string, isbnPrefixPublishers: SerializedEntity[]) {
   return isbnPrefixPublishers
   .map(getPublisherClosestTerm(publisherLabel))
   .filter(publisher => publisher.distance <= maximumNameDistance)
 }
 
-const getPublisherClosestTerm = publisherLabel => entity => {
+const getPublisherClosestTerm = (publisherLabel: string) => (entity: SerializedEntity) => {
   const closestTerm = getClosestTerm(entity, publisherLabel)
-  const id = entity.uri.split(':')[1]
+  const { uri } = entity
   return {
-    uri: `wd:${id}`,
+    uri,
     distance: closestTerm.distance,
   }
 }
