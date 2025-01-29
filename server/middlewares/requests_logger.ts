@@ -30,6 +30,7 @@ function skip (req: Req) {
 
 function logRequest (req: Req, res: Res) {
   const { method, originalUrl: url } = req
+  if ('mute' in req && req.mute) return
   const user = 'user' in req ? req.user : null
   const remoteUser = 'remoteUser' in req ? req.remoteUser as MinimalRemoteUser : null
   const { statusCode: status, finished } = res

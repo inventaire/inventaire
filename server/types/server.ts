@@ -15,6 +15,7 @@ export interface SignedReq extends Express.Request {
   signed: {
     host: Host
   }
+  mute?: boolean
 }
 
 export type MaybeSignedReq = SetOptional<SignedReq, 'signed'>

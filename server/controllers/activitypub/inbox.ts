@@ -1,7 +1,6 @@
 import { follow } from '#controllers/activitypub/follow'
 import { setActivityPubContentType } from '#controllers/activitypub/lib/helpers'
 import { newError } from '#lib/error/error'
-import { warn } from '#lib/utils/logs'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { Res, SignedReq } from '#types/server'
 import { verifySignature } from './lib/security.js'
@@ -59,7 +58,8 @@ async function controller (params: SanitizedParameters, req: SignedReq, res: Res
     const message = 'unsupported activity type'
     const err = newError(message, 400, params)
     err.mute = true
-    warn(`${message}: ${type}`)
+    req.mute = true
+    // warn(`${message}: ${type}`)
     throw err
   }
 }
