@@ -146,4 +146,12 @@ describe('entities:get:by-uris', () => {
     res.entities[uri].claims.should.be.an.Object()
     res.redirects[invUri].should.equal(uri)
   })
+
+  it('should redirect a merged wikidata entity', async () => {
+    const mergedUri = 'wd:Q55597827'
+    const uri = 'wd:Q27734829'
+    const res = await getByUris([ mergedUri ])
+    res.entities[uri].claims.should.be.an.Object()
+    res.redirects[mergedUri].should.equal(uri)
+  })
 })

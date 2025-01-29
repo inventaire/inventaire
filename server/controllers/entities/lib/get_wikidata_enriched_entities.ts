@@ -115,7 +115,14 @@ async function getCachedEnrichedEntities ({ wdIds, refresh, dry, noSideEffects }
     refresh,
     dry,
   })
-  return keyBy(results, 'wdId')
+  const remoteEntitiesByIds = keyBy(results, 'wdId')
+  for (const result of results) {
+    if ('redirects' in result) {
+      const wdId = unprefixify(result.redirects.from)
+      remoteEntitiesByIds[wdId] = result
+    }
+  }
+  return remoteEntitiesByIds
 }
 
 async function getCachedEnrichedEntity ({ wdId, refresh, dry, noSideEffects }: { wdId: WdEntityId, refresh?: boolean, dry?: boolean, noSideEffects?: boolean }) {
