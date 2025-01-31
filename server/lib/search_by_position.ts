@@ -12,10 +12,11 @@ export function searchByPositionFactory <D extends User> (db: DbHandler, dbBaseN
     queryBuilder,
   })
 
-  return async (bbox: BBox) => {
+  return async (bbox: BBox, limit: number = 500) => {
     assertNumbers(bbox)
     const { hits } = await searchByPosition(bbox)
-    const ids = map(hits, '_id')
+    const limitedHits = hits.slice(0, limit)
+    const ids = map(limitedHits, '_id')
     return db.byIds<D>(ids)
   }
 }
