@@ -62,7 +62,7 @@ describe('outbox', () => {
       res2.orderedItems[0].object.content.should.containEql(itemA._id)
     })
 
-    it('should return content with items link', async () => {
+    it('should return content with item link', async () => {
       const user = createUser({ fediversable: true, language: 'it' })
       const details = 'details'
       const item = await createItem(user, { details })
@@ -80,7 +80,7 @@ describe('outbox', () => {
       const createActivity = res.orderedItems[0]
       const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
       const activityEndpoint = makeUrl({ params: { action: 'activity' } })
-      createActivity.id.should.startWith(activityEndpoint)
+      createActivity.id.should.startWith(`${activityEndpoint}&id=item-`)
       createActivity.actor.should.equal(actorUrl)
       createActivity.object.content.should.containEql(item._id)
       createActivity.object.content.should.containEql(details)
@@ -123,8 +123,8 @@ describe('outbox', () => {
         res.orderedItems.length.should.equal(1)
       })
 
-      it('should including an item previously private after it was updated to public', async () => {
-        const user = createUser({ fediversable: true })
+      it('should include an item previously private after it was updated to public', async () => {
+        const user = createUser({ fediversable: true, poolActivities: true })
         const [ publicItem, privateItem ] = await createItems(user, [
           { visibility: [ 'public' ] },
           { visibility: [] },
@@ -146,8 +146,18 @@ describe('outbox', () => {
     })
 
     describe('create:items', () => {
-      it('should return an activity when creating items in bulk', async () => {
+      it('should return several activities when creating items in bulk', async () => {
         const user = createUser({ fediversable: true })
+        await createItems(user, [ { visibility: [ 'public' ] }, { visibility: [ 'public' ] } ])
+        const { username } = await user
+        const outboxUrl: Url = `${endpoint}${username}&offset=0`
+        await wait(debounceTime)
+        const res = await publicReq('get', outboxUrl)
+        res.orderedItems.length.should.equal(2)
+      })
+
+      it('should return an activity when creating items in bulk', async () => {
+        const user = createUser({ fediversable: true, poolActivities: true })
         await createItems(user, [ { visibility: [ 'public' ] }, { visibility: [ 'public' ] } ])
         const { username } = await user
         const outboxUrl: Url = `${endpoint}${username}&offset=0`
@@ -157,7 +167,7 @@ describe('outbox', () => {
       })
 
       it('should return an activity when creating items sequentially', async () => {
-        const user = createUser({ fediversable: true })
+        const user = createUser({ fediversable: true, poolActivities: true })
         await createItem(user)
         await createItem(user)
         const { username } = await user
@@ -168,7 +178,7 @@ describe('outbox', () => {
       })
 
       it('should return several activities when creating items at a different time', async () => {
-        const user = createUser({ fediversable: true })
+        const user = createUser({ fediversable: true, poolActivities: true })
         await createItem(user)
         await wait(debounceTime)
         await createItem(user)
@@ -180,7 +190,7 @@ describe('outbox', () => {
       })
 
       it('should not return recent activities', async () => {
-        const user = createUser({ fediversable: true })
+        const user = createUser({ fediversable: true, poolActivities: true })
         await createItem(user)
         const { username } = await user
         const outboxUrl: Url = `${endpoint}${username}&offset=0`
@@ -308,7 +318,7 @@ describe('outbox', () => {
       res.next.should.equal(`${url}&offset=0`)
     })
 
-    it('should return content with items link', async () => {
+    it('should return content with item link', async () => {
       const { shelf, item } = await createShelfWithItem({}, null, getFediversableUser())
       const name = getActorName(shelf)
       await wait(debounceTime)
@@ -326,6 +336,7 @@ describe('outbox', () => {
       const activityEndpoint = makeUrl({ params: { action: 'activity' } })
       createActivity.id.should.startWith(activityEndpoint)
       createActivity.actor.should.equal(actorUrl)
+      createActivity.object.id.should.containEql(item._id)
       createActivity.object.content.should.containEql(item._id)
       createActivity.to.should.containEql('Public')
       createActivity.object.attachment.should.be.an.Array()
