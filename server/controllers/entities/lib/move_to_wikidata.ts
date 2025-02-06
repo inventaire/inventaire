@@ -6,7 +6,7 @@ import { getPublicationYear } from '#controllers/entities/lib/get_publisher_publ
 import { expandInvClaims, getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { resolveExternalIds } from '#controllers/entities/lib/resolver/resolve_external_ids'
 import { omitLocalClaims } from '#controllers/entities/lib/update_wd_claim'
-import { getWikidataOAuthCredentials } from '#controllers/entities/lib/wikidata_oauth'
+import { validateUserHasWikidataOAuth, getWikidataOAuthCredentials } from '#controllers/entities/lib/wikidata_oauth'
 import { temporarilyOverrideWdIdAndIsbnCache } from '#data/wikidata/get_wd_entities_by_isbns'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
@@ -24,6 +24,9 @@ import { cacheEntityRelations } from './temporarily_cache_relations.js'
 
 export async function moveInvEntityToWikidata (user: User | MinimalRemoteUser, invEntityUri: InvEntityUri) {
   const userAcct = getUserAcct(user)
+
+  // We currently require a Wikidata account to create a Wikidata entity, and thus also to move an entity to Wikidata
+  validateUserHasWikidataOAuth(user)
 
   const entityId = unprefixify(invEntityUri)
 
@@ -136,14 +139,14 @@ function buildDescriptions (claims: ExpandedClaims): Descriptions {
 }
 
 async function setReverseClaims (claims: ExpandedClaims, wdEntityUri: WdEntityUri, user: User | MinimalRemoteUser) {
-  const credentials = getWikidataOAuthCredentials(user)
+  const { credentials, summarySuffix } = getWikidataOAuthCredentials(user)
   const entityType = getInvEntityType(claims['wdt:P31'])
   const newEntityId = unprefixify(wdEntityUri)
   if (entityType === 'edition') {
     for (const workClaim of uniq(claims['wdt:P629'])) {
       const workUri = getClaimValue(workClaim) as EntityValue
       const id = unprefixify(workUri)
-      await wdEdit.claim.create({ id, property: 'P747', value: newEntityId }, { credentials })
+      await wdEdit.claim.create({ id, property: 'P747', value: newEntityId }, { credentials, summarySuffix })
     }
   }
 }

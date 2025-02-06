@@ -1,5 +1,5 @@
 import { getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
-import { getWikidataOAuthCredentials, validateWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
+import { getWikidataOAuthCredentials, validateUserHasWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
 import { newError } from '#lib/error/error'
 import type { MinimalRemoteUser } from '#lib/federation/remote_user'
 import { mapKeysValues, objectEntries } from '#lib/utils/base'
@@ -40,8 +40,9 @@ export type UnprefixedClaims = Record<WdPropertyId, UnprefixedClaimObject[]>
 
 export async function createWdEntity (params: CreateWdEntityParams) {
   const { labels, descriptions, claims, user, isAlreadyValidated = false } = params
-  validateWikidataOAuth(user)
-  const credentials = getWikidataOAuthCredentials(user)
+  // Reserve wd entity creation to users who connected their Wikidata account, for now
+  validateUserHasWikidataOAuth(user)
+  const { credentials, summarySuffix } = getWikidataOAuthCredentials(user)
 
   const entity: EntityDraft = { labels, descriptions, claims }
 
@@ -50,7 +51,7 @@ export async function createWdEntity (params: CreateWdEntityParams) {
   if (!isAlreadyValidated) await validateInvEntity(entity)
   validateWikidataCompliance(entity)
   const formattedEntity = format(entity)
-  const res = await wdEdit.entity.create(formattedEntity, { credentials })
+  const res = await wdEdit.entity.create(formattedEntity, { credentials, summarySuffix })
   const { entity: createdEntity } = res
   if (createdEntity == null) {
     throw newError('invalid wikidata-edit response', 500, { res })

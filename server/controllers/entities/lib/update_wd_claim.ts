@@ -3,7 +3,7 @@ import { simplifyPropertyClaims, simplifyPropertyQualifiers } from 'wikibase-sdk
 import { formatClaimsForWikidata } from '#controllers/entities/lib/create_wd_entity'
 import { expandInvClaims } from '#controllers/entities/lib/inv_claims_utils'
 import { updateWdEntityLocalClaims } from '#controllers/entities/lib/update_wd_entity_local_claims'
-import { getWikidataOAuthCredentials, hasWikidataOAuth, validateWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
+import { getWikidataOAuthCredentials } from '#controllers/entities/lib/wikidata_oauth'
 import type { InstanceAgnosticContributor } from '#controllers/user/lib/anonymizable_user'
 import { getWdEntity } from '#data/wikidata/get_entity'
 import { isEntityUri, isInvEntityUri, isInvPropertyUri, isWdEntityId } from '#lib/boolean_validations'
@@ -11,7 +11,7 @@ import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 import type { UserWithAcct } from '#lib/federation/remote_user'
 import { arrayIncludes } from '#lib/utils/base'
-import { LogError, success, warn } from '#lib/utils/logs'
+import { LogError, success } from '#lib/utils/logs'
 import { qualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
 import { validateWdEntityUpdate } from '#lib/wikidata/validate_wd_update'
@@ -26,8 +26,6 @@ import type { CustomSimplifiedSnak } from 'wikibase-sdk'
 
 export async function updateWdClaim (user: UserWithAcct, id: WdEntityId, property: PropertyUri, oldValue: InvClaimValue, newValue: InvClaimValue) {
   if (isInvPropertyUri(property)) return updateWdEntityLocalClaims(user, id, property, oldValue, newValue)
-
-  validateWikidataOAuth(user)
 
   await validateWdEntityUpdate(id, property, oldValue, newValue)
 
@@ -49,14 +47,14 @@ export async function updateWdClaim (user: UserWithAcct, id: WdEntityId, propert
     throw newInvalidError('property', propertyPrefix)
   }
 
-  const credentials = getWikidataOAuthCredentials(user)
+  const { credentials, summarySuffix } = getWikidataOAuthCredentials(user)
 
   let res
 
   if (qualifierProperties[propertyId]) {
-    res = await updateRelocatedClaim({ id, propertyId, newValue, oldValue, credentials })
+    res = await updateRelocatedClaim({ id, propertyId, newValue, oldValue, credentials, summarySuffix })
   } else {
-    res = await updateClaim({ id, propertyId, newValue, oldValue, credentials })
+    res = await updateClaim({ id, propertyId, newValue, oldValue, credentials, summarySuffix })
   }
 
   const uri = prefixifyWd(id)
@@ -78,21 +76,21 @@ export async function updateWdClaim (user: UserWithAcct, id: WdEntityId, propert
   return res
 }
 
-async function updateClaim ({ id, propertyId, newValue, oldValue, credentials }) {
+async function updateClaim ({ id, propertyId, newValue, oldValue, credentials, summarySuffix }) {
   if (newValue) {
     if (oldValue) {
-      return wdEdit.claim.update({ id, property: propertyId, oldValue, newValue }, { credentials })
+      return wdEdit.claim.update({ id, property: propertyId, oldValue, newValue }, { credentials, summarySuffix })
     } else {
-      return wdEdit.claim.create({ id, property: propertyId, value: newValue }, { credentials })
+      return wdEdit.claim.create({ id, property: propertyId, value: newValue }, { credentials, summarySuffix })
     }
   } else {
     const guid = await getClaimGuid(id, propertyId, oldValue)
-    return wdEdit.claim.remove({ guid }, { credentials })
+    return wdEdit.claim.remove({ guid }, { credentials, summarySuffix })
   }
 }
 
 async function updateRelocatedClaim (params) {
-  const { id, propertyId, newValue, oldValue, credentials } = params
+  const { id, propertyId, newValue, oldValue, credentials, summarySuffix } = params
   const { claimProperty, noClaimErrorMessage, tooManyClaimsErrorMessage } = qualifierProperties[propertyId]
   const propertyClaims = await getPropertyClaims(id, claimProperty)
   if (!propertyClaims) throw newError(noClaimErrorMessage, 400, params)
@@ -101,13 +99,13 @@ async function updateRelocatedClaim (params) {
   const guid = claim.id
   if (newValue) {
     if (oldValue) {
-      return wdEdit.qualifier.update({ guid, property: propertyId, oldValue, newValue }, { credentials })
+      return wdEdit.qualifier.update({ guid, property: propertyId, oldValue, newValue }, { credentials, summarySuffix })
     } else {
-      return wdEdit.qualifier.set({ guid, property: propertyId, value: newValue }, { credentials })
+      return wdEdit.qualifier.set({ guid, property: propertyId, value: newValue }, { credentials, summarySuffix })
     }
   } else {
     const hash = getQualifierHash(claim, propertyId, oldValue)
-    return wdEdit.qualifier.remove({ guid, hash }, { credentials })
+    return wdEdit.qualifier.remove({ guid, hash }, { credentials, summarySuffix })
   }
 }
 
@@ -139,15 +137,12 @@ function getQualifierHash (claim, property, value) {
 export async function addWdClaims (id: WdEntityId, claims: Claims, user: InstanceAgnosticContributor) {
   if (isEmpty(claims)) return
   const context = { id, claims, user: pick(user, 'acct', 'username') }
-  // TODO: Let users without Wikidata OAuth use the botAccountWikidataOAuth crendentials(?)
-  if (!hasWikidataOAuth(user)) {
-    warn(context, 'Can not addWdClaims without Wikidata OAuth credentials')
-    return
-  }
-  const credentials = getWikidataOAuthCredentials(user)
+  const { credentials, summarySuffix } = getWikidataOAuthCredentials(user)
   const bot = user.special === true
   const expandedClaims = expandInvClaims(claims)
   const formattedClaims = formatClaimsForWikidata(omitLocalClaims(expandedClaims))
+  let summary = `add claims: ${Object.keys(formattedClaims).join(', ')}`
+  if (summarySuffix) summary += ` ${summarySuffix}`
   await wdEdit.entity.edit({
     id,
     claims: formattedClaims,
@@ -156,7 +151,7 @@ export async function addWdClaims (id: WdEntityId, claims: Claims, user: Instanc
       mode: 'skip-on-any-value',
     },
   }, {
-    summary: `add claims: ${Object.keys(formattedClaims).join(', ')}`,
+    summary,
     credentials,
     // bot, // Requires bot rigths, see https://www.wikidata.org/wiki/Wikidata:Bots
     maxlag: bot ? 5 : undefined,
