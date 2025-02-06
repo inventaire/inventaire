@@ -2,7 +2,7 @@ import { map, uniq, without } from 'lodash-es'
 import { getAllGroupsMembersIds } from '#controllers/groups/lib/users_lists'
 import { dbFactory } from '#db/couchdb/base'
 import { notFoundError } from '#lib/error/error'
-import searchGroupsByPositionFactory from '#lib/search_by_position'
+import { searchByPositionFactory } from '#lib/search_by_position'
 import { assertStrings, assertString } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import { groupRoles } from '#models/attributes/group'
@@ -13,7 +13,7 @@ import type { UserId } from '#types/user'
 import { addSlug } from './slug.js'
 
 const db = await dbFactory('groups')
-const searchGroupsByPosition = searchGroupsByPositionFactory(db, 'groups')
+const searchGroupsByPosition = searchByPositionFactory(db, 'groups')
 
 export const getGroupById = (id: GroupId) => db.get<Group>(id)
 export async function getGroupsByIds (ids: GroupId[]) {

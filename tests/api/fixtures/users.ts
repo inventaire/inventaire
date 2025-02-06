@@ -11,9 +11,10 @@ import { makeFriends } from '#tests/api/utils/relations'
 import { request, rawRequest } from '#tests/api/utils/request'
 import { deleteUser } from '#tests/api/utils/users'
 import type { Awaitable } from '#tests/api/utils/utils'
+import type { LatLng } from '#types/common'
 import type { User, UserRole } from '#types/user'
 
-export type CustomUserData = Record<string, string | number | boolean>
+export type CustomUserData = Record<string, string | number | boolean | number[]>
 
 const authEndpoint = `${localOrigin}/api/auth`
 
@@ -109,7 +110,7 @@ export function getRandomPosition () {
   return [
     getRandomLatitude(),
     getRandomLongitude(),
-  ]
+  ] as LatLng
 }
 export const getRandomLatitude = () => randomCoordinate(-90, 90)
 export const getRandomLongitude = () => randomCoordinate(-180, 180)

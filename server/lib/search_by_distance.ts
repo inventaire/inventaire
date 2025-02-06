@@ -1,24 +1,22 @@
 import { buildSearcher } from '#lib/elasticsearch'
 import { distanceBetween } from '#lib/geo'
-import { assertNumbers, assertNumber } from '#lib/utils/assert_types'
+import type { LatLng } from '#types/common'
 import type { SearchRequest } from '@elastic/elasticsearch/lib/api/types.js'
 
-export default dbBaseName => {
+export function searchByDistanceFactory (dbBaseName: string) {
   const searchByDistance = buildSearcher({
     dbBaseName,
     queryBuilder,
   })
 
-  return async (latLng, meterRange) => {
-    assertNumbers(latLng)
-    assertNumber(meterRange)
+  return async (latLng: LatLng, meterRange: number) => {
     const { hits } = await searchByDistance({ latLng, meterRange })
     return getIdsSortedByDistance(hits, latLng)
   }
 }
 
 // See https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-bounding-box-query.html
-function queryBuilder ({ latLng, meterRange }) {
+function queryBuilder ({ latLng, meterRange }: { latLng: LatLng, meterRange: number }) {
   const [ lat, lon ] = latLng
   const searchRequest: SearchRequest = {
     query: {
