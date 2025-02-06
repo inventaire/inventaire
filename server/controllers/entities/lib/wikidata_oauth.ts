@@ -11,7 +11,7 @@ export function hasWikidataOAuth (user: User | SpecialUser | MinimalRemoteUser |
   return 'oauth' in user && 'wikidata' in user.oauth && user.oauth.wikidata != null
 }
 
-export function assertUserHasWikidataOAuth (user: User | SpecialUser | MinimalRemoteUser | UserWithAcct) {
+export function validateUserHasWikidataOAuth (user: User | SpecialUser | MinimalRemoteUser | UserWithAcct) {
   if (!hasWikidataOAuth(user)) {
     throw newError('missing wikidata oauth tokens', 400)
   }

@@ -6,7 +6,7 @@ import { getPublicationYear } from '#controllers/entities/lib/get_publisher_publ
 import { expandInvClaims, getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { resolveExternalIds } from '#controllers/entities/lib/resolver/resolve_external_ids'
 import { omitLocalClaims } from '#controllers/entities/lib/update_wd_claim'
-import { assertUserHasWikidataOAuth, getWikidataOAuthCredentials } from '#controllers/entities/lib/wikidata_oauth'
+import { validateUserHasWikidataOAuth, getWikidataOAuthCredentials } from '#controllers/entities/lib/wikidata_oauth'
 import { temporarilyOverrideWdIdAndIsbnCache } from '#data/wikidata/get_wd_entities_by_isbns'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
@@ -26,7 +26,7 @@ export async function moveInvEntityToWikidata (user: User | MinimalRemoteUser, i
   const userAcct = getUserAcct(user)
 
   // We currently require a Wikidata account to create a Wikidata entity, and thus also to move an entity to Wikidata
-  assertUserHasWikidataOAuth(user)
+  validateUserHasWikidataOAuth(user)
 
   const entityId = unprefixify(invEntityUri)
 

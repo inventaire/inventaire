@@ -1,5 +1,5 @@
 import { getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
-import { getWikidataOAuthCredentials, assertUserHasWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
+import { getWikidataOAuthCredentials, validateUserHasWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
 import { newError } from '#lib/error/error'
 import type { MinimalRemoteUser } from '#lib/federation/remote_user'
 import { mapKeysValues, objectEntries } from '#lib/utils/base'
@@ -41,7 +41,7 @@ export type UnprefixedClaims = Record<WdPropertyId, UnprefixedClaimObject[]>
 export async function createWdEntity (params: CreateWdEntityParams) {
   const { labels, descriptions, claims, user, isAlreadyValidated = false } = params
   // Reserve wd entity creation to users who connected their Wikidata account, for now
-  assertUserHasWikidataOAuth(user)
+  validateUserHasWikidataOAuth(user)
   const { credentials, summarySuffix } = getWikidataOAuthCredentials(user)
 
   const entity: EntityDraft = { labels, descriptions, claims }
