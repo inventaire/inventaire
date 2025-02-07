@@ -42,10 +42,12 @@ export async function sendInvitation ({ reqUser, group, emails, message }: SendI
   const remainingEmails = concatRemainingEmails(canBeInvited, unknownEmails)
   log(remainingEmails, 'effectively sent emails')
 
-  if (group) {
-    await emit('send:group:email:invitations', reqUser, group, emails, message)
-  } else {
-    await emit('send:email:invitations', reqUser, emails, message)
+  if (remainingEmails.length > 0) {
+    if (group) {
+      await emit('send:group:email:invitations', reqUser, group, remainingEmails, message)
+    } else {
+      await emit('send:email:invitations', reqUser, remainingEmails, message)
+    }
   }
 }
 
