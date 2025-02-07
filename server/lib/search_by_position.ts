@@ -1,7 +1,7 @@
 import { map } from 'lodash-es'
 import { buildSearcher } from '#lib/elasticsearch'
 import { assertNumbers } from '#lib/utils/assert_types'
-import type { BBox, Bounds } from '#types/common'
+import type { BBox } from '#types/common'
 import type { DbHandler } from '#types/couchdb'
 import type { User } from '#types/user'
 import type { SearchRequest } from '@elastic/elasticsearch/lib/api/types.js'
@@ -21,8 +21,8 @@ export function searchByPositionFactory <D extends User> (db: DbHandler, dbBaseN
   }
 }
 
-function queryBuilder (bounds: Bounds) {
-  const boundss: Bounds[] = splitBboxOnAntiMeridian(bounds)
+function queryBuilder (bbox: BBox) {
+  const boundss: BBox[] = splitBboxOnAntiMeridian(bbox)
   const searchRequest: SearchRequest = {
     query: {
       // @ts-ignore somehow, the "should" assertion library is leaking global types
@@ -41,22 +41,22 @@ function queryBuilder (bounds: Bounds) {
   return searchRequest
 }
 
-function splitBboxOnAntiMeridian ([ minLng, minLat, maxLng, maxLat ]: Bounds) {
+function splitBboxOnAntiMeridian ([ minLng, minLat, maxLng, maxLat ]: BBox) {
   if (minLng < -180 && maxLng > -180) {
     return [
       [ -180, minLat, maxLng, maxLat ],
       [ normalizeLongitude(minLng), minLat, 180, maxLat ],
-    ] as Bounds[]
+    ] as BBox[]
   } else if (maxLng > 180 && minLng < 180) {
     return [
       [ minLng, minLat, 180, maxLat ],
       [ -180, minLat, normalizeLongitude(maxLng), maxLat ],
-    ] as Bounds[]
+    ] as BBox[]
   } else {
     return [
       // Normalizing for the case where both minLng and maxLng are out of the [ -180, 180 ] range
       [ normalizeLongitude(minLng), minLat, normalizeLongitude(maxLng), maxLat ],
-    ] as Bounds[]
+    ] as BBox[]
   }
 }
 
@@ -66,7 +66,7 @@ function normalizeLongitude (lng: number) {
   return lng
 }
 
-function buildGeoBoundingBoxClause ([ minLng, minLat, maxLng, maxLat ]: Bounds) {
+function buildGeoBoundingBoxClause ([ minLng, minLat, maxLng, maxLat ]: BBox) {
   const topLeft = { lat: maxLat, lon: minLng }
   const bottomRight = { lat: minLat, lon: maxLng }
   return {
