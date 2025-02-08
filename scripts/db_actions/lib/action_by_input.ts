@@ -1,8 +1,12 @@
-import { LogError, Log } from '#lib/utils/logs'
+import { logErrorAndExit, logSuccessAndExit } from '#scripts/scripts_utils'
 
-export default input => action => {
-  action(input)
-  .then(Log('action_by_input ok'))
-  .catch(LogError('action_by_input err'))
-  .then(() => process.exit(0))
+export function actionByInputFactory (input) {
+  return async function (action) {
+    try {
+      const res = await action(input)
+      logSuccessAndExit('action_by_input ok', res)
+    } catch (err) {
+      logErrorAndExit('action_by_input err', err)
+    }
+  }
 }

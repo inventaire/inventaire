@@ -18,9 +18,10 @@ export function logErrorMessageAndExit (message: string) {
   process.exit(1)
 }
 
-export function logSuccessAndExit (label, res) {
+export function logSuccessAndExit (label, res?) {
   makeSureLogsAreWrittenBeforeExit()
-  success(res, label)
+  if (res) success(res, label)
+  else success(label)
   process.exit(0)
 }
 
