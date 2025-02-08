@@ -18,7 +18,7 @@ export function validateUserHasWikidataOAuth (user: User | SpecialUser | Minimal
 }
 
 export function getWikidataOAuthCredentials (user: User | SpecialUser | MinimalRemoteUser | UserWithAcct) {
-  if ('type' in user && user.type === 'special') {
+  if (('type' in user && user.type === 'special') || ('special' in user && user.special)) {
     return {
       hasOwnOAuth: true,
       credentials: { oauth: botAccountWikidataOAuth },
