@@ -1,7 +1,7 @@
 import leven from 'leven'
 import { dbFactory } from '#db/couchdb/base'
 import { LogError, warn } from '#lib/utils/logs'
-import type { AbuseReport, User } from '#types/user'
+import type { AbuseReport, User, UserId } from '#types/user'
 
 const db = await dbFactory('users')
 
@@ -36,4 +36,11 @@ export function addReport (user: User, report: AbuseReport) {
   user.reports ??= []
   user.reports.push(report)
   return user
+}
+
+export async function clearUserAbuseReports (userId: UserId) {
+  await db.update(userId, (user: User) => {
+    delete user.reports
+    return user
+  })
 }
