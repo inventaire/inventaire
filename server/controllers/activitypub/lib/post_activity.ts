@@ -1,4 +1,3 @@
-import { map, uniq } from 'lodash-es'
 import { makeActorKeyUrl } from '#controllers/activitypub/lib/get_actor'
 import { signRequest } from '#controllers/activitypub/lib/security'
 import { initJobQueue } from '#db/level/jobs'
@@ -83,8 +82,8 @@ async function buildAudience (activity, inboxUrisByBodyTos) {
   }
 }
 
-async function postActivityWorker (jobId, cb) {
-  const { inboxUri, postHeaders, body, activity } = cb
+async function postActivityWorker (jobId, activityData) {
+  const { inboxUri, postHeaders, body, activity } = activityData
   try {
     await requests_.post(inboxUri, {
       headers: postHeaders,
