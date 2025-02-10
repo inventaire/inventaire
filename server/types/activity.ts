@@ -52,7 +52,7 @@ export interface ActorActivity {
 }
 
 interface BaseActivity {
-  '@context'?: any[]
+  '@context'?: Context[]
   id: Url
   to?: string[]
   cc?: string[]
@@ -138,6 +138,15 @@ export interface PublicKeyObject {
   id: string
   owner: ActorUrl
   publicKeyPem: string
+}
+
+interface BaseActivity {
+  '@context'?: any[]
+  id: Url
+  to?: string[]
+  cc?: string[]
+  actor?: Url | ActorActivity
+  type: ActivityType
 }
 
 export interface ActorParams {

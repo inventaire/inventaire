@@ -213,6 +213,9 @@ export type Config = ReadonlyDeep<{
     'wd:entity:indexation': {
       run: boolean
     }
+    'post:activity': {
+      run: boolean
+    }
   }
 
   // give priority to more urgent matters

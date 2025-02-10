@@ -350,6 +350,9 @@ const config = {
     'wd:entity:indexation': {
       run: true,
     },
+    'post:activity': {
+      run: true,
+    },
   },
 
   // Keys for users Wikidata OAuth

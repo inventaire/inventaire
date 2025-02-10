@@ -1,11 +1,11 @@
-import { map, uniq } from 'lodash-es'
 import { makeActorKeyUrl } from '#controllers/activitypub/lib/get_actor'
 import { signRequest } from '#controllers/activitypub/lib/security'
+import { initJobQueue } from '#db/level/jobs'
 import { isUrl } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { whateverWorks } from '#lib/promises'
 import { requests_, sanitizeUrl } from '#lib/requests'
-import { warn, logError } from '#lib/utils/logs'
+import { LogError, warn, logError, info } from '#lib/utils/logs'
 import config from '#server/config'
 import type { ActorName, PostActivity, BodyTo } from '#types/activity'
 import type { AbsoluteUrl } from '#types/common'
@@ -17,39 +17,20 @@ const timeout = 30 * 1000
 const { sanitizeUrls } = config.activitypub
 
 export async function postActivity ({ actorName, inboxUri, bodyTo, activity }: { actorName: ActorName, inboxUri: AbsoluteUrl, bodyTo: BodyTo, activity: PostActivity }) {
-  const { privateKey, publicKeyHash } = await getSharedKeyPair()
   const body: PostActivity = Object.assign({}, activity)
   body.to = bodyTo
-  const postHeaders = signRequest({
-    url: inboxUri,
-    method: 'post',
-    keyId: makeActorKeyUrl(actorName, publicKeyHash),
-    privateKey,
-    body,
-  })
-  postHeaders['content-type'] = 'application/activity+json'
-  try {
-    await requests_.post(inboxUri, {
-      headers: postHeaders,
-      body,
-      timeout,
-      parseJson: false,
-      retryOnceOnError: true,
-    })
-  } catch (err) {
-    err.context = err.context || {}
-    Object.assign(err.context, { inboxUri, activity })
-    logError(err, 'Posting activity to inbox failed')
-  }
+  info(`activity: ${activity.id} queuing`)
+  await postActivityQueue.push({ inboxUri, body, actorName })
+  .catch(LogError('addPostActivityToQueue err'))
 }
 
 export async function postActivityToActorFollowersInboxes ({ activity, actorName }: { activity: PostActivity, actorName: ActorName }) {
   const followActivities = await getFollowActivitiesByObject(actorName)
-  const inboxUrisByBodyTos: Record<AbsoluteUrl, BodyTo> = {}
-  await whateverWorks(followActivities.map(activity => buildAudience(activity, inboxUrisByBodyTos)))
-  const inboxUris = Object.keys(inboxUrisByBodyTos) as AbsoluteUrl[]
+  const bodyToByInboxUris: Record<AbsoluteUrl, BodyTo> = {}
+  await whateverWorks(followActivities.map(activity => buildAudience(activity, bodyToByInboxUris)))
+  const inboxUris = Object.keys(bodyToByInboxUris) as AbsoluteUrl[]
   return Promise.all(inboxUris.map(inboxUri => {
-    const bodyTo: BodyTo = inboxUrisByBodyTos[inboxUri]
+    const bodyTo: BodyTo = bodyToByInboxUris[inboxUri]
     return postActivity({ actorName, inboxUri, bodyTo, activity })
   }))
 }
@@ -81,14 +62,45 @@ export async function fetchInboxUri ({ actorUri, activity }: { actorUri: Absolut
   }
 }
 
-async function buildAudience (activity, inboxUrisByBodyTos) {
+async function buildAudience (activity, bodyToByInboxUris) {
   const actorUri: AbsoluteUrl = activity.actor.uri
-  const inboxUri = await fetchInboxUri({ actorUri, activity })
+  const inboxUri = await fetchInboxUri({ actorUri, activity }) as AbsoluteUrl
   if (inboxUri) {
-    if (inboxUrisByBodyTos[inboxUri]) {
-      inboxUrisByBodyTos[inboxUri] = inboxUrisByBodyTos[inboxUri].unshift(actorUri)
+    if (bodyToByInboxUris[inboxUri]) {
+      bodyToByInboxUris[inboxUri] = bodyToByInboxUris[inboxUri].unshift(actorUri)
     } else {
-      inboxUrisByBodyTos[inboxUri] = [ actorUri, 'Public' ]
+      bodyToByInboxUris[inboxUri] = [ actorUri, 'Public' ]
     }
   }
 }
+
+async function postActivityWorker (jobId, requestData: { actorName: ActorName, inboxUri: AbsoluteUrl, body: PostActivity }) {
+  const { actorName, inboxUri, body } = requestData
+  info(`activity: ${body.id} processing`)
+  const { privateKey, publicKeyHash } = await getSharedKeyPair()
+
+  const postHeaders = signRequest({
+    url: inboxUri,
+    method: 'post',
+    keyId: makeActorKeyUrl(actorName, publicKeyHash),
+    privateKey,
+    body,
+  })
+  postHeaders['content-type'] = 'application/activity+json'
+
+  try {
+    await requests_.post(inboxUri, {
+      headers: postHeaders,
+      body,
+      timeout,
+      parseJson: false,
+    })
+    info(`activity: ${body.id} sent`)
+  } catch (err) {
+    err.context = err.context || {}
+    Object.assign(err.context, { inboxUri, body })
+    logError(err, 'Posting activity to inbox failed')
+  }
+}
+
+const postActivityQueue = initJobQueue('post:activity', postActivityWorker, 1)
