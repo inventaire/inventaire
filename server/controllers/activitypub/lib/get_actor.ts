@@ -1,7 +1,7 @@
 import { getEntityActorName } from '#controllers/activitypub/lib/helpers'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { cache_ } from '#lib/cache'
-import { requests_ } from '#lib/requests'
+import { requests_, sanitizeUrl } from '#lib/requests'
 import { oneMonth } from '#lib/time'
 import { logError } from '#lib/utils/logs'
 import config, { publicOrigin } from '#server/config'
@@ -173,9 +173,10 @@ export async function getRemoteActor (actorUrl) {
   return remoteActor
 }
 
-const sanitize = config.activitypub.sanitizeUrls
+const { sanitizeUrls } = config.activitypub
 async function fetchRemoteActor (actorUrl) {
-  const remoteActorRes = await requests_.get(actorUrl, { sanitize })
+  if (sanitizeUrls) actorUrl = await sanitizeUrl(actorUrl)
+  const remoteActorRes = await requests_.get(actorUrl)
   return serializeRemoteActor(remoteActorRes)
 }
 
