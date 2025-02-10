@@ -24,7 +24,7 @@ export const views: Views<Group> = {
   },
   byPicture: {
     map: doc => {
-      if (doc.picture !== null) {
+      if (doc.picture != null) {
         emit(doc.picture.split('/')[3], null)
       }
     },

@@ -22,7 +22,7 @@ export const views: Views<Task> = {
   },
   byScore: {
     map: doc => {
-      if (!doc.state) {
+      if (!doc.state && doc.externalSourcesOccurrences != null) {
         const occurrencesCount = doc.externalSourcesOccurrences.length
         emit([ occurrencesCount, doc.relationScore, doc.lexicalScore ], null)
       }
