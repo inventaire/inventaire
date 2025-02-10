@@ -25,11 +25,11 @@ export async function postActivity ({ actorName, inboxUri, bodyTo, activity }: {
 
 export async function postActivityToActorFollowersInboxes ({ activity, actorName }: { activity: PostActivity, actorName: ActorName }) {
   const followActivities = await getFollowActivitiesByObject(actorName)
-  const inboxUrisByBodyTos: Record<AbsoluteUrl, BodyTo> = {}
-  await whateverWorks(followActivities.map(activity => buildAudience(activity, inboxUrisByBodyTos)))
-  const inboxUris = Object.keys(inboxUrisByBodyTos) as AbsoluteUrl[]
+  const bodyToByInboxUris: Record<AbsoluteUrl, BodyTo> = {}
+  await whateverWorks(followActivities.map(activity => buildAudience(activity, bodyToByInboxUris)))
+  const inboxUris = Object.keys(bodyToByInboxUris) as AbsoluteUrl[]
   return Promise.all(inboxUris.map(inboxUri => {
-    const bodyTo: BodyTo = inboxUrisByBodyTos[inboxUri]
+    const bodyTo: BodyTo = bodyToByInboxUris[inboxUri]
     return postActivity({ actorName, inboxUri, bodyTo, activity })
   }))
 }
@@ -61,14 +61,14 @@ export async function fetchInboxUri ({ actorUri, activity }: { actorUri: Absolut
   }
 }
 
-async function buildAudience (activity, inboxUrisByBodyTos) {
+async function buildAudience (activity, bodyToByInboxUris) {
   const actorUri: AbsoluteUrl = activity.actor.uri
   const inboxUri = await fetchInboxUri({ actorUri, activity }) as AbsoluteUrl
   if (inboxUri) {
-    if (inboxUrisByBodyTos[inboxUri]) {
-      inboxUrisByBodyTos[inboxUri] = inboxUrisByBodyTos[inboxUri].unshift(actorUri)
+    if (bodyToByInboxUris[inboxUri]) {
+      bodyToByInboxUris[inboxUri] = bodyToByInboxUris[inboxUri].unshift(actorUri)
     } else {
-      inboxUrisByBodyTos[inboxUri] = [ actorUri, 'Public' ]
+      bodyToByInboxUris[inboxUri] = [ actorUri, 'Public' ]
     }
   }
 }
