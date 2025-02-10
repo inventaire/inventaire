@@ -9,12 +9,21 @@ export const views: Views<ActivityDoc> = {
   },
   followActivitiesByObject: {
     map: doc => {
-      if (doc.type === 'Follow') emit(doc.object.name, null)
+      if (doc.type === 'Follow') emit([ doc.object.name, doc.updated ], null)
     },
+    reduce: '_count',
   },
   byExternalId: {
     map: doc => {
       if (doc.externalId) emit(doc.externalId, null)
+    },
+  },
+  isKnownHostname: {
+    map: doc => {
+      if (doc.actor && doc.actor.uri) {
+        const host = doc.actor.uri.split('/')[2]
+        emit(host, null)
+      }
     },
   },
 }

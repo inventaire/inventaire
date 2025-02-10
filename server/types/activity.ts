@@ -40,6 +40,7 @@ export interface ActorActivity {
   inbox: AbsoluteUrl
   sharedInbox: AbsoluteUrl
   outbox: Url
+  followers: Url
   publicKey: {
     id: ActorKeyId
     owner: ActorUrl
@@ -131,13 +132,7 @@ export interface ItemNote extends Note {
 
 export interface ActivityLink {
   name: 'shelf' | 'inventory' | 'wikidata.org' | string
-  url: AbsoluteUrl
-}
-
-export interface PublicKeyObject {
-  id: string
-  owner: ActorUrl
-  publicKeyPem: string
+  url: Url
 }
 
 export interface ActorParams {
@@ -149,7 +144,7 @@ export interface ActorParams {
   attachment?: PropertyValueAttachment[]
 }
 
-export interface Outbox {
+export interface OrderedCollection {
   '@context': Context[]
   id: Url
   type: 'OrderedCollection'
@@ -159,3 +154,11 @@ export interface Outbox {
 }
 
 export type BodyTo = (AbsoluteUrl | 'Public')[]
+
+export interface RemoteActor {
+  id: Url
+  icon?: ImageAttachment
+  name?: string
+  preferredUsername?: string
+  inbox?: Url
+}

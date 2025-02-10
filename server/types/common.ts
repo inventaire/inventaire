@@ -27,6 +27,7 @@ export type RelativeUrl = `/${string}`
 export type Url = AbsoluteUrl | RelativeUrl
 export type Origin = AbsoluteUrl
 export type Host = string
+export type Hostname = string
 export type Path = string
 
 export type HighResolutionTime = [ number, number ]
