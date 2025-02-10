@@ -140,15 +140,6 @@ export interface PublicKeyObject {
   publicKeyPem: string
 }
 
-interface BaseActivity {
-  '@context'?: any[]
-  id: Url
-  to?: string[]
-  cc?: string[]
-  actor?: Url | ActorActivity
-  type: ActivityType
-}
-
 export interface ActorParams {
   actorName: ActorName
   displayName: string
