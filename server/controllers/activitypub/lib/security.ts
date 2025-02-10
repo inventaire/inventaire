@@ -1,4 +1,5 @@
 import { createSign, createVerify } from 'node:crypto'
+import { omit } from 'lodash-es'
 import { isNonEmptyPlainObject } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
 import { getSha256Base64Digest } from '#lib/crypto'
@@ -168,7 +169,7 @@ async function fetchActorPublicKeyPem (actorUrl: string) {
   const actor = await requests_.get(actorUrl as AbsoluteUrl)
   assertObject(actor)
   if (!('publicKey' in actor)) {
-    throw newError('no publicKey found', 400, { actor })
+    throw newError('no publicKey found', 400, { actor: omit(actor, 'privateKey') })
   }
   const { publicKey } = actor
   if (!publicKey) {
