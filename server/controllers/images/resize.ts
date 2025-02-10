@@ -9,6 +9,7 @@ import { assertHostIsNotTemporarilyBanned } from '#lib/requests_temporary_host_b
 import { responses_ } from '#lib/responses'
 import { getHashCode } from '#lib/utils/base'
 import config, { mediaStorageEndpoint } from '#server/config'
+import type { Hostname } from '#types/common'
 import { getResizedImage } from './lib/get_resized_image.js'
 
 const { env } = config
@@ -104,7 +105,7 @@ const trustedRemoteHosts = new Set([
   'inventaire.io',
 ])
 
-function getApproximativeRootDomain (hostname) {
+function getApproximativeRootDomain (hostname: Hostname) {
   // From https://gist.github.com/aaronpeterson/8c481deafa549b3614d3d8c9192e3908
   // As many images servers have subdomains: ie. static.mamot.fr
   let parts = hostname.split('.')

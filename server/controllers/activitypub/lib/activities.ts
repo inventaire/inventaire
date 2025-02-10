@@ -2,6 +2,7 @@ import { dbFactory } from '#db/couchdb/base'
 import { assertString } from '#lib/utils/assert_types'
 import { createActivityDoc } from '#models/activity'
 import type { ActivityDoc, ActivityId, ActorName } from '#types/activity'
+import type { Hostname } from '#types/common'
 
 const db = await dbFactory('activities')
 
@@ -69,7 +70,7 @@ export function getActivityByExternalId (externalId: string) {
   return db.findDocByViewKey<ActivityDoc>('byExternalId', externalId)
 }
 
-export async function isFediverseKnownHost (hostname) {
+export async function isFediverseKnownHost (hostname: Hostname) {
   const res = await db.view('activities', 'isKnownHostname', {
     key: hostname,
     limit: 1,
