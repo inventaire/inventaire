@@ -17,18 +17,9 @@ const timeout = 30 * 1000
 const { sanitizeUrls } = config.activitypub
 
 export async function postActivity ({ actorName, inboxUri, bodyTo, activity }: { actorName: ActorName, inboxUri: AbsoluteUrl, bodyTo: BodyTo, activity: PostActivity }) {
-  const { privateKey, publicKeyHash } = await getSharedKeyPair()
   const body: PostActivity = Object.assign({}, activity)
   body.to = bodyTo
-  const postHeaders = signRequest({
-    url: inboxUri,
-    method: 'post',
-    keyId: makeActorKeyUrl(actorName, publicKeyHash),
-    privateKey,
-    body,
-  })
-  postHeaders['content-type'] = 'application/activity+json'
-  await postActivityQueue.push({ inboxUri, postHeaders, body, activity })
+  await postActivityQueue.push({ inboxUri, body, actorName, inboxUri })
   .catch(LogError('addPostActivityToQueue err'))
 }
 
@@ -82,8 +73,19 @@ async function buildAudience (activity, inboxUrisByBodyTos) {
   }
 }
 
-async function postActivityWorker (jobId, activityData) {
-  const { inboxUri, postHeaders, body, activity } = activityData
+async function postActivityWorker (jobId, requestData) {
+  const { actorName, inboxUri, body } = requestData
+  const { privateKey, publicKeyHash } = await getSharedKeyPair()
+
+  const postHeaders = signRequest({
+    url: inboxUri,
+    method: 'post',
+    keyId: makeActorKeyUrl(actorName, publicKeyHash),
+    privateKey,
+    body,
+  })
+  postHeaders['content-type'] = 'application/activity+json'
+
   try {
     await requests_.post(inboxUri, {
       headers: postHeaders,
@@ -93,7 +95,7 @@ async function postActivityWorker (jobId, activityData) {
     })
   } catch (err) {
     err.context = err.context || {}
-    Object.assign(err.context, { inboxUri, activity })
+    Object.assign(err.context, { inboxUri, body })
     logError(err, 'Posting activity to inbox failed')
   }
 }
