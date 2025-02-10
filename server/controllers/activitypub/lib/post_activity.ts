@@ -5,7 +5,7 @@ import { isUrl } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { whateverWorks } from '#lib/promises'
 import { requests_, sanitizeUrl } from '#lib/requests'
-import { LogError, warn, logError } from '#lib/utils/logs'
+import { LogError, warn, logError, info } from '#lib/utils/logs'
 import config from '#server/config'
 import type { ActorName, PostActivity, BodyTo } from '#types/activity'
 import type { AbsoluteUrl } from '#types/common'
@@ -19,7 +19,8 @@ const { sanitizeUrls } = config.activitypub
 export async function postActivity ({ actorName, inboxUri, bodyTo, activity }: { actorName: ActorName, inboxUri: AbsoluteUrl, bodyTo: BodyTo, activity: PostActivity }) {
   const body: PostActivity = Object.assign({}, activity)
   body.to = bodyTo
-  await postActivityQueue.push({ inboxUri, body, actorName, inboxUri })
+  info(`activity: ${activity.id} queuing`)
+  await postActivityQueue.push({ inboxUri, body, actorName })
   .catch(LogError('addPostActivityToQueue err'))
 }
 
@@ -73,8 +74,9 @@ async function buildAudience (activity, bodyToByInboxUris) {
   }
 }
 
-async function postActivityWorker (jobId, requestData) {
+async function postActivityWorker (jobId, requestData: { actorName: ActorName, inboxUri: AbsoluteUrl, body: PostActivity }) {
   const { actorName, inboxUri, body } = requestData
+  info(`activity: ${body.id} processing`)
   const { privateKey, publicKeyHash } = await getSharedKeyPair()
 
   const postHeaders = signRequest({
@@ -93,6 +95,7 @@ async function postActivityWorker (jobId, requestData) {
       timeout,
       parseJson: false,
     })
+    info(`activity: ${body.id} sent`)
   } catch (err) {
     err.context = err.context || {}
     Object.assign(err.context, { inboxUri, body })
