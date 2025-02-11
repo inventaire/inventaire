@@ -19,6 +19,7 @@ export const searchUsersItems = buildSearcher({
       offset = 0,
       ownersIdsAndVisibilityKeys,
       shelfId,
+      sortByDate = false,
     } = params
 
     if (ownersIdsAndVisibilityKeys.length === 0) {
@@ -33,23 +34,36 @@ export const searchUsersItems = buildSearcher({
       filter.push({ term: { shelves: shelfId } })
     }
 
-    const should: QueryDslQueryContainer = {
-      multi_match: {
-        type: 'cross_fields',
-        analyzer: 'standard_truncated',
-        fields: textFields,
-        query: search,
-      },
-    }
-
     const query: QueryDslQueryContainer = {
       bool: {
         filter,
-        should,
+        // should,
       },
     }
 
-    return { query, size: limit, from: offset, min_score: 0.2 }
+    const request = { query, size: limit, from: offset }
+
+    if (search) {
+      query.bool.should = {
+        multi_match: {
+          type: 'cross_fields',
+          analyzer: 'standard_truncated',
+          fields: textFields,
+          query: search,
+        },
+      } as QueryDslQueryContainer
+      // @ts-expect-error
+      searchQuery.min_score = 0.2
+    }
+
+    if (sortByDate) {
+      // @ts-expect-error
+      request.sort = [
+        { created: 'desc' },
+      ]
+    }
+
+    return request
   },
 })
 

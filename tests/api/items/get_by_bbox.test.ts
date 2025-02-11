@@ -25,8 +25,11 @@ describe('items:public:by-bbox', () => {
   })
 
   it('should get public items nearby', async () => {
-    await waitForIndexation('users', geolocatedUser._id)
     const item = await createItem(geolocatedUser)
+    await Promise.all([
+      waitForIndexation('users', geolocatedUser._id),
+      waitForIndexation('items', item._id),
+    ])
     const { items } = await publicReq('get', `${endpoint}&bbox=${bbox}`)
     const itemsIds = map(items, '_id')
     itemsIds.includes(item._id).should.be.true()
