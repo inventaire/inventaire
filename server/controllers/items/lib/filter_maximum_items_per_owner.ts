@@ -8,7 +8,7 @@ export function filterMaximumItemsPerOwner (items: SerializedItem[], lang: strin
   for (const item of items) {
     if (filteredItems.length === limit) return filteredItems
     itemsCountByOwner[item.owner] ??= 0
-    if ((item.snapshot['entity:lang'] === lang) && (itemsCountByOwner[item.owner] < 3)) {
+    if (itemsCountByOwner[item.owner] < 3) {
       itemsCountByOwner[item.owner]++
       filteredItems.push(item)
     } else {

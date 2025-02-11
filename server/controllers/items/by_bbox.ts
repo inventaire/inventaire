@@ -1,10 +1,11 @@
-import { property } from 'lodash-es'
+import { groupBy } from 'lodash-es'
 import { filterMaximumItemsPerOwner } from '#controllers/items/lib/filter_maximum_items_per_owner'
-import { getItemsByUsers } from '#controllers/items/lib/get_items_by_users'
+import { getAuthorizedItemsByUsers } from '#controllers/items/lib/get_authorized_items'
+import { removeUnauthorizedShelves, addItemsSnapshots } from '#controllers/items/lib/queries_commons'
 import { getUsersByBbox } from '#controllers/user/lib/user'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
-import type { Item } from '#types/item'
-import type { User, UserId } from '#types/user'
+import type { SerializedItem } from '#types/item'
+import type { User } from '#types/user'
 
 const sanitization = {
   bbox: {},
@@ -17,13 +18,17 @@ const sanitization = {
 }
 
 async function controller (params: SanitizedParameters) {
-  const { bbox, limit, lang } = params
+  const { bbox, limit, lang, reqUserId } = params
   const foundUsers: User[] = await getUsersByBbox(bbox)
-  const usersIds: UserId[] = foundUsers.map(property('_id'))
-  const { items, users }: { items: Item[], users: User[] } = await getItemsByUsers({ ...params, usersIds })
+  const usersByIds = groupBy(foundUsers, '_id')
+  const usersIds = Object.keys(usersByIds)
+  const authorizedItems = await getAuthorizedItemsByUsers(usersIds, params.reqUserId)
 
-  const filteredItems = filterMaximumItemsPerOwner(items, lang, limit)
-  return { items: filteredItems, users }
+  const filteredItems = filterMaximumItemsPerOwner(authorizedItems, lang, limit)
+
+  const serializedItems: SerializedItem[] = await addItemsSnapshots(filteredItems)
+  await removeUnauthorizedShelves(serializedItems, reqUserId)
+  return { items: serializedItems, users: foundUsers }
 }
 
 export default { sanitization, controller }
