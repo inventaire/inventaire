@@ -2,6 +2,7 @@
 // - answers Prerender (thus getting the logs aside)
 // - handles database changes hooks (based on follow)
 // - sends activity reports
+// - runs jobs
 
 // This config file will be used if: NODE_ENV=production NODE_APP_INSTANCE=alt
 // Override locally in ./local-production-alt.cjs
@@ -22,7 +23,7 @@ const config = {
     maxEmailsPerHour: 20,
   },
   debouncedEmail: {
-    // Let the main server handle it as its logs are archived so if if the mail
+    // Let the primary production server handle it as its logs are archived so if the mail
     // fails to be sent, it could be recovered
     disabled: true,
   },
@@ -34,6 +35,9 @@ const config = {
       run: true,
     },
     'wd:entity:indexation': {
+      run: true,
+    },
+    'post:activity': {
       run: true,
     },
   },

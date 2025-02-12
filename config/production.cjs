@@ -1,4 +1,5 @@
 // Production config
+
 // This config file will be used if: NODE_ENV=production
 // Override locally in ./local-production.cjs
 
@@ -28,18 +29,6 @@ const config = {
   },
   activitySummary: {
     disabled: false,
-  },
-  // Let the alt instance run the jobs
-  jobs: {
-    'inv:deduplicate': {
-      run: false,
-    },
-    'entity:popularity': {
-      run: false,
-    },
-    'wd:entity:indexation': {
-      run: false,
-    },
   },
   remoteImages: {
     useProdCachedImages: false,
