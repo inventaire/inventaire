@@ -26,7 +26,7 @@ import {
   updateLabel,
 } from '#tests/api/utils/entities'
 import { getItem } from '#tests/api/utils/items'
-import { authReq, getRemoteInstanceUser, getUserB } from '#tests/api/utils/utils'
+import { authReq, getRemoteInstanceAdmin, getRemoteInstanceUser, getUserB } from '#tests/api/utils/utils'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 const { remoteEntitiesOrigin } = config.federation
@@ -383,6 +383,24 @@ describe('items:snapshot', () => {
       // This supposes that the snapshot cache might stay outdated for as long as the entity itself
       // has not been re-requested
       await getByUri(uri)
+      await wait(debounceDelay)
+      const updatedItem = await getItem(item)
+      updatedItem.snapshot['entity:title'].should.equal(titleB)
+    })
+
+    it('should update the item snapshot after a merge on the remote entities origin', async () => {
+      const titleA = randomWords(3)
+      const titleB = randomWords(3)
+      const [ { uri: uriA }, { uri: uriB } ] = await Promise.all([
+        createEdition({ title: titleA }),
+        createEdition({ title: titleB }),
+      ])
+      const item = await authReq('post', '/api/items', { entity: uriA })
+      item.snapshot['entity:title'].should.equal(titleA)
+      await wait(debounceDelay)
+      await merge(uriA, uriB, { user: getRemoteInstanceAdmin(), origin: remoteEntitiesOrigin })
+      // Trigger an entity revision cache refresh
+      await getByUri(uriA)
       await wait(debounceDelay)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:title'].should.equal(titleB)
