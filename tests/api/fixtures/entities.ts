@@ -9,6 +9,7 @@ import { newError } from '#lib/error/error'
 import { isValidIsbn, toIsbn13h } from '#lib/isbn/isbn'
 import { forceArray, objectValues } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
+import { localOrigin } from '#server/config'
 import { getByUri, addClaim, getByUris } from '#tests/api/utils/entities'
 import { customAuthReq, request } from '#tests/api/utils/request'
 import { authReq, getUser } from '#tests/api/utils/utils'
@@ -45,9 +46,11 @@ interface CreateEntityParams {
   labels?: Labels
   claims?: Claims
   user?: AwaitableUserWithCookie
+  origin?: AbsoluteUrl
 }
 export const createEntity = (P31: WdEntityUri, options: CreateEntityOptions = {}) => (params: CreateEntityParams = {}) => {
   const { canHaveLabels = true, defaultClaims } = options
+  const { origin = localOrigin } = params
   const defaultLabel = P31 === 'wd:Q5' ? humanName() : randomLabel(4)
   let labels
   if (canHaveLabels) {
@@ -57,7 +60,8 @@ export const createEntity = (P31: WdEntityUri, options: CreateEntityOptions = {}
   claims['wdt:P31'] = [ P31 ]
   if (defaultClaims) claims = Object.assign({}, defaultClaims, claims)
   const user = params.user || getUser()
-  return customAuthReq(user, 'post', '/api/entities?action=create', { labels, claims })
+  const url = `${origin}/api/entities?action=create` as AbsoluteUrl
+  return customAuthReq(user, 'post', url, { labels, claims })
 }
 
 export const createHuman = createEntity('wd:Q5')
