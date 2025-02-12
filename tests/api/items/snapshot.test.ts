@@ -10,7 +10,7 @@ import {
   createWorkWithAuthor,
   someImageHash,
 } from '#fixtures/entities'
-import { humanName } from '#fixtures/text'
+import { humanName, randomWords } from '#fixtures/text'
 import { wait } from '#lib/promises'
 import { getRandomString } from '#lib/utils/random_string'
 import config, { federatedMode } from '#server/config'
@@ -26,8 +26,10 @@ import {
   updateLabel,
 } from '#tests/api/utils/entities'
 import { getItem } from '#tests/api/utils/items'
-import { authReq, getUserB } from '#tests/api/utils/utils'
+import { authReq, getRemoteInstanceUser, getUserB } from '#tests/api/utils/utils'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
+
+const { remoteEntitiesOrigin } = config.federation
 
 const debounceDelay = config.snapshotsDebounceTime + 100
 
@@ -356,5 +358,30 @@ describe('items:snapshot', () => {
     })
 
     // TODO: add series tests
+  })
+
+  describe('federated mode', () => {
+    before(function () { if (!federatedMode) this.skip() })
+
+    it('should update the item snapshot after an update on the remote entities origin', async () => {
+      const titleA = randomWords(3)
+      const titleB = randomWords(3)
+      const { uri } = await createEdition({ title: titleA })
+      const item = await authReq('post', '/api/items', { entity: uri })
+      item.snapshot['entity:title'].should.equal(titleA)
+      await wait(debounceDelay)
+      // Trigger a change directly on the remote instance
+      await updateClaim({
+        origin: remoteEntitiesOrigin,
+        user: getRemoteInstanceUser(),
+        uri,
+        property: 'wdt:P1476',
+        oldValue: titleA,
+        newValue: titleB,
+      })
+      await wait(debounceDelay)
+      const updatedItem = await getItem(item)
+      updatedItem.snapshot['entity:title'].should.equal(titleB)
+    })
   })
 })

@@ -6,8 +6,10 @@ import { isInvEntityId, isNonEmptyArray } from '#lib/boolean_validations'
 import { assertStrings, assertString } from '#lib/utils/assert_types'
 import { forceArray, objectValues } from '#lib/utils/base'
 import { buildUrl } from '#lib/utils/url'
+import { localOrigin } from '#server/config'
 import { customAuthReq } from '#tests/api/utils/request'
 import { waitForIndexation } from '#tests/api/utils/search'
+import type { AbsoluteUrl } from '#types/common'
 import type { EntityUri, ExpandedSerializedEntitiesByUris, InvClaimValue, InvEntityId, PropertyUri, SerializedEntitiesByUris, SerializedEntity } from '#types/entity'
 import type { PatchId } from '#types/patch'
 import { getIndexedDoc } from './search.js'
@@ -124,14 +126,16 @@ interface UpdateClaimParams {
   oldValue?: InvClaimValue
   newValue?: InvClaimValue
   user?: AwaitableUserWithCookie
+  origin?: AbsoluteUrl
 }
-export function updateClaim ({ uri, property, oldValue, newValue, user }: UpdateClaimParams) {
+export function updateClaim ({ uri, property, oldValue, newValue, user, origin }: UpdateClaimParams) {
   uri = normalizeUri(uri)
-  user = user || getUser()
+  user ??= getUser()
+  origin ??= localOrigin
   const body = { uri, property }
   if (oldValue) body['old-value'] = oldValue
   if (newValue) body['new-value'] = newValue
-  return customAuthReq(user, 'put', '/api/entities?action=update-claim', body)
+  return customAuthReq(user, 'put', `${origin}/api/entities?action=update-claim`, body)
 }
 
 export function addClaim ({ user, uri, property, value }: Pick<UpdateClaimParams, 'user' | 'uri' | 'property'> & { value: UpdateClaimParams['newValue'] }) {

@@ -4,19 +4,20 @@ import { isPlainObject, random, round } from 'lodash-es'
 import { addUserRole } from '#controllers/user/lib/user'
 import { getSomeEmail, getSomeUsername } from '#fixtures/text'
 import { getRandomUuid } from '#lib/crypto'
+import { newError } from '#lib/error/error'
 import { assertString } from '#lib/utils/assert_types'
 import { getRandomString } from '#lib/utils/random_string'
 import { localOrigin } from '#server/config'
 import { makeFriends } from '#tests/api/utils/relations'
 import { request, rawRequest } from '#tests/api/utils/request'
+import type { Awaitable } from '#tests/api/utils/types'
 import { deleteUser } from '#tests/api/utils/users'
-import type { Awaitable } from '#tests/api/utils/utils'
-import type { LatLng } from '#types/common'
+import type { AbsoluteUrl, LatLng } from '#types/common'
 import type { User, UserRole } from '#types/user'
 
 export type CustomUserData = Record<string, string | number | boolean | number[]>
 
-const authEndpoint = `${localOrigin}/api/auth`
+const authEndpoint = '/api/auth'
 
 let getUser, updateUser
 async function importCircularDependencies () {
@@ -26,13 +27,17 @@ async function importCircularDependencies () {
 setImmediate(importCircularDependencies)
 
 const connect = (endpoint, userData) => rawRequest('post', endpoint, { body: userData })
-const _signup = userData => connect(`${authEndpoint}?action=signup`, userData)
-async function loginOrSignup (userData) {
+
+function _signup (userData, origin: AbsoluteUrl = localOrigin) {
+  return connect(`${origin}${authEndpoint}?action=signup`, userData)
+}
+
+async function loginOrSignup (userData, origin = localOrigin) {
   try {
-    return await connect(`${authEndpoint}?action=login`, userData)
+    return await connect(`${origin}${authEndpoint}?action=login`, userData)
   } catch (err) {
     if (err.statusCode !== 401) throw err
-    return _signup(userData)
+    return _signup(userData, origin)
   }
 }
 
@@ -44,7 +49,7 @@ export function signup (email) {
   })
 }
 
-async function _getOrCreateUser ({ customData = {}, mayReuseExistingUser, role }: { customData: CustomUserData, mayReuseExistingUser?: boolean, role?: UserRole }) {
+async function _getOrCreateUser ({ customData = {}, mayReuseExistingUser, role, origin }: { customData: CustomUserData, mayReuseExistingUser?: boolean, role?: UserRole, origin?: AbsoluteUrl }) {
   const username = customData.username || createUsername()
   const userData = {
     username,
@@ -54,19 +59,25 @@ async function _getOrCreateUser ({ customData = {}, mayReuseExistingUser, role }
   }
   let cookie
   if (mayReuseExistingUser) {
-    cookie = await loginOrSignup(userData).then(parseCookie)
+    cookie = await loginOrSignup(userData, origin).then(parseCookie)
   } else {
-    cookie = await _signup(userData).then(parseCookie)
+    cookie = await _signup(userData, origin).then(parseCookie)
   }
   assertString(cookie)
-  const user = await getUserWithCookie(cookie)
-  await setCustomData(user, customData)
-  if (role) await addUserRole(user._id, role)
-  return getUserWithCookie(cookie)
+  const user = await getUserWithCookie(cookie, origin)
+  await setCustomData(user, customData, origin)
+  if (role) {
+    if (origin && origin !== localOrigin) {
+      throw newError('can set a role on a remote user', 500, { role, origin })
+    } else {
+      await addUserRole(user._id, role)
+    }
+  }
+  return getUserWithCookie(cookie, origin)
 }
 
-export function getOrCreateUser (customData: CustomUserData, role: UserRole) {
-  return _getOrCreateUser({ customData, role, mayReuseExistingUser: true })
+export function getOrCreateUser (customData: CustomUserData, role: UserRole, origin?: AbsoluteUrl) {
+  return _getOrCreateUser({ customData, role, mayReuseExistingUser: true, origin })
 }
 
 export function createUser (customData: CustomUserData = {}) {
@@ -75,23 +86,25 @@ export function createUser (customData: CustomUserData = {}) {
 
 export interface UserWithCookie extends User {
   cookie: string
+  origin: AbsoluteUrl
 }
 
 export type AwaitableUserWithCookie = Awaitable<UserWithCookie>
 
-export async function getUserWithCookie (cookie: string) {
-  const user = await request('get', '/api/user', null, { cookie })
+export async function getUserWithCookie (cookie: string, origin: AbsoluteUrl = localOrigin) {
+  const user = await request('get', `${origin}/api/user`, null, { cookie })
   user.cookie = cookie
+  user.origin = origin
   assertString(user.cookie)
   return user as UserWithCookie
 }
 
-export async function getRefreshedUser (user: AwaitableUserWithCookie) {
+export async function getRefreshedUser (user: AwaitableUserWithCookie, origin?: AbsoluteUrl) {
   // Allow to pass either a user doc or a user promise
   user = await user
   // Get the up-to-date user doc while keeping the cookie
   // set by tests/api/fixtures/users
-  return getUserWithCookie(user.cookie)
+  return getUserWithCookie(user.cookie, origin)
 }
 
 export const createUsername = () => getSomeUsername()
@@ -126,7 +139,7 @@ export async function getTwoFriends () {
 
 const parseCookie = res => res.headers['set-cookie']
 
-async function setCustomData (user: UserWithCookie, customData: CustomUserData) {
+async function setCustomData (user: UserWithCookie, customData: CustomUserData, origin: AbsoluteUrl = localOrigin) {
   delete customData.username
   delete customData.password
   for (const attribute in customData) {
@@ -135,7 +148,7 @@ async function setCustomData (user: UserWithCookie, customData: CustomUserData) 
       // ex: 'settings.contributions.anonymize': false
       throw new Error('use object path syntax')
     }
-    await updateUser({ user, attribute, value })
+    await updateUser({ user, attribute, value, origin })
   }
 }
 

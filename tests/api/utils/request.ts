@@ -5,7 +5,7 @@ import { requests_, type RequestOptions } from '#lib/requests'
 import { assertObject, assertType, assertString } from '#lib/utils/assert_types'
 import { log, success } from '#lib/utils/logs'
 import { stringifyQuery } from '#lib/utils/url'
-import config, { publicOrigin } from '#server/config'
+import config, { localOrigin, publicOrigin } from '#server/config'
 import type { AbsoluteUrl, HttpHeaders, HttpMethod, Url } from '#types/common'
 import type { BearerToken } from '#types/oauth'
 import type { OverrideProperties } from 'type-fest'
@@ -63,14 +63,17 @@ export async function request (method: HttpMethod, endpoint: Url, body?: unknown
   }
 }
 
-export async function customAuthReq (user: AwaitableUserWithCookie, method: HttpMethod, endpoint: Url, body?: unknown, headers: HttpHeaders = {}) {
+export async function customAuthReq (user: AwaitableUserWithCookie, method: HttpMethod, url: Url, body?: unknown, headers: HttpHeaders = {}) {
   assertType('object|promise', user)
   assertString(method)
-  assertString(endpoint)
+  assertString(url)
   user = await user
+  if (user.origin !== localOrigin && !url.startsWith(user.origin)) {
+    throw newError('custom auth request url and user origin mismatch', 500, { url, user })
+  }
   // Gets a user doc to which tests/api/fixtures/users added a cookie attribute
   headers.cookie = user.cookie
-  return request(method, endpoint, body, headers)
+  return request(method, url, body, headers)
 }
 
 interface RawCustomAuthReqOptions {
