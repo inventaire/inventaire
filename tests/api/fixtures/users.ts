@@ -1,19 +1,21 @@
 import 'should'
 import { randomBytes } from 'node:crypto'
 import { isPlainObject, random, round } from 'lodash-es'
+import { red } from 'tiny-chalk'
 import { addUserRole } from '#controllers/user/lib/user'
 import { getSomeEmail, getSomeUsername } from '#fixtures/text'
 import { getRandomUuid } from '#lib/crypto'
-import { newError } from '#lib/error/error'
 import { assertString } from '#lib/utils/assert_types'
+import { logError, success } from '#lib/utils/logs'
 import { getRandomString } from '#lib/utils/random_string'
-import { localOrigin } from '#server/config'
+import { shellExec } from '#scripts/scripts_utils'
+import { federatedMode, localOrigin } from '#server/config'
 import { makeFriends } from '#tests/api/utils/relations'
 import { request, rawRequest } from '#tests/api/utils/request'
 import type { Awaitable } from '#tests/api/utils/types'
 import { deleteUser } from '#tests/api/utils/users'
 import type { AbsoluteUrl, LatLng } from '#types/common'
-import type { User, UserRole } from '#types/user'
+import type { User, UserId, UserRole } from '#types/user'
 
 export type CustomUserData = Record<string, string | number | boolean | number[]>
 
@@ -67,13 +69,25 @@ async function _getOrCreateUser ({ customData = {}, mayReuseExistingUser, role, 
   const user = await getUserWithCookie(cookie, origin)
   await setCustomData(user, customData, origin)
   if (role) {
-    if (origin && origin !== localOrigin) {
-      throw newError('can set a role on a remote user', 500, { role, origin })
-    } else {
-      await addUserRole(user._id, role)
-    }
+    await addTestUserRole(user._id, role)
   }
   return getUserWithCookie(cookie, origin)
+}
+
+async function addTestUserRole (userId: UserId, role: UserRole) {
+  if (federatedMode) {
+    // Use a sub-process to use be able to override NODE_ENV and NODE_APP_INSTANCE to access the associated config
+    try {
+      const { stderr } = await shellExec(`export NODE_ENV=tests-api NODE_APP_INSTANCE=server; npm run db-actions:update-user-role ${userId} add ${role}`)
+      if (stderr) console.log(red('addTestUserRole stderr ###'), stderr, red('###'))
+      else success(`added role ${role} to ${userId}`)
+    } catch (err) {
+      logError(err)
+      throw err
+    }
+  } else {
+    await addUserRole(userId, role)
+  }
 }
 
 export function getOrCreateUser (customData: CustomUserData, role: UserRole, origin?: AbsoluteUrl) {

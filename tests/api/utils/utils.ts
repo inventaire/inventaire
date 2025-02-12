@@ -1,7 +1,6 @@
 import 'should'
 import { getOrCreateUser, getRefreshedUser, type CustomUserData } from '#fixtures/users'
-import { newError } from '#lib/error/error'
-import config, { federatedMode } from '#server/config'
+import config from '#server/config'
 import type { AbsoluteUrl, HttpHeaders, HttpMethod, RelativeUrl } from '#types/common'
 import type { UserRole } from '#types/user'
 import { request, customAuthReq, rawCustomAuthReq } from './request.js'
@@ -13,9 +12,6 @@ const userPromises = {}
 
 export function getUserGetter (key: string, role?: UserRole, customData?: CustomUserData, origin?: AbsoluteUrl) {
   return function () {
-    if (federatedMode && role === 'dataadmin') {
-      throw newError('Tests relying on the dataadmin role are not available in federated mode yet', 500, { role })
-    }
     if (userPromises[key] == null) {
       userPromises[key] = getOrCreateUser(customData, role, origin)
     }
@@ -49,7 +45,14 @@ export const getDeanonymizedUser = getUserGetter('deanonymized', undefined, {
 })
 
 export const getRemoteInstanceUser = getUserGetter('remote', undefined, undefined, remoteEntitiesOrigin)
+export const getRemoteInstanceAdmin = getUserGetter('remote_admin', 'admin', undefined, remoteEntitiesOrigin)
+
 export function remoteUserAuthReq (method: HttpMethod, endpoint: RelativeUrl, body?: unknown, headers: HttpHeaders = {}) {
   const url = `${remoteEntitiesOrigin}${endpoint}` as AbsoluteUrl
   return customAuthReq(getRemoteInstanceUser(), method, url, body, headers)
+}
+
+export function remoteAdminReq (method: HttpMethod, endpoint: RelativeUrl, body?: unknown, headers: HttpHeaders = {}) {
+  const url = `${remoteEntitiesOrigin}${endpoint}` as AbsoluteUrl
+  return customAuthReq(getRemoteInstanceAdmin(), method, url, body, headers)
 }
