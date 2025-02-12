@@ -379,6 +379,10 @@ describe('items:snapshot', () => {
         oldValue: titleA,
         newValue: titleB,
       })
+      // Trigger an entity revision cache refresh
+      // This supposes that the snapshot cache might stay outdated for as long as the entity itself
+      // has not been re-requested
+      await getByUri(uri)
       await wait(debounceDelay)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:title'].should.equal(titleB)
