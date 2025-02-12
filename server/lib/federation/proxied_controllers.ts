@@ -84,7 +84,7 @@ async function proxyWrappedController (req: Req | AuthentifiedReq, accessLevel: 
   } else {
     throw newUnauthorizedApiAccessError(401)
   }
-  runPostProxiedRequestHooks(method, url, action, params)
+  runPostProxiedRequestHooks(method, url, action, params, res)
   return res
 }
 
