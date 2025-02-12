@@ -1,8 +1,9 @@
-import { map } from 'lodash-es'
+import { map, zipObject } from 'lodash-es'
 import type { GetEntitiesByUrisResponse } from '#controllers/entities/by_uris_get'
 import { leveldbFactory } from '#db/level/get_sub_db'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
+import { objectEntries } from '#lib/utils/base'
 import { info, logError } from '#lib/utils/logs'
 import { objectKeys } from '#lib/utils/types'
 import type { ExpandedSerializedEntity, SerializedEntity } from '#types/entity'
@@ -11,17 +12,31 @@ const db = leveldbFactory('entity-rev', 'utf8')
 
 export async function updateEntitiesRevisionsCache (res: GetEntitiesByUrisResponse) {
   try {
-    const { entities } = res
+    const { entities, redirects } = res
     const uris = objectKeys(entities)
-    const cacheRes: (string | undefined)[] = await db.getMany(uris)
+    const redirectsUris = objectKeys(redirects)
+    const allUris = uris.concat(redirectsUris)
+    const cachedRevs: (string | undefined)[] = await db.getMany(allUris)
+    const cachedRevByUri = zipObject(allUris, cachedRevs)
     const updateOps = []
-    for (const [ index, uri ] of uris.entries()) {
+    for (const uri of uris) {
       const entity = entities[uri]
       const newRev = getEntityRevisionId(entity)
-      const oldRev = cacheRes[index]
+      const oldRev = cachedRevByUri[uri]
       if (oldRev !== newRev) {
         updateOps.push({ type: 'put', key: uri, value: newRev })
         await emit('entity:changed', uri)
+      }
+    }
+    for (const [ from, to ] of objectEntries(redirects)) {
+      const oldRev = cachedRevByUri[from]
+      // Use the redirection target rev as the new rev value
+      // Do not propagate redirection to items,
+      // to not be impacted by an eventual merge revert
+      const newRev = getEntityRevisionId(entities[to])
+      if (oldRev !== newRev) {
+        updateOps.push({ type: 'put', key: from, value: newRev })
+        await emit('entity:changed', from)
       }
     }
     info(`received new entities revisions: ${map(updateOps, 'key').join(' ')}`)

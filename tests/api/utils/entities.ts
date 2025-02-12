@@ -87,13 +87,15 @@ export async function deleteByExternalId (property: PropertyUri, externalId: str
   return deleteByUris(uris)
 }
 
-export function merge (fromUri: EntityUri, toUri: EntityUri, options: { user?: AwaitableUserWithCookie } = {}) {
+export function merge (fromUri: EntityUri, toUri: EntityUri, options: { user?: AwaitableUserWithCookie, origin?: AbsoluteUrl } = {}) {
   assertString(fromUri)
   assertString(toUri)
   fromUri = normalizeUri(fromUri)
   toUri = normalizeUri(toUri)
   const user = options.user || getDataadminUser()
-  return customAuthReq(user, 'put', '/api/entities?action=merge', { from: fromUri, to: toUri })
+  const origin = options.origin || localOrigin
+  const url = `${origin}/api/entities?action=merge` as AbsoluteUrl
+  return customAuthReq(user, 'put', url, { from: fromUri, to: toUri })
 }
 
 export function revertMerge (fromUri: EntityUri) {
