@@ -1,7 +1,6 @@
 import 'should'
 import { getOrCreateUser, getRefreshedUser, type CustomUserData } from '#fixtures/users'
-import { newError } from '#lib/error/error'
-import config, { federatedMode } from '#server/config'
+import config from '#server/config'
 import type { AbsoluteUrl, HttpHeaders, HttpMethod, RelativeUrl } from '#types/common'
 import type { UserRole } from '#types/user'
 import { request, customAuthReq, rawCustomAuthReq } from './request.js'
@@ -13,9 +12,6 @@ const userPromises = {}
 
 export function getUserGetter (key: string, role?: UserRole, customData?: CustomUserData, origin?: AbsoluteUrl) {
   return function () {
-    if (federatedMode && role === 'dataadmin') {
-      throw newError('Tests relying on the dataadmin role are not available in federated mode yet', 500, { role })
-    }
     if (userPromises[key] == null) {
       userPromises[key] = getOrCreateUser(customData, role, origin)
     }
