@@ -49,7 +49,14 @@ export const getDeanonymizedUser = getUserGetter('deanonymized', undefined, {
 })
 
 export const getRemoteInstanceUser = getUserGetter('remote', undefined, undefined, remoteEntitiesOrigin)
+export const getRemoteInstanceAdmin = getUserGetter('remote_admin', 'admin', undefined, remoteEntitiesOrigin)
+
 export function remoteUserAuthReq (method: HttpMethod, endpoint: RelativeUrl, body?: unknown, headers: HttpHeaders = {}) {
   const url = `${remoteEntitiesOrigin}${endpoint}` as AbsoluteUrl
   return customAuthReq(getRemoteInstanceUser(), method, url, body, headers)
+}
+
+export function remoteAdminReq (method: HttpMethod, endpoint: RelativeUrl, body?: unknown, headers: HttpHeaders = {}) {
+  const url = `${remoteEntitiesOrigin}${endpoint}` as AbsoluteUrl
+  return customAuthReq(getRemoteInstanceAdmin(), method, url, body, headers)
 }

@@ -1,9 +1,10 @@
+import { pick } from 'lodash-es'
 import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { newError } from '#lib/error/error'
 import { wait } from '#lib/promises'
 import { requests_, type RequestOptions } from '#lib/requests'
 import { assertObject, assertType, assertString } from '#lib/utils/assert_types'
-import { log, success } from '#lib/utils/logs'
+import { log, logError, success } from '#lib/utils/logs'
 import { stringifyQuery } from '#lib/utils/url'
 import config, { localOrigin, publicOrigin } from '#server/config'
 import type { AbsoluteUrl, HttpHeaders, HttpMethod, Url } from '#types/common'
@@ -69,7 +70,9 @@ export async function customAuthReq (user: AwaitableUserWithCookie, method: Http
   assertString(url)
   user = await user
   if (user.origin !== localOrigin && !url.startsWith(user.origin)) {
-    throw newError('custom auth request url and user origin mismatch', 500, { url, user })
+    const err = newError('custom auth request url and user origin mismatch', 500, { url, user: pick(user, [ '_id', 'origin' ]) })
+    logError(err, 'customAuthReq origin error')
+    throw err
   }
   // Gets a user doc to which tests/api/fixtures/users added a cookie attribute
   headers.cookie = user.cookie

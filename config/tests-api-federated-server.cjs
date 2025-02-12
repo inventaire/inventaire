@@ -1,5 +1,5 @@
 // Custom config for the API tests server
-// This config file will be used if: NODE_ENV=tests-api NODE_APP_INSTANCE=server
+// This config file will be used if: NODE_ENV=tests-api NODE_APP_INSTANCE=federated-server
 // Override locally in ./local-tests-api-server.cjs
 
 /** @typedef { import('../types/types.ts').Config } Config */
