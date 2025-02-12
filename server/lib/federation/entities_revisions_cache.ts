@@ -1,8 +1,9 @@
+import { map } from 'lodash-es'
 import type { GetEntitiesByUrisResponse } from '#controllers/entities/by_uris_get'
 import { leveldbFactory } from '#db/level/get_sub_db'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
-import { logError } from '#lib/utils/logs'
+import { info, logError } from '#lib/utils/logs'
 import { objectKeys } from '#lib/utils/types'
 import type { ExpandedSerializedEntity, SerializedEntity } from '#types/entity'
 
@@ -23,6 +24,7 @@ export async function updateEntitiesRevisionsCache (res: GetEntitiesByUrisRespon
         await emit('entity:changed', uri)
       }
     }
+    info(`received new entities revisions: ${map(updateOps, 'key').join(' ')}`)
     await db.batch(updateOps)
   } catch (err) {
     logError(err, 'updateEntitiesRevisionsCache error')
