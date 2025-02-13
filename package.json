@@ -35,6 +35,7 @@
     "populate-users-fixtures": "./scripts/populate_users_fixtures.ts",
     "postinstall": "./scripts/postinstall.sh",
     "replicate-tests-db": "./scripts/tests/replicate_tests_db.ts",
+    "send-test-email": "./scripts/send_test_email.ts",
     "start": "tsx server/server.ts",
     "start-built-server": "./scripts/typescript/start_built_server.sh",
     "start-tests-server": "./scripts/tests/api/start_tests_server.sh",
