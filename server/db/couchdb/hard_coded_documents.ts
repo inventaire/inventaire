@@ -1,4 +1,5 @@
-import type { SpecialUser } from '#types/user'
+import { getLocalUserWithAcct, type SpecialUserWithAcct } from '#lib/federation/remote_user'
+import type { SpecialUser, Username } from '#types/user'
 
 export const specialUserDocBase = {
   type: 'special',
@@ -14,7 +15,7 @@ export const specialUserDocBase = {
   },
 } as const
 
-function buildSpecialUserDoc (username, idLastCharacters) {
+function buildSpecialUserDoc (username: Username, idLastCharacters: string) {
   const id = `00000000000000000000000000000${idLastCharacters}`
   const specialUser: Omit<SpecialUser, '_rev' | 'stableUsername' | 'roles'> = {
     _id: id,
@@ -22,7 +23,7 @@ function buildSpecialUserDoc (username, idLastCharacters) {
     username,
     ...specialUserDocBase,
   }
-  return specialUser
+  return getLocalUserWithAcct(specialUser) as SpecialUserWithAcct
 }
 
 export const hardCodedUsers = {

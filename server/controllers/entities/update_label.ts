@@ -1,6 +1,6 @@
 import { checkSpamContent } from '#controllers/user/lib/spam'
 import { newError } from '#lib/error/error'
-import { getMaybeRemoteReqUser } from '#lib/federation/remote_user'
+import { parseReqLocalOrRemoteUser } from '#lib/federation/remote_user'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { AuthentifiedReq, RemoteUserAuthentifiedReq } from '#types/server'
 import { unprefixify } from './lib/prefix.js'
@@ -24,7 +24,7 @@ async function controller (params: SanitizedParameters, req: AuthentifiedReq | R
 
   if (value === '') throw newError('invalid value', 400, params)
 
-  const user = getMaybeRemoteReqUser(req)
+  const user = parseReqLocalOrRemoteUser(req)
   await checkSpamContent(user, value)
 
   if (updater == null) {

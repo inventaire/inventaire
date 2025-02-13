@@ -32,7 +32,11 @@ export interface LocalUserWithAcct extends User {
   acct: UserAccountUri
 }
 
-export type UserWithAcct = LocalUserWithAcct | RemoteUserWithAcct | MinimalRemoteUser | InstanceAgnosticContributor
+export interface SpecialUserWithAcct extends SpecialUser {
+  acct: UserAccountUri
+}
+
+export type UserWithAcct = LocalUserWithAcct | SpecialUserWithAcct | RemoteUserWithAcct | MinimalRemoteUser | InstanceAgnosticContributor
 
 export const remoteUserHeader = 'x-remote-user'
 
@@ -77,15 +81,6 @@ export function getUserAcct (user: User | SpecialUser | MinimalRemoteUser | User
   } else {
     return buildLocalUserAcct(user.anonymizableId)
   }
-}
-
-export function getMaybeRemoteReqUser (req: AuthentifiedReq | RemoteUserAuthentifiedReq) {
-  return 'remoteUser' in req ? req.remoteUser : req.user
-}
-
-export function getReqUserAcct (req: AuthentifiedReq | RemoteUserAuthentifiedReq) {
-  const user = getMaybeRemoteReqUser(req)
-  return getUserAcct(user)
 }
 
 export async function getUsersByAccts (usersAccts: UserAccountUri[], options: AnonymizeUserOptions = {}) {
@@ -160,4 +155,13 @@ export async function getUserByAcct (userAcct: UserAccountUri) {
 export function parseReqLocalOrRemoteUser (req: AuthentifiedReq | RemoteUserAuthentifiedReq) {
   if ('user' in req) return setUserAcctAndRoles(req.user, publicHost) as LocalUserWithAcct
   else return req.remoteUser
+}
+
+export function getReqUserAcct (req: AuthentifiedReq | RemoteUserAuthentifiedReq) {
+  const user = parseReqLocalOrRemoteUser(req)
+  return getUserAcct(user)
+}
+
+export function getLocalUserWithAcct <T extends Pick<User, 'anonymizableId'>> (user: T) {
+  return setUserAcctAndRoles(user, publicHost)
 }

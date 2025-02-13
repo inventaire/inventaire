@@ -5,7 +5,7 @@ import { checkSpamContent } from '#controllers/user/lib/spam'
 import { isInvEntityId, isNonEmptyString } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { newMissingBodyError } from '#lib/error/pre_filled'
-import { getMaybeRemoteReqUser, parseReqLocalOrRemoteUser } from '#lib/federation/remote_user'
+import { parseReqLocalOrRemoteUser } from '#lib/federation/remote_user'
 import { log } from '#lib/utils/logs'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { IsbnEntityUri } from '#types/entity'
@@ -32,12 +32,12 @@ async function controller (params: SanitizedParameters, req: AuthentifiedReq | R
     throw newMissingBodyError('old-value|new-value')
   }
 
+  const user = parseReqLocalOrRemoteUser(req)
   // An empty string is interpreted as a null value
   oldValue = parseEmptyValue(oldValue)
   newValue = parseEmptyValue(newValue)
 
   if (isNonEmptyString(newValue) && getPropertyDatatype(property) !== 'url') {
-    const user = getMaybeRemoteReqUser(req)
     await checkSpamContent(user, newValue)
   }
 
@@ -53,7 +53,6 @@ async function controller (params: SanitizedParameters, req: AuthentifiedReq | R
     throw newError(`unsupported uri prefix: ${prefix}`, 400, { uri })
   }
 
-  const user = parseReqLocalOrRemoteUser(req)
   await updater(user, id, property, oldValue, newValue)
   return { ok: true }
 }

@@ -10,24 +10,18 @@ import { validateUserHasWikidataOAuth, getWikidataOAuthCredentials } from '#cont
 import { temporarilyOverrideWdIdAndIsbnCache } from '#data/wikidata/get_wd_entities_by_isbns'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
-import { getUserAcct, type MinimalRemoteUser } from '#lib/federation/remote_user'
+import { type UserWithAcct } from '#lib/federation/remote_user'
 import { normalizeIsbn } from '#lib/isbn/isbn'
 import { logError } from '#lib/utils/logs'
 import wdEdit from '#lib/wikidata/edit'
 import { getLanguageEnglishLabel, getOriginalLang } from '#lib/wikidata/get_original_lang'
 import type { Descriptions, EntityValue, ExpandedClaims, InvEntityUri, WdEntityUri } from '#types/entity'
-import type { User } from '#types/user'
 import { createWdEntity } from './create_wd_entity.js'
 import mergeEntities from './merge_entities.js'
 import { unprefixify } from './prefix.js'
 import { cacheEntityRelations } from './temporarily_cache_relations.js'
 
-export async function moveInvEntityToWikidata (user: User | MinimalRemoteUser, invEntityUri: InvEntityUri) {
-  const userAcct = getUserAcct(user)
-
-  // We currently require a Wikidata account to create a Wikidata entity, and thus also to move an entity to Wikidata
-  validateUserHasWikidataOAuth(user)
-
+export async function moveInvEntityToWikidata (user: UserWithAcct, invEntityUri: InvEntityUri) {
   const entityId = unprefixify(invEntityUri)
 
   const entity = await getEntityById(entityId).catch(rewrite404(invEntityUri))
@@ -38,6 +32,10 @@ export async function moveInvEntityToWikidata (user: User | MinimalRemoteUser, i
   if (entity.type === 'removed:placeholder') {
     throw newError('A removed placeholder can not be moved to Wikidata', 400, { invEntityUri, entity })
   }
+
+  // We currently require a Wikidata account to create a Wikidata entity, and thus also to move an entity to Wikidata
+  // Checking after the guards above to be able to test those guards without Wikidata OAuth credentials
+  validateUserHasWikidataOAuth(user)
 
   let claims, labels
   if ('labels' in entity) labels = entity.labels
@@ -88,7 +86,7 @@ export async function moveInvEntityToWikidata (user: User | MinimalRemoteUser, i
   await cacheEntityRelations(invEntityUri)
 
   await mergeEntities({
-    userAcct,
+    user,
     fromUri: invEntityUri,
     toUri: wdEntityUri,
     context: {
@@ -138,7 +136,7 @@ function buildDescriptions (claims: ExpandedClaims): Descriptions {
   }
 }
 
-async function setReverseClaims (claims: ExpandedClaims, wdEntityUri: WdEntityUri, user: User | MinimalRemoteUser) {
+async function setReverseClaims (claims: ExpandedClaims, wdEntityUri: WdEntityUri, user: UserWithAcct) {
   const { credentials, summarySuffix } = getWikidataOAuthCredentials(user)
   const entityType = getInvEntityType(claims['wdt:P31'])
   const newEntityId = unprefixify(wdEntityUri)
