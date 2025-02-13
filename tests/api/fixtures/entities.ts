@@ -4,7 +4,7 @@ import wdk from 'wikibase-sdk/wikidata.org'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { isEntityUri } from '#lib/boolean_validations'
-import { sha1 } from '#lib/crypto'
+import { getRandomUuid, sha1 } from '#lib/crypto'
 import { newError } from '#lib/error/error'
 import { isValidIsbn, toIsbn13h } from '#lib/isbn/isbn'
 import { forceArray, objectValues } from '#lib/utils/base'
@@ -202,7 +202,9 @@ export function createItemFromEntityUri ({ user, uri, item = {} }: { user?: Awai
   return customAuthReq(user, 'post', '/api/items', { ...item, entity: uri })
 }
 
-export const someFakeUri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+export const getRandomInvUri = () => `inv:${getRandomUuid()}` as InvEntityUri
+
+export const someFakeUri = getRandomInvUri()
 
 export const someBnfId = () => `1${Math.random().toString().slice(2, 9)}p`
 

@@ -1,5 +1,5 @@
 import 'should'
-import { createWork } from '#fixtures/entities'
+import { createWork, getRandomInvUri } from '#fixtures/entities'
 import { authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
@@ -15,7 +15,7 @@ describe('entities:move-to-wikidata', () => {
   })
 
   it('should reject if entity does not exist', async () => {
-    const uri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+    const uri = getRandomInvUri()
     await authReq('put', endpoint, { uri })
     .then(shouldNotBeCalled)
     .catch(err => {
