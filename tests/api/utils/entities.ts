@@ -9,7 +9,7 @@ import { buildUrl } from '#lib/utils/url'
 import { federatedMode, localOrigin, remoteEntitiesOrigin } from '#server/config'
 import { customAuthReq } from '#tests/api/utils/request'
 import { waitForIndexation } from '#tests/api/utils/search'
-import type { AbsoluteUrl } from '#types/common'
+import type { AbsoluteUrl, Url } from '#types/common'
 import type { EntityUri, ExpandedSerializedEntitiesByUris, InvClaimValue, InvEntityId, PropertyUri, SerializedEntitiesByUris, SerializedEntity } from '#types/entity'
 import type { PatchId } from '#types/patch'
 import { getIndexedDoc } from './search.js'
@@ -70,10 +70,15 @@ export async function findOrIndexEntities (uris: EntityUri[], index = 'wikidata'
 
 export const parseLabel = entity => Object.values(entity.labels)[0]
 
-export function deleteByUris (uris: EntityUri[], options: { user?: AwaitableUserWithCookie } = {}) {
+interface UserRequestOptions {
+  user?: AwaitableUserWithCookie
+  origin?: AbsoluteUrl
+}
+
+export function deleteByUris (uris: EntityUri[], options: UserRequestOptions = {}) {
   if (uris.length === 0) return
-  const user = options.user || getDataadminUser()
-  return customAuthReq(user, 'post', '/api/entities?action=delete', { uris })
+  const { url, user } = parseDataadminRequestOptions('/api/entities?action=delete', options)
+  return customAuthReq(user, 'post', url, { uris })
 }
 
 export async function getReverseClaims (property: PropertyUri, value: InvClaimValue) {
@@ -87,15 +92,20 @@ export async function deleteByExternalId (property: PropertyUri, externalId: str
   return deleteByUris(uris)
 }
 
-export function merge (fromUri: EntityUri, toUri: EntityUri, options: { user?: AwaitableUserWithCookie, origin?: AbsoluteUrl } = {}) {
+export function merge (fromUri: EntityUri, toUri: EntityUri, options: UserRequestOptions = {}) {
   assertString(fromUri)
   assertString(toUri)
   fromUri = normalizeUri(fromUri)
   toUri = normalizeUri(toUri)
+  const { url, user } = parseDataadminRequestOptions('/api/entities?action=merge', options)
+  return customAuthReq(user, 'put', url, { from: fromUri, to: toUri })
+}
+
+function parseDataadminRequestOptions (url: Url, options: UserRequestOptions) {
   const user = options.user || (federatedMode ? getRemoteInstanceDataadmin() : getDataadminUser())
   const origin = options.origin || (federatedMode ? remoteEntitiesOrigin : localOrigin)
-  const url = `${origin}/api/entities?action=merge` as AbsoluteUrl
-  return customAuthReq(user, 'put', url, { from: fromUri, to: toUri })
+  url = `${origin}${url}` as AbsoluteUrl
+  return { url, user, origin }
 }
 
 export function revertMerge (fromUri: EntityUri) {

@@ -36,6 +36,9 @@ describe('entities:delete', () => {
   })
 
   it('should reject non-inv URIs', async function () {
+    // `deleteByUris` is directly executed on the primary instance,
+    // so running this test in federatedMode is just duplicating tests
+    // Same goes for following skipped tests
     if (federatedMode) this.skip()
     await deleteByUris([ 'wd:Q535' ])
     .then(shouldNotBeCalled)
@@ -136,14 +139,15 @@ describe('entities:delete', () => {
     })
   })
 
-  it('should remove deleted entities from items snapshot', async function () {
-    if (federatedMode) this.skip()
+  it('should remove deleted entities from items snapshot', async () => {
     const author = await createHuman()
     const work = await createWorkWithAuthor(author)
     const item = await authReq('post', '/api/items', { entity: work.uri })
     item.snapshot['entity:title'].should.equal(work.labels.en)
     item.snapshot['entity:authors'].should.equal(author.labels.en)
     await deleteByUris([ author.uri ])
+    // Trigger the entity revision refresh
+    if (federatedMode) await getByUri(work.uri)
     await wait(debounceDelay)
     const updatedItem = await getItemById(item._id)
     updatedItem.snapshot['entity:title'].should.equal(work.labels.en)

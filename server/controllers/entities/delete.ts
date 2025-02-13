@@ -31,14 +31,14 @@ async function controller (params: SanitizedParameters, req: AuthentifiedReq | R
   return { ok: true }
 }
 
-function validateUris (uris: EntityUri[]): asserts uris is (InvEntityUri | IsbnEntityUri)[] {
+export function validateUris (uris: EntityUri[]): asserts uris is (InvEntityUri | IsbnEntityUri)[] {
   for (const uri of uris) {
     // Wikidata entities can't be deleted
     if (isWdEntityUri(uri)) throw newInvalidError('uri', uri)
   }
 }
 
-async function replaceIsbnUrisByInvUris (uris: (InvEntityUri | IsbnEntityUri)[]) {
+export async function replaceIsbnUrisByInvUris (uris: (InvEntityUri | IsbnEntityUri)[]) {
   const [ invUris, isbnUris ] = partition(uris, isInvEntityUri) as [ InvEntityUri[], IsbnEntityUri[] ]
   if (isbnUris.length === 0) return invUris
 

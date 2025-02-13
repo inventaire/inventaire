@@ -223,3 +223,7 @@ export function getInvEntityUriFromPatchId (patchId: PatchId) {
   const entityId = patchId.split(':')[0]
   return prefixifyInv(entityId)
 }
+
+export function sortAntiChronologically (a: Patch, b: Patch) {
+  return b.timestamp - a.timestamp
+}

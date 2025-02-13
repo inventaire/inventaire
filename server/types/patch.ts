@@ -1,6 +1,7 @@
 import type { CouchDoc } from '#types/couchdb'
-import type { EntityUri, InvClaimValue, InvEntityDoc, InvEntityId, Label } from '#types/entity'
+import type { EntityUri, InvClaimValue, InvEntityDoc, InvEntityId, Label, PropertyUri } from '#types/entity'
 import type { UserAccountUri } from '#types/server'
+import type { OverrideProperties } from 'type-fest'
 
 export type PatchId = `${InvEntityId}:${number}`
 
@@ -51,7 +52,11 @@ export interface RestorePatchContext {
   restoredPatch: PatchId
 }
 
-export type PatchContext = ActionPatchContext | MergePatchContext | RedirectedClaimsContext | RevertedPatchContext | RestorePatchContext
+export interface RemovedPlaceholderContext {
+  deletedClaims: { subject: InvEntityId, property: PropertyUri }[]
+}
+
+export type PatchContext = ActionPatchContext | MergePatchContext | RedirectedClaimsContext | RevertedPatchContext | RestorePatchContext | RemovedPlaceholderContext
 
 export interface Patch extends CouchDoc {
   _id: PatchId
@@ -68,3 +73,5 @@ export interface PatchWithSnapshot extends Patch {
 }
 
 export type NewPatch = Omit<Patch, '_rev'>
+
+export type RemovedPlaceholderPatch = OverrideProperties<Patch, { context: RemovedPlaceholderContext }>

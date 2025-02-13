@@ -73,6 +73,9 @@ describe('entities:merge:as:dataadmin', () => {
   })
 
   it('should merge two entities with an inv URI', async function () {
+    // `merge` is directly executed on the primary instance,
+    // so running this test in federatedMode is just duplicating tests
+    // Same goes for following skipped tests
     if (federatedMode) this.skip()
     const [ workA, workB ] = await Promise.all([
       createWork(),

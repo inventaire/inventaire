@@ -60,7 +60,9 @@ async function deleteIfIsolated (user: UserWithAcct, redirectedEntityId: InvEnti
   // Ignore wd or isbn entities
   if (!isInvEntityUri(uri)) return
 
-  let results = await getInvClaimsByClaimValue(entityUri)
-  results = results.filter(result => result.entity !== fromId)
-  if (results.length === 0) return removePlaceholder(userAcct, entityId)
+  let results = await getInvClaimsByClaimValue(uri)
+  results = results.filter(result => result.entity !== redirectedEntityId)
+  // noRelatedClaimUpdate=true, because as results.length === 0, the only claim is to the redirected entity
+  // and updating it would create an edit conflict with the update made by convertEntityDocIntoALocalLayer
+  if (results.length === 0) return removePlaceholder(user, uri, { noRelatedClaimUpdate: true })
 }
