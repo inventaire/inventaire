@@ -1,5 +1,6 @@
 import { getEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
+import { getPropertyDatatype } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { checkSpamContent } from '#controllers/user/lib/spam'
 import { isInvEntityId, isNonEmptyString } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
@@ -35,7 +36,7 @@ async function controller (params: SanitizedParameters, req: AuthentifiedReq | R
   oldValue = parseEmptyValue(oldValue)
   newValue = parseEmptyValue(newValue)
 
-  if (isNonEmptyString(newValue)) {
+  if (isNonEmptyString(newValue) && getPropertyDatatype(property) !== 'url') {
     const user = getMaybeRemoteReqUser(req)
     await checkSpamContent(user, newValue)
   }
