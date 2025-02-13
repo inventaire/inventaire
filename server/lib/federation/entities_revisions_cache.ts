@@ -1,12 +1,13 @@
 import { map, zipObject } from 'lodash-es'
 import type { GetEntitiesByUrisResponse } from '#controllers/entities/by_uris_get'
+import type { Redirects } from '#controllers/entities/lib/get_entities_by_uris'
 import { leveldbFactory } from '#db/level/get_sub_db'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { objectEntries } from '#lib/utils/base'
 import { info, logError } from '#lib/utils/logs'
 import { objectKeys } from '#lib/utils/types'
-import type { ExpandedSerializedEntity, SerializedEntity } from '#types/entity'
+import type { EntityUri, ExpandedSerializedEntity, SerializedEntity } from '#types/entity'
 
 const db = leveldbFactory('entity-rev', 'utf8')
 
@@ -14,22 +15,19 @@ export async function updateEntitiesRevisionsCache (res: GetEntitiesByUrisRespon
   try {
     const { entities, redirects } = res
     const uris = objectKeys(entities)
-    const redirectsUris = objectKeys(redirects)
-    const allUris = uris.concat(redirectsUris)
-    const cachedRevs: (string | undefined)[] = await db.getMany(allUris)
-    const cachedRevByUri = zipObject(allUris, cachedRevs)
+    const cachedRevsByUris = await getCachedRevsByUris(uris, redirects)
     const updateOps = []
     for (const uri of uris) {
       const entity = entities[uri]
       const newRev = getEntityRevisionId(entity)
-      const oldRev = cachedRevByUri[uri]
+      const oldRev = cachedRevsByUris[uri]
       if (oldRev !== newRev) {
         updateOps.push({ type: 'put', key: uri, value: newRev })
         await emit('entity:changed', uri)
       }
     }
     for (const [ from, to ] of objectEntries(redirects)) {
-      const oldRev = cachedRevByUri[from]
+      const oldRev = cachedRevsByUris[from]
       // Use the redirection target rev as the new rev value
       // Do not propagate redirection to items,
       // to not be impacted by an eventual merge revert
@@ -46,6 +44,13 @@ export async function updateEntitiesRevisionsCache (res: GetEntitiesByUrisRespon
   } catch (err) {
     logError(err, 'updateEntitiesRevisionsCache error')
   }
+}
+
+async function getCachedRevsByUris (uris: EntityUri[], redirects: Redirects) {
+  const redirectsUris = objectKeys(redirects)
+  const allUris = uris.concat(redirectsUris)
+  const cachedRevs: (string | undefined)[] = await db.getMany(allUris)
+  return zipObject(allUris, cachedRevs)
 }
 
 function getEntityRevisionId (entity: SerializedEntity | ExpandedSerializedEntity) {
