@@ -15,35 +15,42 @@ import type { UserAccountUri } from '#types/server'
 
 const db = await dbFactory('entities')
 
-function PlaceholderHandler (actionName, modelFn) {
-  return async (userAcct: UserAccountUri, entityId: InvEntityId) => {
-    warn(entityId, `${actionName} placeholder entity`)
-    // Using db.get anticipates a possible future where db.byId filters-out
-    // non type='entity' docs, thus making type='removed:placeholder' not accessible
-    const currentDoc = await db.get<InvEntityDoc>(entityId)
-    if (actionName === 'remove' && currentDoc.type === 'removed:placeholder') {
-      warn(entityId, 'this entity is already a removed:placeholder: ignored')
-      return
-    }
-    let updatedDoc
-    try {
-      updatedDoc = modelFn(currentDoc)
-    } catch (err) {
-      if (err.message === "can't turn a redirection into a removed placeholder") {
-        // Ignore this error as the effects of those two states are close
-        // (so much so that it might be worth just having redirections)
-        warn(currentDoc, err.message)
-        return
-      } else {
-        throw err
-      }
-    }
-
+export async function removePlaceholder (userAcct: UserAccountUri, entityId: InvEntityId) {
+  warn(entityId, 'removing placeholder entity')
+  const currentDoc = await db.get<InvEntityDoc>(entityId)
+  if (currentDoc.type === 'removed:placeholder') {
+    warn(entityId, 'this entity is already a removed:placeholder: ignored')
+    return
+  }
+  if ('redirect' in currentDoc) {
+    warn(entityId, 'this entity is a redirection: ignored')
+    return
+  }
+  try {
+    const updatedDoc = convertEntityDocToPlaceholder(currentDoc)
     await putInvEntityUpdate<RemovedPlaceholderEntity>({ userAcct, currentDoc, updatedDoc })
-    await emit(`entity:${actionName}`, `inv:${entityId}`)
+    await emit('entity:remove', `inv:${entityId}`)
     return currentDoc._id
+  } catch (err) {
+    if (err.message === "can't turn a redirection into a removed placeholder") {
+      // Ignore this error as the effects of those two states are close
+      // (so much so that it might be worth just having redirections)
+      warn(currentDoc, err.message)
+    } else {
+      throw err
+    }
   }
 }
 
-export const removePlaceholder = PlaceholderHandler('remove', convertEntityDocToPlaceholder)
-export const recoverPlaceholder = PlaceholderHandler('recover', recoverEntityDocFromPlaceholder)
+export async function recoverPlaceholder (userAcct: UserAccountUri, entityId: InvEntityId) {
+  warn(entityId, 'recovering placeholder entity')
+  const currentDoc = await db.get<InvEntityDoc>(entityId)
+  if (currentDoc.type !== 'removed:placeholder') {
+    warn(entityId, 'this entity is not a removed:placeholder: ignored')
+    return
+  }
+  const updatedDoc = recoverEntityDocFromPlaceholder(currentDoc)
+  await putInvEntityUpdate<InvEntity>({ userAcct, currentDoc, updatedDoc })
+  await emit('entity:recover', `inv:${entityId}`)
+  return currentDoc._id
+}
