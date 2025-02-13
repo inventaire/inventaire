@@ -140,12 +140,12 @@ export function updateClaim ({ uri, property, oldValue, newValue, user, origin }
   return customAuthReq(user, 'put', `${origin}/api/entities?action=update-claim`, body)
 }
 
-export function addClaim ({ user, uri, property, value }: Pick<UpdateClaimParams, 'user' | 'uri' | 'property'> & { value: UpdateClaimParams['newValue'] }) {
-  return updateClaim({ user, uri, property, newValue: value })
+export function addClaim ({ user, origin, uri, property, value }: Pick<UpdateClaimParams, 'user' | 'origin' | 'uri' | 'property'> & { value: UpdateClaimParams['newValue'] }) {
+  return updateClaim({ user, origin, uri, property, newValue: value })
 }
 
-export function removeClaim ({ user, uri, property, value }: Pick<UpdateClaimParams, 'user' | 'uri' | 'property'> & { value: UpdateClaimParams['oldValue'] }) {
-  return updateClaim({ user, uri, property, oldValue: value })
+export function removeClaim ({ user, origin, uri, property, value }: Pick<UpdateClaimParams, 'user' | 'origin' | 'uri' | 'property'> & { value: UpdateClaimParams['oldValue'] }) {
+  return updateClaim({ user, origin, uri, property, oldValue: value })
 }
 
 export function getRefreshedPopularityByUris (uris: EntityUri[]) {

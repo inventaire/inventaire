@@ -8,7 +8,9 @@ import {
   createHuman,
   createWork,
   createWorkWithAuthor,
+  getSomeWdEditionUriWithoutLocalLayer,
   someImageHash,
+  someRandomImageHash,
 } from '#fixtures/entities'
 import { humanName, randomWords } from '#fixtures/text'
 import { wait } from '#lib/promises'
@@ -16,6 +18,7 @@ import { getRandomString } from '#lib/utils/random_string'
 import config, { federatedMode } from '#server/config'
 import 'should'
 import {
+  addClaim,
   getByUri,
   getByUris,
   merge,
@@ -404,6 +407,24 @@ describe('items:snapshot', () => {
       await wait(debounceDelay)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:title'].should.equal(titleB)
+    })
+
+    it('should update the item snapshot after an update on the remote layer', async () => {
+      const uri = await getSomeWdEditionUriWithoutLocalLayer()
+      const item = await authReq('post', '/api/items', { entity: uri })
+      const imageHash = someRandomImageHash()
+      await addClaim({
+        origin: remoteEntitiesOrigin,
+        user: getRemoteInstanceUser(),
+        uri,
+        property: 'invp:P2',
+        value: imageHash,
+      })
+      // Trigger an entity revision cache refresh
+      await getByUri(uri)
+      await wait(debounceDelay)
+      const updatedItem = await getItem(item)
+      updatedItem.snapshot['entity:image'].should.equal(`/img/entities/${imageHash}`)
     })
   })
 })

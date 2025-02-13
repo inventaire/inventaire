@@ -39,7 +39,9 @@ export async function updateEntitiesRevisionsCache (res: GetEntitiesByUrisRespon
         await emit('entity:changed', from)
       }
     }
-    info(`received new entities revisions: ${map(updateOps, 'key').join(' ')}`)
+    if (updateOps.length > 0) {
+      info(`received new entities revisions: ${map(updateOps, 'key').join(' ')}`)
+    }
     await db.batch(updateOps)
   } catch (err) {
     logError(err, 'updateEntitiesRevisionsCache error')
@@ -47,7 +49,13 @@ export async function updateEntitiesRevisionsCache (res: GetEntitiesByUrisRespon
 }
 
 function getEntityRevisionId (entity: SerializedEntity | ExpandedSerializedEntity) {
-  if ('lastrevid' in entity) return entity.lastrevid.toString()
-  else if ('_rev' in entity) return entity._rev
-  else throw newError('entity revision id not found', 500, { entity })
+  if ('lastrevid' in entity) {
+    let rev = entity.lastrevid.toString()
+    if ('invRev' in entity) rev += `+${entity.invRev}`
+    return rev
+  } else if ('_rev' in entity) {
+    return entity._rev
+  } else {
+    throw newError('entity revision id not found', 500, { entity })
+  }
 }

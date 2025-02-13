@@ -4,7 +4,7 @@ import type { getWikimediaThumbnailData } from '#data/commons/thumb'
 import type { indexedEntitiesTypes } from '#db/elasticsearch/indexes'
 import type { ExtraWdPropertyUri } from '#lib/wikidata/allowlisted_properties'
 import type { Url } from '#types/common'
-import type { CouchDoc, CouchUuid, NewCouchDoc } from '#types/couchdb'
+import type { CouchDoc, CouchRevId, CouchUuid, NewCouchDoc } from '#types/couchdb'
 import type { ImageHash } from '#types/image'
 import type { OverrideProperties, Writable } from 'type-fest'
 import type { WikimediaLanguageCode, SitelinkBadges, Claims as WdClaims, GetSitelinkUrlOptions } from 'wikibase-sdk'
@@ -227,6 +227,8 @@ export interface SerializedWdEntity {
   _id?: WdEntityId
   _indexationTime?: EpochTimeStamp
   lastrevid?: number
+  // Added when there is a local layer
+  invRev?: CouchRevId
 }
 
 export type SerializedEntity = SerializedInvEntity | SerializedRemovedPlaceholder | SerializedWdEntity

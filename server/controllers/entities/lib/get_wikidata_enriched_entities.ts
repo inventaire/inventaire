@@ -97,6 +97,7 @@ function aggregateWdEntityLayers (wdId: WdEntityId, remoteEntity: SerializedWdEn
 
 function runPostLayerAggregationFormatting (remoteEntity: SerializedWdEntity, localEntityLayer: InvEntity) {
   remoteEntity.invId = localEntityLayer._id
+  remoteEntity.invRev = localEntityLayer._rev
   if (localEntityLayer.claims['invp:P2'] != null) {
     setEntityImageFromImageHashClaims(remoteEntity)
   }
