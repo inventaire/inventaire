@@ -38,15 +38,18 @@ describe('listings:by-id', () => {
   })
 
   describe('redirects hook', () => {
-    it('should update element uri after merging entities', async function () {
-      // Disabled in federated mode yet as this test relies on a special role
-      if (federatedMode) this.skip()
+    it('should update element uri after merging entities, unless in federated mode', async () => {
       const work = await createWork()
       const { uri, listing } = await createElement({})
       await merge(uri, work.uri)
       const byIdEndpoint = '/api/lists?action=by-id'
       const { list } = await publicReq('get', `${byIdEndpoint}&id=${listing._id}`)
-      list.elements[0].uri.should.equal(work.uri)
+      if (federatedMode) {
+        // Keeping the redirected uri, to not need to be notified of a possible revert merge
+        list.elements[0].uri.should.equal(uri)
+      } else {
+        list.elements[0].uri.should.equal(work.uri)
+      }
     })
   })
 })

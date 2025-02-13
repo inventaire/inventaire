@@ -6,14 +6,14 @@ import { isInvEntityId, isNonEmptyArray } from '#lib/boolean_validations'
 import { assertStrings, assertString } from '#lib/utils/assert_types'
 import { forceArray, objectValues } from '#lib/utils/base'
 import { buildUrl } from '#lib/utils/url'
-import { localOrigin } from '#server/config'
+import { federatedMode, localOrigin, remoteEntitiesOrigin } from '#server/config'
 import { customAuthReq } from '#tests/api/utils/request'
 import { waitForIndexation } from '#tests/api/utils/search'
 import type { AbsoluteUrl } from '#types/common'
 import type { EntityUri, ExpandedSerializedEntitiesByUris, InvClaimValue, InvEntityId, PropertyUri, SerializedEntitiesByUris, SerializedEntity } from '#types/entity'
 import type { PatchId } from '#types/patch'
 import { getIndexedDoc } from './search.js'
-import { publicReq, dataadminReq, adminReq, getDataadminUser, getUser } from './utils.js'
+import { publicReq, dataadminReq, adminReq, getDataadminUser, getUser, getRemoteInstanceDataadmin } from './utils.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 export function getByUris (uris: EntityUri[], relatives?: PropertyUri[], refresh?: boolean) {
@@ -92,8 +92,8 @@ export function merge (fromUri: EntityUri, toUri: EntityUri, options: { user?: A
   assertString(toUri)
   fromUri = normalizeUri(fromUri)
   toUri = normalizeUri(toUri)
-  const user = options.user || getDataadminUser()
-  const origin = options.origin || localOrigin
+  const user = options.user || (federatedMode ? getRemoteInstanceDataadmin() : getDataadminUser())
+  const origin = options.origin || (federatedMode ? remoteEntitiesOrigin : localOrigin)
   const url = `${origin}/api/entities?action=merge` as AbsoluteUrl
   return customAuthReq(user, 'put', url, { from: fromUri, to: toUri })
 }
@@ -104,10 +104,10 @@ export function revertMerge (fromUri: EntityUri) {
   return dataadminReq('put', '/api/entities?action=revert-merge', { from: fromUri })
 }
 
-export function getHistory (entityId: InvEntityId) {
+export async function getHistory (entityId: InvEntityId) {
   entityId = entityId.replace('inv:', '')
-  return adminReq('get', `/api/entities?action=history&id=${entityId}`)
-  .then(({ patches }) => patches)
+  const { patches } = await adminReq('get', `/api/entities?action=history&id=${entityId}`)
+  return patches
 }
 
 export function updateLabel ({ uri, lang, value, user }: { uri: EntityUri, lang: WikimediaLanguageCode, value: string, user?: AwaitableUserWithCookie }) {

@@ -44,6 +44,7 @@ export const getDeanonymizedUser = getUserGetter('deanonymized', undefined, {
 
 export const getRemoteInstanceUser = getUserGetter('remote', undefined, undefined, remoteEntitiesOrigin)
 export const getRemoteInstanceAdmin = getUserGetter('remote_admin', 'admin', undefined, remoteEntitiesOrigin)
+export const getRemoteInstanceDataadmin = getUserGetter('remote_admin', 'dataadmin', undefined, remoteEntitiesOrigin)
 
 export function remoteUserAuthReq (method: HttpMethod, endpoint: RelativeUrl, body?: unknown, headers: HttpHeaders = {}) {
   const url = `${remoteEntitiesOrigin}${endpoint}` as AbsoluteUrl
@@ -53,4 +54,9 @@ export function remoteUserAuthReq (method: HttpMethod, endpoint: RelativeUrl, bo
 export function remoteAdminReq (method: HttpMethod, endpoint: RelativeUrl, body?: unknown, headers: HttpHeaders = {}) {
   const url = `${remoteEntitiesOrigin}${endpoint}` as AbsoluteUrl
   return customAuthReq(getRemoteInstanceAdmin(), method, url, body, headers)
+}
+
+export function remoteDataadminReq (method: HttpMethod, endpoint: RelativeUrl, body?: unknown, headers: HttpHeaders = {}) {
+  const url = `${remoteEntitiesOrigin}${endpoint}` as AbsoluteUrl
+  return customAuthReq(getRemoteInstanceDataadmin(), method, url, body, headers)
 }
