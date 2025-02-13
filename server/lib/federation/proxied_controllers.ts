@@ -6,13 +6,11 @@ import { runPostProxiedRequestHooks } from '#lib/federation/proxied_requests_hoo
 import { signedFederatedRequest } from '#lib/federation/signed_federated_request'
 import { httpMethodHasBody } from '#lib/requests'
 import type { AccessLevel } from '#lib/user_access_levels'
-import config from '#server/config'
+import { remoteEntitiesOrigin } from '#server/config'
 import type { AbsoluteUrl, RelativeUrl } from '#types/common'
 import type { ActionController, ActionControllerFunction, ActionControllerStandaloneFunction, HttpMethod } from '#types/controllers'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { AuthentifiedReq, Req, Res } from '#types/server'
-
-const { remoteEntitiesOrigin } = config.federation
 
 export function proxiedController (accessLevel: AccessLevel, method: HttpMethod, pathname: RelativeUrl, action: string, actionController: ActionController) {
   if (accessLevel === 'admin' || accessLevel === 'dataadmin') return closedEndpointFactory(method, pathname, action)

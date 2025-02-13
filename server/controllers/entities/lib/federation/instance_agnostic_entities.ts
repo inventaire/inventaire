@@ -4,11 +4,9 @@ import { getEntitiesList as getLocalEntitiesList } from '#controllers/entities/l
 import { getEntityByUri as getLocalEntityByUri } from '#controllers/entities/lib/get_entity_by_uri'
 import { getReverseClaims as getLocalReverseClaims, type ReverseClaimsParams } from '#controllers/entities/lib/reverse_claims'
 import { info } from '#lib/utils/logs'
-import config from '#server/config'
+import config, { federatedMode } from '#server/config'
 import type { EntityUri } from '#types/entity'
 
-const { remoteEntitiesOrigin } = config.federation
-const federatedMode = remoteEntitiesOrigin != null
 if (federatedMode) info(config.federation, 'federated entities mode')
 
 export async function getEntitiesByUris ({ uris }: Pick<GetEntitiesByUrisParams, 'uris'>) {

@@ -4,12 +4,10 @@ import { getSharedKeyPair } from '#controllers/activitypub/lib/shared_key_pair'
 import { federatedRequest } from '#lib/federation/federated_requests'
 import { instanceActorName } from '#lib/federation/instance'
 import { remoteUserHeader } from '#lib/federation/remote_user'
-import config from '#server/config'
+import { remoteEntitiesOrigin } from '#server/config'
 import type { AbsoluteUrl, HttpHeaders, RelativeUrl } from '#types/common'
 import type { HttpMethod } from '#types/controllers'
 import type { AuthentifiedReq } from '#types/server'
-
-const { remoteEntitiesOrigin } = config.federation
 
 export async function signedFederatedRequest (req: AuthentifiedReq, method: HttpMethod, url: RelativeUrl, body: unknown) {
   const headers = await getSignedFederatedRequestHeaders(req, method, url, body)

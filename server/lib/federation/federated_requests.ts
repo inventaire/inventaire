@@ -1,10 +1,8 @@
 import { newError } from '#lib/error/error'
 import type { ContextualizedError } from '#lib/error/format_error'
 import { request, type RequestOptions } from '#lib/requests'
-import config from '#server/config'
+import { remoteEntitiesOrigin } from '#server/config'
 import type { AbsoluteUrl, HttpMethod, RelativeUrl } from '#types/common'
-
-const { remoteEntitiesOrigin } = config.federation
 
 export async function federatedRequest <Response = unknown> (method: HttpMethod, url: RelativeUrl, options: RequestOptions = {}) {
   const remoteUrl = `${remoteEntitiesOrigin}${url}` as AbsoluteUrl

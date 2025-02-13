@@ -15,7 +15,7 @@ import {
 import { humanName, randomWords } from '#fixtures/text'
 import { wait } from '#lib/promises'
 import { getRandomString } from '#lib/utils/random_string'
-import config, { federatedMode } from '#server/config'
+import config, { federatedMode, remoteEntitiesOrigin } from '#server/config'
 import 'should'
 import {
   addClaim,
@@ -31,8 +31,6 @@ import {
 import { getItem } from '#tests/api/utils/items'
 import { authReq, getRemoteInstanceAdmin, getRemoteInstanceUser, getUserB } from '#tests/api/utils/utils'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
-
-const { remoteEntitiesOrigin } = config.federation
 
 const debounceDelay = config.snapshotsDebounceTime + 100
 
