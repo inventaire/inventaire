@@ -6,7 +6,7 @@ import { workAuthorRelationsProperties } from '#controllers/entities/lib/propert
 import { getReverseClaims } from '#controllers/entities/lib/reverse_claims'
 import { dbFactory } from '#db/couchdb/base'
 import { mapDoc } from '#lib/couch'
-import { newError } from '#lib/error/error'
+import { addErrorContext, newError } from '#lib/error/error'
 import { getUrlFromImageHash } from '#lib/images'
 import { toIsbn13h } from '#lib/isbn/isbn'
 import { emit } from '#lib/radio'
@@ -121,10 +121,15 @@ export async function putInvEntityUpdate <T extends InvEntityDoc = InvEntity> (p
   // It is to the consumers responsability to check if there is an update:
   // empty patches at this stage will throw 500 errors
   let docAfterUpdate
-  if (create === true) {
-    docAfterUpdate = await db.postAndReturn(updatedDoc)
-  } else {
-    docAfterUpdate = await db.putAndReturn(updatedDoc)
+  try {
+    if (create === true) {
+      docAfterUpdate = await db.postAndReturn(updatedDoc)
+    } else {
+      docAfterUpdate = await db.putAndReturn(updatedDoc)
+    }
+  } catch (err) {
+    addErrorContext(err, { currentDoc, updatedDoc, context })
+    throw err
   }
 
   try {
