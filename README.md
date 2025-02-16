@@ -52,7 +52,7 @@ This repository tracks server-side developments, while the (heavy) [client-side 
 - a [CouchDB](https://couchdb.apache.org/) (>=3.1) instance (on port 5984 for default config)
 - an [Elasticsearch](https://www.elastic.co/fr/products/elasticsearch) (>=7.10) instance (on port 9200 for default config)
 
-To install all this those dependencies on Ubuntu 20.04:
+To install all this those dependencies on Debian/Ubuntu:
 
 For packages available in Ubuntu default repositories:
 ```sh
@@ -62,7 +62,7 @@ sudo apt-get install git curl wget graphicsmagick inotify-tools
 For packages that need a more elaborated installation, see their own documentation:
 * [Install NodeJS latest LTS via NVM](https://github.com/nvm-sh/nvm#installing-and-updating)
 * [Install CouchDB](https://docs.couchdb.org/en/stable/install/unix.html)
-* [Install ElasticSearch](https://www.elastic.co/guide/en/elasticsearch/reference/7.14/deb.html)
+* [Install ElasticSearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html)
 
 Alternatively, CouchDB and Elasticsearch could be run in Docker, see [docker-inventaire](https://github.com/inventaire/docker-inventaire)
 
@@ -127,15 +127,15 @@ npm run watch
 - [**main**](https://github.com/inventaire/inventaire-client/tree/main): the stable branch. Unstable work should happen in feature-specific branches and trigger pull requests when ready to be merged in the main branch. See [Code Contributor Guidelines](https://github.com/inventaire/inventaire/wiki/Code-Contributor-Guidelines).
 
 #### [i18n](https://github.com/inventaire/inventaire-i18n)
-The repository tracking strings used in the server (for emails, activitypub) and client (for the web UI) in all the supported languages. For helping to translate, see the [Inventaire Weblate project](https://weblate.framasoft.org/engage/inventaire/)
+The repository tracking strings used in the server (for emails, activitypub) and client (for the web UI) in all the supported languages. To contribute to translations, see the [Inventaire Weblate project](https://weblate.framasoft.org/engage/inventaire/)
 - [**main**](https://github.com/inventaire/inventaire-i18n/tree/main): tracking translations fetched from [Weblate](https://weblate.framasoft.org/engage/inventaire/) and build scripts
 
 #### [deploy](https://github.com/inventaire/inventaire-deploy)
 tracking installation scripts and documentation to run inventaire in production
-- [**main**](https://github.com/inventaire/inventaire-deploy/tree/main): the main implementation targeting Ubuntu 16.04. Additional branches can be started to document installation on other environments
+- [**main**](https://github.com/inventaire/inventaire-deploy/tree/main): the main implementation for Debian/Ubuntu systems. Additional branches can be started to document installation on other environments
 
 #### [docker](https://github.com/inventaire/docker-inventaire)
-- [**main**](https://github.com/inventaire/docker-inventaire/tree/main): tracking docker installation files for development and testing use
+- [**main**](https://github.com/inventaire/docker-inventaire/tree/main): tracking docker installation files
 
 ## Stack Map
 This repository correspond to the the "Server" section in the [stack map](https://inventaire.github.io/stack/)
