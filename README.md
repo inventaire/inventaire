@@ -44,7 +44,7 @@ This repository tracks server-side developments, while the (heavy) [client-side 
 
 ## Installation
 
-*This is the installation documentation for a developement environment. For production setup, see*: [inventaire-deploy](https://github.com/inventaire/inventaire-deploy)
+*This is the installation documentation for a developement environment. For production setup, see*: [docs](https://git.inventaire.io/inventaire/tree/main/docs)
 
 ### Dependencies to install manually
 - [git](https://git-scm.com/), [curl](https://curl.haxx.se) (used in some installation scripts), [graphicsmagick](www.graphicsmagick.org/README.html) (used to resize images), [inotify-tools](https://github.com/rvoicilas/inotify-tools) (used in API tests scripts):
@@ -148,17 +148,20 @@ The app has a few core concepts, see the [Glossary](https://wiki.inventaire.io/w
 For code-related contributions, see [*How to contribute* on wiki.inventaire.io](https://wiki.inventaire.io/wiki/Technic#How_to_contribute).
 
 ## Documentation
-see [docs](https://github.com/inventaire/inventaire/tree/main/docs/)
 
-## Wiki
-see [wiki.inventaire.io](https://wiki.inventaire.io)
-You may want to directly go to the [technical wiki page](https://wiki.inventaire.io/wiki/Technic)
+### User documentation
 
-## API
-see wiki: [API](https://wiki.inventaire.io/wiki/Technic#About_the_API)
+Most of the user doc is on the [wiki](https://wiki.inventaire.io), especially in the [help section](https://wiki.inventaire.io/wiki/Help).
 
-## Administration
-see [Administration](./docs/administration.md)
+### Admin documentation
+
+See the [production documentation](https://git.inventaire.io/inventaire/tree/main/docs).
+
+### Technical documentation
+
+The [technical wiki page](https://wiki.inventaire.io/wiki/Technic) gives a detailed explanation of the architectural choices.
+
+See our not exhaustive [API](https://api.inventaire.io) documentation
 
 ## License
 Inventaire is an open-sourced project licensed under [AGPLv3](./LICENSES/AGPL-3.0-only.txt).
