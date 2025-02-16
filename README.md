@@ -1,12 +1,16 @@
+<div align="center">
+
 # Inventaire
 
-Libre collaborative resource mapper powered by open-knowledge<br>
+**[Visit inventaire.io](https://inventaire.io) | [Create an instance](https://git.inventaire.io/inventaire/tree/main/docs) | [Wiki](https://wiki.inventaire.io) | [Contact us](https://wiki.inventaire.io/wiki/Communication_channels) | [Donate](https://liberapay.com/Association_Inventaire)**
+
 [![License](https://img.shields.io/badge/license-AGPL3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
 [![Node](https://img.shields.io/badge/node->=v4-brightgreen.svg)](https://nodejs.org)
 [![Code Climate](https://codeclimate.com/github/inventaire/inventaire/badges/gpa.svg)](https://codeclimate.com/github/inventaire/inventaire)<br>
-<br>
-[![chat](https://img.shields.io/badge/chat-%23inventaire-ffd402.svg)](https://riot.im/app/#/room/#freenode_#inventaire:matrix.org)
-[![wiki](https://img.shields.io/badge/wiki-general-319cc2.svg)](https://wiki.inventaire.io)
+
+</div>
+
+Inventaire is a libre collaborative resource mapper, powered by open-knowledge.<br>
 
 [![inventory screenshot](https://github.com/inventaire/inventaire/assets/1596934/844c04ff-a216-48dc-b3b9-c33a106b8fbe)](https://inventaire.io)
 
