@@ -1,12 +1,22 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -eo pipefail
 
 # Usage:
+# Dump entities database from config
+#   npm run create-entities-dumps
+# Dump another entities database by passing an authentified CouchDB database URL
 #   npm run create-entities-dumps http://username:password@localhost:5984/entities-prod
 #
 
-entities_db_authentified_url="$1"
+if [ "$1" != "" ]; then
+  entities_db_authentified_url="$1"
+else
+  entities_db_authentified_url="$(node -p 'require("config").db.getOrigin() + "/" + require("config").db.name("entities")')"
+fi
+
+# Set after $entities_db_authentified_url to allow $1 to be an unbound variable
+set -u
 
 folder=$(tsx ./server/lib/absolute_path.ts root dumps/inv)
 today=$(date -I)
