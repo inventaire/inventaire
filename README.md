@@ -148,17 +148,20 @@ The app has a few core concepts, see the [Glossary](https://wiki.inventaire.io/w
 For code-related contributions, see [*How to contribute* on wiki.inventaire.io](https://wiki.inventaire.io/wiki/Technic#How_to_contribute).
 
 ## Documentation
-see [docs](https://github.com/inventaire/inventaire/tree/main/docs/)
 
-## Wiki
-see [wiki.inventaire.io](https://wiki.inventaire.io)
-You may want to directly go to the [technical wiki page](https://wiki.inventaire.io/wiki/Technic)
+### User documentation
 
-## API
-see wiki: [API](https://wiki.inventaire.io/wiki/Technic#About_the_API)
+Most of the user doc is on the [wiki](https://wiki.inventaire.io), especially in the [help section](https://wiki.inventaire.io/wiki/Help).
 
-## Administration
-see [Administration](./docs/administration.md)
+### Admin documentation
+
+See the [production documentation](https://git.inventaire.io/inventaire-deploy).
+
+### Technical documentation
+
+The [technical wiki page](https://wiki.inventaire.io/wiki/Technic) gives a detailed explanation of the architectural choices.
+
+See our not exhaustive [API](https://api.inventaire.io) documentation
 
 ## License
 Inventaire is an open-sourced project licensed under [AGPLv3](./LICENSES/AGPL-3.0-only.txt).
