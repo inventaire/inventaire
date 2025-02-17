@@ -3,7 +3,7 @@ import type { ContextualizedError } from '#lib/error/format_error'
 import { assertObject, assertString } from '#lib/utils/assert_types'
 import { localOrigin } from '#server/config'
 import { customAuthReq } from '#tests/api/utils/request'
-import type { AbsoluteUrl, RelativeUrl } from '#types/common'
+import type { Origin, RelativeUrl } from '#types/common'
 import { getUser } from './utils.js'
 
 export async function getUsersNearPosition (position, user) {
@@ -14,7 +14,7 @@ export async function getUsersNearPosition (position, user) {
   return users
 }
 
-export async function updateUser ({ user, attribute, value, origin = localOrigin }: { user: UserWithCookie, attribute: string, value, origin: AbsoluteUrl }) {
+export async function updateUser ({ user, attribute, value, origin = localOrigin }: { user: UserWithCookie, attribute: string, value, origin: Origin }) {
   user = await (user || getUser())
   assertObject(user)
   assertString(attribute)

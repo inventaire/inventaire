@@ -14,7 +14,7 @@ import { makeFriends } from '#tests/api/utils/relations'
 import { request, rawRequest } from '#tests/api/utils/request'
 import type { Awaitable } from '#tests/api/utils/types'
 import { deleteUser } from '#tests/api/utils/users'
-import type { AbsoluteUrl, LatLng } from '#types/common'
+import type { LatLng, Origin } from '#types/common'
 import type { User, UserId, UserRole } from '#types/user'
 
 export type CustomUserData = Record<string, string | number | boolean | number[]>
@@ -30,7 +30,7 @@ setImmediate(importCircularDependencies)
 
 const connect = (endpoint, userData) => rawRequest('post', endpoint, { body: userData })
 
-function _signup (userData, origin: AbsoluteUrl = localOrigin) {
+function _signup (userData, origin: Origin = localOrigin) {
   return connect(`${origin}${authEndpoint}?action=signup`, userData)
 }
 
@@ -51,7 +51,7 @@ export function signup (email) {
   })
 }
 
-async function _getOrCreateUser ({ customData = {}, mayReuseExistingUser, role, origin }: { customData: CustomUserData, mayReuseExistingUser?: boolean, role?: UserRole, origin?: AbsoluteUrl }) {
+async function _getOrCreateUser ({ customData = {}, mayReuseExistingUser, role, origin }: { customData: CustomUserData, mayReuseExistingUser?: boolean, role?: UserRole, origin?: Origin }) {
   const username = customData.username || createUsername()
   const userData = {
     username,
@@ -90,7 +90,7 @@ async function addTestUserRole (userId: UserId, role: UserRole) {
   }
 }
 
-export function getOrCreateUser (customData: CustomUserData, role: UserRole, origin?: AbsoluteUrl) {
+export function getOrCreateUser (customData: CustomUserData, role: UserRole, origin?: Origin) {
   return _getOrCreateUser({ customData, role, mayReuseExistingUser: true, origin })
 }
 
@@ -100,12 +100,12 @@ export function createUser (customData: CustomUserData = {}) {
 
 export interface UserWithCookie extends User {
   cookie: string
-  origin: AbsoluteUrl
+  origin: Origin
 }
 
 export type AwaitableUserWithCookie = Awaitable<UserWithCookie>
 
-export async function getUserWithCookie (cookie: string, origin: AbsoluteUrl = localOrigin) {
+export async function getUserWithCookie (cookie: string, origin: Origin = localOrigin) {
   const user = await request('get', `${origin}/api/user`, null, { cookie })
   user.cookie = cookie
   user.origin = origin
@@ -113,7 +113,7 @@ export async function getUserWithCookie (cookie: string, origin: AbsoluteUrl = l
   return user as UserWithCookie
 }
 
-export async function getRefreshedUser (user: AwaitableUserWithCookie, origin?: AbsoluteUrl) {
+export async function getRefreshedUser (user: AwaitableUserWithCookie, origin?: Origin) {
   // Allow to pass either a user doc or a user promise
   user = await user
   // Get the up-to-date user doc while keeping the cookie
@@ -153,7 +153,7 @@ export async function getTwoFriends () {
 
 const parseCookie = res => res.headers['set-cookie']
 
-async function setCustomData (user: UserWithCookie, customData: CustomUserData, origin: AbsoluteUrl = localOrigin) {
+async function setCustomData (user: UserWithCookie, customData: CustomUserData, origin: Origin = localOrigin) {
   delete customData.username
   delete customData.password
   for (const attribute in customData) {

@@ -8,13 +8,14 @@ import { objectEntries } from '#lib/utils/base'
 import { logError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
 import { publicHost } from '#server/config'
-import type { Host } from '#types/common'
+import type { Origin, Host } from '#types/common'
 import type { AuthentifiedReq, MaybeSignedReq, RemoteUserAuthentifiedReq, UserAccountUri } from '#types/server'
 import type { AnonymizableUserId, SpecialUser, User, UserOAuth, UserRole } from '#types/user'
 
 export interface MinimalRemoteUser {
   anonymizableId: AnonymizableUserId
   host: Host
+  origin: Origin
   acct: UserAccountUri
   roles: UserRole[]
   // Not used currently, but required to avoid type errors when typing user as (User | MinimalRemoteUser)

@@ -6,7 +6,7 @@ import { getRandomBytes } from '#lib/crypto'
 import { jsonBodyParser } from '#server/middlewares/content'
 import { startGenericMockServer, type Server } from '#tests/integration/utils/mock_server'
 import type { LocalActorUrl, ActivityId, ActivityType, Context, ObjectType } from '#types/activity'
-import type { Url, HttpMethod, Host, Origin } from '#types/common'
+import type { Url, HttpMethod, Host, Origin, AbsoluteUrl } from '#types/common'
 import type { UserId, Username } from '#types/user'
 import { rawRequest } from './request.js'
 
@@ -43,7 +43,7 @@ export interface TestsActorActivity {
 interface SignedReqParams {
   method?: HttpMethod
   object?: any
-  url?: Url
+  url?: AbsoluteUrl
   body?: ActivityBody
   emitterUser?: TestsActorActivity
   type?: ActivityType
