@@ -154,9 +154,7 @@ Most of the user doc is on the [wiki](https://wiki.inventaire.io), especially in
 
 ### Admin documentation
 
-See [how to create your own instance]().
-
-See the more general [admin documentation]().
+See the [production documentation](https://git.inventaire.io/inventaire-deploy).
 
 ### Technical documentation
 
