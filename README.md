@@ -10,11 +10,11 @@
 
 </div>
 
-Inventaire is a libre collaborative resource mapper, powered by open-knowledge.<br>
+Inventaire is a libre collaborative book mapper, powered by open-knowledge.<br>
 
 [![inventory screenshot](https://github.com/inventaire/inventaire/assets/1596934/844c04ff-a216-48dc-b3b9-c33a106b8fbe)](https://inventaire.io)
 
-This repository hosts [Inventaire.io](https://inventaire.io) source code. Its a collaborative resources mapper project, while yet only focused on exploring books mapping with [wikidata](https://wikidata.org/) and [ISBNs](https://en.wikipedia.org/wiki/International_Standard_Book_Number)
+This repository hosts the server-side code of the [Inventaire association](https://wiki.inventaire.io/wiki/Association), a collaborative resources mapper project, while yet only focused on exploring books mapping with [Wikidata](https://wikidata.org/) and [ISBNs](https://en.wikipedia.org/wiki/International_Standard_Book_Number). The flagship instance is https://inventaire.io and anyone may [create their own federated instance](https://git.inventaire.io/inventaire/tree/main/docs).
 
 This repository tracks server-side developments, while the (heavy) [client-side can be found here](https://github.com/inventaire/inventaire-client). Client-related technical issues should go in the client repo, while this repo gathers all other technical issues. Non-technical discussions, such as feature requests, should preferably happen in the [chat](https://wiki.inventaire.io/wiki/Communication_channels#Chat).
 
