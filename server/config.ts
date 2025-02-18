@@ -43,4 +43,9 @@ if (mode === 'local') {
   mediaStorageEndpoint = publicURL
 }
 
+// It's convenient in tests to have the guaranty that event listeners and other side effects were called,
+// but in production, that would mean delaying API responses for secondary actions
+// (setting notifications, sending emails, analytics, etc)
+export const waitForSideEffects = config.env.includes('tests')
+
 export default config
