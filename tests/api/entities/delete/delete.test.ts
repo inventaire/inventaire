@@ -196,10 +196,7 @@ describe('entities:delete', () => {
       const work = await createWork()
       await authReq('post', '/api/items', { entity: work.uri })
       await deleteByUris([ work.uri ])
-      // Trigger the check (still returns as removed:placeholder)
-      await getByUri(work.uri)
-      await wait(500)
-      // Get the actually recovered entity
+      // Trigger the check
       const updatedWork = await getByUri(work.uri)
       // @ts-expect-error
       should(updatedWork._meta_type).not.equal('removed:placeholder')
@@ -210,10 +207,7 @@ describe('entities:delete', () => {
       await authReq('post', '/api/items', { entity: uri })
       // Using the inv URI, as the isbn one would be rejected
       await deleteByUris([ invUri ])
-      // Trigger the check (still returns as removed:placeholder)
-      await getByUri(uri)
-      await wait(500)
-      // Get the actually recovered entity
+      // Trigger the check
       const updatedEdition = await getByUri(uri)
       // @ts-expect-error
       should(updatedEdition._meta_type).not.equal('removed:placeholder')
@@ -223,10 +217,7 @@ describe('entities:delete', () => {
       const { uri } = await createHuman()
       await createElement({ type: 'author', uri })
       await deleteByUris([ uri ])
-      // Trigger the check (still returns as removed:placeholder)
-      await getByUri(uri)
-      await wait(500)
-      // Get the actually recovered entity
+      // Trigger the check
       const updatedWork = await getByUri(uri)
       // @ts-expect-error
       should(updatedWork._meta_type).not.equal('removed:placeholder')

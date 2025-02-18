@@ -6,6 +6,7 @@ import { runPostProxiedRequestHooks } from '#lib/federation/proxied_requests_hoo
 import { signedFederatedRequest } from '#lib/federation/signed_federated_request'
 import { httpMethodHasBody } from '#lib/requests'
 import type { AccessLevel } from '#lib/user_access_levels'
+import { logError, warn } from '#lib/utils/logs'
 import { remoteEntitiesOrigin } from '#server/config'
 import type { AbsoluteUrl, RelativeUrl } from '#types/common'
 import type { ActionController, ActionControllerFunction, ActionControllerStandaloneFunction, HttpMethod } from '#types/controllers'
@@ -70,7 +71,8 @@ function shouldBeRedirected (method: HttpMethod, pathname: RelativeUrl, action: 
 }
 
 // "Wrapped", because it does not handle the http response (aka `Res`)
-async function proxyWrappedController (req: Req | AuthentifiedReq, accessLevel: AccessLevel, method: HttpMethod, action: string, params?: SanitizedParameters) {
+async function proxyWrappedController (req: Req | AuthentifiedReq, accessLevel: AccessLevel, method: HttpMethod, action: string, params?: SanitizedParameters, attempts?: number) {
+  attempts ??= 0
   const { url } = req
   if (!isRelativeUrl(url)) throw newError('invalid relative url', 500, { method, action, params })
   const body = httpMethodHasBody(method) ? req.body : undefined
@@ -82,7 +84,16 @@ async function proxyWrappedController (req: Req | AuthentifiedReq, accessLevel: 
   } else {
     throw newUnauthorizedApiAccessError(401)
   }
-  runPostProxiedRequestHooks(method, url, action, params, res)
+  try {
+    await runPostProxiedRequestHooks(method, url, action, params, res)
+  } catch (err) {
+    if (err.retryProxiedRequest && attempts < 3) {
+      warn({ url, error: err.message, context: err.context, attempts }, 'retrying proxied request')
+      return proxyWrappedController(req, accessLevel, method, action, params, attempts + 1)
+    } else {
+      logError(err, 'runPostProxiedRequestHooks error')
+    }
+  }
   return res
 }
 

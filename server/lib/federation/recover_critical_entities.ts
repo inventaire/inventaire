@@ -5,6 +5,7 @@ import { isRemovedPlaceholder } from '#controllers/entities/lib/placeholders'
 import { getItemsByEntities } from '#controllers/items/lib/items'
 import { getElementsByEntities } from '#controllers/listings/lib/elements'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
+import { newError } from '#lib/error/error'
 import { signedFederatedRequestAsUser } from '#lib/federation/signed_federated_request'
 import { objectEntries } from '#lib/utils/base'
 import type { ListingElement } from '#types/element'
@@ -21,7 +22,12 @@ export async function checkIfCriticalEntitiesWereRemoved (res: GetEntitiesByUris
     getElementsByEntities(uris),
   ])
   const criticalUris = getCriticalUris(items, elements, res.redirects)
-  await recoverCriticalEntities(criticalUris)
+  if (criticalUris.length > 0) {
+    await recoverCriticalEntities(criticalUris)
+    const err = newError('critical entities were deleted', 500, { criticalUris })
+    err.retryProxiedRequest = true
+    throw err
+  }
 }
 
 function getUrisToCheck (res: GetEntitiesByUrisResponse) {

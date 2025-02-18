@@ -15,7 +15,6 @@ const db = leveldbFactory('entity-rev', 'utf8')
 
 export async function updateEntitiesRevisionsCache (res: GetEntitiesByUrisResponse) {
   try {
-    // Problem: this still returns a removed:placeholder
     const { entities, redirects } = res
     const uris = objectKeys(entities)
     const cachedRevsByUris = await getCachedRevsByUris(uris, redirects)
