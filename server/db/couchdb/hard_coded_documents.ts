@@ -30,7 +30,7 @@ export const hardCodedUsers = {
   // A fake user used to sign entities edit generated from dataseed
   // see server/data/dataseed/dataseed.js
   seed: buildSpecialUserDoc('seed', '000'),
-  // see server/controllers/entities/lib/update_claims_hooks
+  // Actions performed in reaction to other actions on entities (merge, claim update, etc)
   hook: buildSpecialUserDoc('hook', '001'),
   reconciler: buildSpecialUserDoc('reconciler', '002'),
   // used by scripts/update_entities.js

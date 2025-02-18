@@ -187,4 +187,21 @@ describe('entities:delete', () => {
       err.statusCode.should.equal(403)
     })
   })
+
+  describe('federated mode', () => {
+    before(function () { if (!federatedMode) this.skip() })
+
+    it('should recover a deleted work that is the entity of an item', async () => {
+      const work = await createWork()
+      await authReq('post', '/api/items', { entity: work.uri })
+      await deleteByUris([ work.uri ])
+      // Trigger the check (still returns as removed:placeholder)
+      await getByUri(work.uri)
+      await wait(500)
+      // Get the actually recovered entity
+      const updatedWork = await getByUri(work.uri)
+      // @ts-expect-error
+      should(updatedWork._meta_type).not.equal('removed:placeholder')
+    })
+  })
 })
