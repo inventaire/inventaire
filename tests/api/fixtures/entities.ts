@@ -48,20 +48,23 @@ interface CreateEntityParams {
   user?: AwaitableUserWithCookie
   origin?: AbsoluteUrl
 }
-export const createEntity = (P31: WdEntityUri, options: CreateEntityOptions = {}) => (params: CreateEntityParams = {}) => {
-  const { canHaveLabels = true, defaultClaims } = options
-  const { origin = localOrigin } = params
-  const defaultLabel = P31 === 'wd:Q5' ? humanName() : randomLabel(4)
-  let labels
-  if (canHaveLabels) {
-    labels = params.labels || { en: defaultLabel }
+export function createEntity (P31: WdEntityUri, options: CreateEntityOptions = {}) {
+  return async function (params: CreateEntityParams = {}) {
+    const { canHaveLabels = true, defaultClaims } = options
+    const { origin = localOrigin } = params
+    const defaultLabel = P31 === 'wd:Q5' ? humanName() : randomLabel(4)
+    let labels
+    if (canHaveLabels) {
+      labels = params.labels || { en: defaultLabel }
+    }
+    let claims = params.claims || {}
+    claims['wdt:P31'] = [ P31 ]
+    if (defaultClaims) claims = Object.assign({}, defaultClaims, claims)
+    const user = params.user || getUser()
+    const url = `${origin}/api/entities?action=create` as AbsoluteUrl
+    const entity: SerializedEntity = await customAuthReq(user, 'post', url, { labels, claims })
+    return entity
   }
-  let claims = params.claims || {}
-  claims['wdt:P31'] = [ P31 ]
-  if (defaultClaims) claims = Object.assign({}, defaultClaims, claims)
-  const user = params.user || getUser()
-  const url = `${origin}/api/entities?action=create` as AbsoluteUrl
-  return customAuthReq(user, 'post', url, { labels, claims })
 }
 
 export const createHuman = createEntity('wd:Q5')
