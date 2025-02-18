@@ -5,7 +5,6 @@ import { propagateRedirectionToSocialCore } from '#controllers/entities/lib/prop
 import { subscribeToCrossInstanceEvent } from '#controllers/instances/lib/subscribe'
 import { leveldbFactory } from '#db/level/get_sub_db'
 import { newError } from '#lib/error/error'
-import { checkIfCriticalEntitiesWereRemoved } from '#lib/federation/recover_critical_entities'
 import { emit } from '#lib/radio'
 import { objectEntries } from '#lib/utils/base'
 import { info, logError } from '#lib/utils/logs'
@@ -16,8 +15,6 @@ const db = leveldbFactory('entity-rev', 'utf8')
 
 export async function updateEntitiesRevisionsCache (res: GetEntitiesByUrisResponse) {
   try {
-    // Start by this check so that any recovered entity can be directly used by snapshots
-    await checkIfCriticalEntitiesWereRemoved(res)
     // Problem: this still returns a removed:placeholder
     const { entities, redirects } = res
     const uris = objectKeys(entities)

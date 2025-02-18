@@ -13,7 +13,7 @@ import { emit } from '#lib/radio'
 import { assertString } from '#lib/utils/assert_types'
 import { beforeEntityDocSave } from '#models/entity'
 import { federatedMode } from '#server/config'
-import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity, Isbn, InvClaimValue, SerializedEntity, WdEntityId, WdEntityUri, EntityType, Claims, NewInvEntity } from '#types/entity'
+import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity, Isbn, InvClaimValue, SerializedEntity, WdEntityId, WdEntityUri, EntityType, Claims, NewInvEntity, RemovedPlaceholderEntity } from '#types/entity'
 import type { EntityImagePath, ImageHash } from '#types/image'
 import type { BatchId, PatchContext } from '#types/patch'
 import type { UserAccountUri } from '#types/server'
@@ -23,6 +23,7 @@ import { validateProperty } from './properties/validations.js'
 import type { DocumentViewResponse } from 'blue-cot/types/nano.js'
 
 const db = await dbFactory('entities')
+const removedPlaceholdersDb = await dbFactory('entities', 'removed_placeholders')
 
 export const getEntityById = db.get<InvEntityDoc>
 export const getEntitiesByIds = db.byIds<InvEntityDoc>
@@ -33,6 +34,13 @@ export function getInvEntitiesByIsbns (isbns: Isbn[]) {
     .filter(identity)
     .map(isbn => [ 'wdt:P212', isbn ])
   return db.getDocsByViewKeys<InvEntity>('byClaim', keys)
+}
+
+export function getRemovedPlaceholdersByIsbns (isbns: Isbn[]) {
+  const keys = isbns
+    .map(toIsbn13h)
+    .filter(identity)
+  return removedPlaceholdersDb.getDocsByViewKeys<RemovedPlaceholderEntity>('byIsbn13', keys)
 }
 
 export async function getInvEntityByIsbn (isbn: Isbn) {

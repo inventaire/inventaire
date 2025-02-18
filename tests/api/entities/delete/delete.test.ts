@@ -203,5 +203,19 @@ describe('entities:delete', () => {
       // @ts-expect-error
       should(updatedWork._meta_type).not.equal('removed:placeholder')
     })
+
+    it('should recover a deleted edition that is the entity of an item', async () => {
+      const { invUri, uri } = await createEditionWithIsbn()
+      await authReq('post', '/api/items', { entity: uri })
+      // Using the inv URI, as the isbn one would be rejected
+      await deleteByUris([ invUri ])
+      // Trigger the check (still returns as removed:placeholder)
+      await getByUri(uri)
+      await wait(500)
+      // Get the actually recovered entity
+      const updatedEdition = await getByUri(uri)
+      // @ts-expect-error
+      should(updatedEdition._meta_type).not.equal('removed:placeholder')
+    })
   })
 })

@@ -2,6 +2,7 @@ import type { GetEntitiesByUrisResponse } from '#controllers/entities/by_uris_ge
 import { getInvEntityUriFromPatchId } from '#controllers/entities/lib/patches/patches'
 import { lazyRefreshSnapshotFromUri } from '#controllers/items/lib/snapshot/refresh_snapshot'
 import { updateEntitiesRevisionsCache } from '#lib/federation/entities_revisions_cache'
+import { checkIfCriticalEntitiesWereRemoved } from '#lib/federation/recover_critical_entities'
 import type { RelativeUrl, HttpMethod } from '#types/common'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 
@@ -13,6 +14,7 @@ export async function runPostProxiedRequestHooks (method: HttpMethod, url: Relat
       if (refresh && uris) {
         uris.forEach(lazyRefreshSnapshotFromUri)
       }
+      await checkIfCriticalEntitiesWereRemoved(res as GetEntitiesByUrisResponse)
       updateEntitiesRevisionsCache(res as GetEntitiesByUrisResponse)
     } else if (method === 'put') {
       const { uri, from, to, patch } = params

@@ -12,6 +12,7 @@ import { views as listsViews } from '#db/couchdb/design_docs/lists'
 import { views as notificationsViews } from '#db/couchdb/design_docs/notifications'
 import { views as patchesViews } from '#db/couchdb/design_docs/patches'
 import { views as relationsViews } from '#db/couchdb/design_docs/relations'
+import { views as removedPlaceholdersViews } from '#db/couchdb/design_docs/removed_placeholders'
 import { views as shelvesViews } from '#db/couchdb/design_docs/shelves'
 import { views as tasksViews } from '#db/couchdb/design_docs/tasks'
 import { views as transactionsViews } from '#db/couchdb/design_docs/transactions'
@@ -28,6 +29,7 @@ const entitiesRelatedDatabases = {
   entities: {
     entities: entitiesViews,
     entities_deduplicate: entitiesDeduplicateViews,
+    removed_placeholders: removedPlaceholdersViews,
   },
   patches: {
     patches: patchesViews,

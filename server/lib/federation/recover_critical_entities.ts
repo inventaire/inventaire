@@ -25,7 +25,7 @@ export async function checkIfCriticalEntitiesWereRemoved (res: GetEntitiesByUris
 }
 
 function getUrisToCheck (res: GetEntitiesByUrisResponse) {
-  const { entities, redirects } = res
+  const { entities, redirects, notFound } = res
   const urisToCheck: EntityUri[] = []
   for (const [ uri, entity ] of objectEntries(entities)) {
     // @ts-expect-error
@@ -34,6 +34,7 @@ function getUrisToCheck (res: GetEntitiesByUrisResponse) {
   for (const [ from, to ] of objectEntries(redirects)) {
     if (urisToCheck.includes(to)) urisToCheck.push(from)
   }
+  if (notFound) urisToCheck.push(...notFound)
   return urisToCheck
 }
 

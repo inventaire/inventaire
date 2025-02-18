@@ -14,7 +14,7 @@ async function controller (params: SanitizedParameters, req: AuthentifiedReq | R
   const user = parseReqLocalOrRemoteUser(req)
   const uris: EntityUri[] = uniq(params.uris)
   validateUris(uris)
-  const invUris: InvEntityUri[] = await replaceIsbnUrisByInvUris(uris)
+  const invUris: InvEntityUri[] = await replaceIsbnUrisByInvUris(uris, { includeRemovedPlaceholders: true })
   await recoverPlaceholders(user, invUris)
   return { ok: true }
 }
