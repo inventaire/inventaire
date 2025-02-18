@@ -4,23 +4,22 @@ import { addElements, getByIdWithElements } from '#tests/api/utils/listings'
 import { customAuthReq } from '#tests/api/utils/request'
 import { getUser } from '#tests/api/utils/utils'
 import type { ListingElement } from '#types/element'
-import type { EntityUri } from '#types/entity'
 import type { Listing } from '#types/listing'
-import type { VisibilityKey } from '#types/visibility'
 import { createWork } from './entities.js'
 
 const endpoint = '/api/lists?action='
 
 export const listingName = () => randomWords(3, ' listing')
-export const listingDescription = () => {
+export function listingDescription () {
   return randomWords(3, ' listing')
 }
 
-export const createListing = async (userPromise?: AwaitableUserWithCookie, listingData: Partial<Listing> = {}) => {
+export async function createListing (userPromise?: AwaitableUserWithCookie, listingData: Partial<Listing> = {}) {
   userPromise = userPromise || getUser()
-  listingData.name = listingData.name || listingName()
-  listingData.visibility = listingData.visibility || [ 'public' ]
-  listingData.description = listingData.description || listingDescription()
+  listingData.name ??= listingName()
+  listingData.type ??= 'work'
+  listingData.visibility ??= [ 'public' ]
+  listingData.description ??= listingDescription()
   const user = await userPromise
   const { list: listing } = await customAuthReq(user, 'post', `${endpoint}create`, listingData)
   return {
@@ -52,12 +51,14 @@ export async function createListingWithElements (userPromise?: AwaitableUserWith
   return { listing: updatedListing, user, uris }
 }
 
-export const createElement = async (params = {}, userPromise?: AwaitableUserWithCookie) => {
-  const { visibility = [ 'public' ] }: { visibility?: VisibilityKey[] } = params
-  let { uri, listing }: { uri?: EntityUri, listing?: Listing } = params
+type CreateElementParams = Partial<Listing & ListingElement & { listing: Listing }>
+
+export async function createElement (params: CreateElementParams = {}, userPromise?: AwaitableUserWithCookie) {
+  const { visibility = [ 'public' ] } = params
+  let { uri, type, listing } = params
   userPromise = userPromise || getUser()
   if (!listing) {
-    const fixtureListing = await createListing(userPromise, { visibility })
+    const fixtureListing = await createListing(userPromise, { visibility, type })
     listing = fixtureListing.listing
   }
   if (!uri) {
@@ -75,7 +76,7 @@ export const createElement = async (params = {}, userPromise?: AwaitableUserWith
   }
 }
 
-export const removeElement = async ({ uri, listing }, user: AwaitableUserWithCookie) => {
+export async function removeElement ({ uri, listing }, user: AwaitableUserWithCookie) {
   user = user || getUser()
   user = await (user || getUser())
   const removeElements = '/api/lists?action=remove-elements'

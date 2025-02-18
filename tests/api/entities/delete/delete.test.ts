@@ -6,6 +6,7 @@ import {
   createEdition,
   createEditionWithIsbn,
 } from '#fixtures/entities'
+import { createElement } from '#fixtures/listings'
 import { wait } from '#lib/promises'
 import config, { federatedMode } from '#server/config'
 import { getByUri, getByUris, deleteByUris } from '#tests/api/utils/entities'
@@ -216,6 +217,19 @@ describe('entities:delete', () => {
       const updatedEdition = await getByUri(uri)
       // @ts-expect-error
       should(updatedEdition._meta_type).not.equal('removed:placeholder')
+    })
+
+    it('should recover a deleted human that is the entity of a listing element', async () => {
+      const { uri } = await createHuman()
+      await createElement({ type: 'author', uri })
+      await deleteByUris([ uri ])
+      // Trigger the check (still returns as removed:placeholder)
+      await getByUri(uri)
+      await wait(500)
+      // Get the actually recovered entity
+      const updatedWork = await getByUri(uri)
+      // @ts-expect-error
+      should(updatedWork._meta_type).not.equal('removed:placeholder')
     })
   })
 })
