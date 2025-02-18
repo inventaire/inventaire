@@ -8,7 +8,7 @@ import { log } from '#lib/utils/logs'
 import { convertEntityDocIntoARedirection, preventRedirectionEdit, convertEntityDocIntoALocalLayer, preventLocalLayerEdit, preventRemovedPlaceholderEdit } from '#models/entity'
 import type { Claims, EntityUri, InvEntity, InvEntityId, InvEntityUri, PropertyUri } from '#types/entity'
 import type { PatchContext } from '#types/patch'
-import propagateRedirection from './propagate_redirection.js'
+import { propagateRedirection } from './propagate_redirection.js'
 
 export async function turnIntoRedirectionOrLocalLayer ({ user, fromId, toUri, previousToUri, context }: { user: UserWithAcct, fromId: InvEntityId, toUri: EntityUri, previousToUri?: EntityUri, context?: PatchContext }) {
   const fromUri = `inv:${fromId}` as InvEntityUri

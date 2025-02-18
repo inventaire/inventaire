@@ -404,7 +404,27 @@ describe('items:snapshot', () => {
       await getByUri(uriA)
       await wait(debounceDelay)
       const updatedItem = await getItem(item)
+      updatedItem.entity.should.equal(uriB)
       updatedItem.snapshot['entity:title'].should.equal(titleB)
+    })
+
+    it('should revert items entity uri after a merge revert', async () => {
+      const [ { uri: uriA }, { uri: uriB } ] = await Promise.all([
+        createEdition(),
+        createEdition(),
+      ])
+      const item = await authReq('post', '/api/items', { entity: uriA })
+      await wait(debounceDelay)
+      await merge(uriA, uriB, { user: getRemoteInstanceAdmin(), origin: remoteEntitiesOrigin })
+      // Trigger an entity revision cache refresh
+      await getByUri(uriA)
+      await wait(debounceDelay)
+      const updatedItem = await getItem(item)
+      updatedItem.entity.should.equal(uriB)
+      await revertMerge(uriA, { user: getRemoteInstanceAdmin(), origin: remoteEntitiesOrigin })
+      await wait(debounceDelay)
+      const reupdatedItem = await getItem(item)
+      reupdatedItem.entity.should.equal(uriA)
     })
 
     it('should update the item snapshot after an update on the remote layer', async () => {

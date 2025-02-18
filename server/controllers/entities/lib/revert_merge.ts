@@ -2,7 +2,6 @@ import { map } from 'lodash-es'
 import { getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { getPatchesWithSnapshots, getPatchesByEntityId, getPatchesByRedirectUri } from '#controllers/entities/lib/patches/patches'
 import { prefixifyInv } from '#controllers/entities/lib/prefix'
-import updateItemEntity from '#controllers/items/lib/update_entity'
 import { newError } from '#lib/error/error'
 import type { UserWithAcct } from '#lib/federation/remote_user'
 import type { EntityUri, InvEntityId, InvEntityUri } from '#types/entity'
@@ -29,13 +28,12 @@ export default async function (user: UserWithAcct, fromId: InvEntityId) {
       updatedDoc: targetVersion,
     })
 
-    await updateItemEntity.afterRevert(fromUri, toUri)
     const removedPlaceholdersUris = currentVersion.removedPlaceholdersIds.map(prefixifyInv)
     await recoverPlaceholders(user, removedPlaceholdersUris)
     await revertMergePatch(userAcct, fromUri, toUri)
     await revertClaimsRedirections(userAcct, fromUri)
 
-    return updateRes
+    return { updateRes, fromUri, toUri }
   } else {
     throw newError('"from" entity is not a redirection', 400, { fromId })
   }

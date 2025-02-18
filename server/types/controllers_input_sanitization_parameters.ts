@@ -4,6 +4,7 @@ import type { CouchUuid } from '#types/couchdb'
 import type { Claims, EntityUri, Labels, PropertyUri } from '#types/entity'
 import type { GroupId } from '#types/group'
 import type { ImageHash } from '#types/image'
+import type { EventName } from '#types/instances'
 import type { ItemId } from '#types/item'
 import type { ListingId } from '#types/listing'
 import type { PatchId } from '#types/patch'
@@ -91,6 +92,7 @@ interface WellknownSanitizedParameters {
 interface GenericsBasedSanitizedParameters {
   claims: Claims
   container: string
+  event: EventName
   height: number
   labels: Labels
   open: boolean

@@ -13,7 +13,7 @@ import type { AbsoluteUrl, Url } from '#types/common'
 import type { EntityUri, ExpandedSerializedEntitiesByUris, InvClaimValue, InvEntityId, PropertyUri, SerializedEntitiesByUris, SerializedEntity } from '#types/entity'
 import type { PatchId } from '#types/patch'
 import { getIndexedDoc } from './search.js'
-import { publicReq, dataadminReq, adminReq, getDataadminUser, getUser, getRemoteInstanceDataadmin } from './utils.js'
+import { publicReq, adminReq, getDataadminUser, getUser, getRemoteInstanceDataadmin } from './utils.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 export function getByUris (uris: EntityUri[], relatives?: PropertyUri[], refresh?: boolean) {
@@ -108,10 +108,11 @@ function parseDataadminRequestOptions (url: Url, options: UserRequestOptions) {
   return { url, user, origin }
 }
 
-export function revertMerge (fromUri: EntityUri) {
+export function revertMerge (fromUri: EntityUri, options: UserRequestOptions = {}) {
   assertString(fromUri)
   fromUri = normalizeUri(fromUri)
-  return dataadminReq('put', '/api/entities?action=revert-merge', { from: fromUri })
+  const { url, user } = parseDataadminRequestOptions('/api/entities?action=revert-merge', options)
+  return customAuthReq(user, 'put', url, { from: fromUri })
 }
 
 export async function getHistory (entityId: InvEntityId) {

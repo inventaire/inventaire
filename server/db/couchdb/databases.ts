@@ -5,6 +5,7 @@ import { views as entitiesViews } from '#db/couchdb/design_docs/entities'
 import { views as entitiesDeduplicateViews } from '#db/couchdb/design_docs/entities_deduplicate'
 import { views as groupsViews } from '#db/couchdb/design_docs/groups'
 import { views as imagesViews } from '#db/couchdb/design_docs/images'
+import { views as instancesSubscriptions } from '#db/couchdb/design_docs/instances_subscriptions'
 import { views as invitedViews } from '#db/couchdb/design_docs/invited'
 import { views as itemsViews } from '#db/couchdb/design_docs/items'
 import { views as listsViews } from '#db/couchdb/design_docs/lists'
@@ -52,6 +53,9 @@ export const databases: Databases = {
   },
   images: {
     images: imagesViews,
+  },
+  instances_subscriptions: {
+    instances_subscriptions: instancesSubscriptions,
   },
   items: {
     items: itemsViews,

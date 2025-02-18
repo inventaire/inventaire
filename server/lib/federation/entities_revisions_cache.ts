@@ -1,6 +1,8 @@
 import { map, zipObject } from 'lodash-es'
 import type { GetEntitiesByUrisResponse } from '#controllers/entities/by_uris_get'
 import type { Redirects } from '#controllers/entities/lib/get_entities_by_uris'
+import { propagateRedirectionToSocialCore } from '#controllers/entities/lib/propagate_redirection'
+import { subscribeToCrossInstanceEvent } from '#controllers/instances/lib/subscribe'
 import { leveldbFactory } from '#db/level/get_sub_db'
 import { newError } from '#lib/error/error'
 import { checkIfCriticalEntitiesWereRemoved } from '#lib/federation/recover_critical_entities'
@@ -30,24 +32,22 @@ export async function updateEntitiesRevisionsCache (res: GetEntitiesByUrisRespon
         await emit('entity:changed', uri)
       }
     }
-    for (const [ from, to ] of objectEntries(redirects)) {
-      const oldRev = cachedRevsByUris[from]
-      // Use the redirection target rev as the new rev value
-      // Do not propagate redirection to items,
-      // to not be impacted by an eventual merge revert
-      const newRev = getEntityRevisionId(entities[to])
-      if (oldRev !== newRev) {
-        updateOps.push({ type: 'put', key: from, value: newRev })
-        await emit('entity:changed', from)
-      }
-    }
     if (updateOps.length > 0) {
       info(`received new entities revisions: ${map(updateOps, 'key').join(' ')}`)
+    }
+    for (const [ from, to ] of objectEntries(redirects)) {
+      await propagateRedirectionAndSubscribeToRevertEvent(from, to)
+      updateOps.push({ type: 'del', key: from })
     }
     await db.batch(updateOps)
   } catch (err) {
     logError(err, 'updateEntitiesRevisionsCache error')
   }
+}
+
+async function propagateRedirectionAndSubscribeToRevertEvent (from: EntityUri, to: EntityUri) {
+  await propagateRedirectionToSocialCore(from, to)
+  await subscribeToCrossInstanceEvent('revert-merge', from)
 }
 
 async function getCachedRevsByUris (uris: EntityUri[], redirects: Redirects) {

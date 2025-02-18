@@ -4,6 +4,7 @@ import { assertTypes, assertObjects, assertObject, assertString } from '#lib/uti
 import { arrayIncludes } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import { objectKeys } from '#lib/utils/types'
+import type { EntityUri } from '#types/entity'
 import type { Item } from '#types/item'
 import type { UserId } from '#types/user'
 import itemAttributes, { type UpdatableItemAttributes } from './attributes/item.js'
