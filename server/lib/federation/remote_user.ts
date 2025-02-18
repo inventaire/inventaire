@@ -43,7 +43,7 @@ export const remoteUserHeader = 'x-remote-user'
 
 export async function geRemoteUserFromSignedReqHeader (req: MaybeSignedReq) {
   await verifySignature(req)
-  const { host } = req.signed
+  const { host, origin } = req.signed
   const anonymizableId = req.headers[remoteUserHeader]
   if (!anonymizableId) {
     throw newError(`could not authentify remote user: missing ${remoteUserHeader} header`, 400)
@@ -54,6 +54,7 @@ export async function geRemoteUserFromSignedReqHeader (req: MaybeSignedReq) {
   return {
     anonymizableId,
     host,
+    origin,
     acct: buildUserAcct(anonymizableId, host),
     roles: [],
   } as MinimalRemoteUser
