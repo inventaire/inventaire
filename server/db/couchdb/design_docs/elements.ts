@@ -3,7 +3,7 @@ import type { Views } from '#types/couchdb'
 import type { ListingElement } from '#types/element'
 
 export const views: Views<ListingElement> = {
-  byEntities: {
+  byEntity: {
     map: doc => {
       if (doc.uri != null) emit(doc.uri, null)
     },
@@ -13,7 +13,7 @@ export const views: Views<ListingElement> = {
       emit([ doc.list, doc.uri ], null)
     },
   },
-  byListings: {
+  byListing: {
     map: doc => {
       if (doc.uri != null) emit(doc.list, null)
     },
