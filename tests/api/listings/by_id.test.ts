@@ -1,7 +1,7 @@
 import { createWork } from '#fixtures/entities'
 import { createListing, createElement } from '#fixtures/listings'
 import { federatedMode } from '#server/config'
-import { merge } from '#tests/api/utils/entities'
+import { getByUri, merge, revertMerge } from '#tests/api/utils/entities'
 import { getListingById } from '#tests/api/utils/listings'
 import { publicReq, getUserB } from '#tests/api/utils/utils'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
@@ -38,18 +38,25 @@ describe('listings:by-id', () => {
   })
 
   describe('redirects hook', () => {
-    it('should update element uri after merging entities, unless in federated mode', async () => {
+    it('should update element uri after merging entities', async () => {
       const work = await createWork()
       const { uri, listing } = await createElement({})
       await merge(uri, work.uri)
-      const byIdEndpoint = '/api/lists?action=by-id'
-      const { list } = await publicReq('get', `${byIdEndpoint}&id=${listing._id}`)
-      if (federatedMode) {
-        // Keeping the redirected uri, to not need to be notified of a possible revert merge
-        list.elements[0].uri.should.equal(uri)
-      } else {
-        list.elements[0].uri.should.equal(work.uri)
-      }
+      // Trigger the merge propagation
+      if (federatedMode) await getByUri(uri)
+      const { list } = await publicReq('get', `${endpoint}&id=${listing._id}`)
+      list.elements[0].uri.should.equal(work.uri)
+    })
+
+    it('should revert element uri after an entity merge was reverted', async () => {
+      const work = await createWork()
+      const { uri, listing } = await createElement({})
+      await merge(uri, work.uri)
+      // Trigger the merge propagation and subscription to the revert merge event
+      if (federatedMode) await getByUri(uri)
+      await revertMerge(uri)
+      const { list } = await publicReq('get', `${endpoint}&id=${listing._id}`)
+      list.elements[0].uri.should.equal(uri)
     })
   })
 })

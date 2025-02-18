@@ -21,6 +21,10 @@ export async function getElementsByEntities (uris: EntityUri[]) {
   return db.getDocsByViewKeys<ListingElement>('byEntity', uris)
 }
 
+export async function getElementsByPreviousEntities (uris: EntityUri[]) {
+  return db.getDocsByViewKeys<ListingElement>('byPreviousEntity', uris)
+}
+
 export async function getElementsByListingsAndEntity (listingsIds: ListingId[], entitiesUris: EntityUri[]) {
   const keys = combinations(listingsIds, entitiesUris)
   return db.getDocsByViewKeys<ListingElement>('byListAndEntity', keys)
@@ -75,11 +79,3 @@ export async function updateElementDocAttributes ({ element, newAttributes, elem
   const updatedElement = updateElementDoc(newAttributes, element, elements)
   return db.putAndReturn(updatedElement)
 }
-
-export async function bulkUpdateElements ({ oldElements, attribute, value }) {
-  const elementUpdateData = { [attribute]: value }
-  const newElements = oldElements.map(oldElement => updateElementDoc(elementUpdateData, oldElement))
-  return elementsBulkUpdate(newElements)
-}
-
-const elementsBulkUpdate = db.bulk

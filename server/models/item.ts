@@ -114,7 +114,7 @@ export function updateItemDocEntity (fromUri: EntityUri, toUri: EntityUri, item:
 
   item.entity = toUri
   // Keeping track of previous entity URI in case a rollback is needed
-  if (!item.previousEntity) { item.previousEntity = [] }
+  item.previousEntity ??= []
   item.previousEntity.unshift(fromUri)
 
   return item

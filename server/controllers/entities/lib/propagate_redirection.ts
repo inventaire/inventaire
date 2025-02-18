@@ -1,6 +1,6 @@
 import { redirectCachedRelations } from '#controllers/entities/lib/temporarily_cache_relations'
 import updateItemEntity from '#controllers/items/lib/update_entity'
-import { updateElementsUris } from '#controllers/listings/lib/update_element_uri'
+import { updateElementsUrisAfterMerge, updateElementsUrisAfterMergeRevert } from '#controllers/listings/lib/update_element_uri'
 import { radio } from '#lib/radio'
 import type { EntityUri } from '#types/entity'
 import type { UserAccountUri } from '#types/server'
@@ -23,15 +23,14 @@ export async function propagateRedirection (userAcct: UserAccountUri, fromUri: E
 export async function propagateRedirectionToSocialCore (fromUri: EntityUri, toUri: EntityUri) {
   await Promise.all([
     updateItemEntity.afterMerge(fromUri, toUri),
-    updateElementsUris(fromUri, toUri),
+    updateElementsUrisAfterMerge(fromUri, toUri),
   ])
 }
 
 export async function propagateRedirectionRevertToSocialCore (fromUri: EntityUri, toUri: EntityUri) {
   await Promise.all([
     updateItemEntity.afterRevert(fromUri, toUri),
-    // TODO: implement listing revert merge
-    // updateElementsUris(fromUri, toUri),
+    updateElementsUrisAfterMergeRevert(fromUri, toUri),
   ])
 }
 

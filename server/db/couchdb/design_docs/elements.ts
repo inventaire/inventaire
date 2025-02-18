@@ -8,6 +8,15 @@ export const views: Views<ListingElement> = {
       if (doc.uri != null) emit(doc.uri, null)
     },
   },
+  byPreviousEntity: {
+    map: doc => {
+      if (doc.previousUris != null) {
+        for (const uri of doc.previousUris) {
+          emit(uri, null)
+        }
+      }
+    },
+  },
   byListAndEntity: {
     map: doc => {
       emit([ doc.list, doc.uri ], null)
