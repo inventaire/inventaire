@@ -107,9 +107,9 @@ export function itemAllowsTransactions (item) {
   return itemAttributes.allowTransaction.includes(item.transaction)
 }
 
-export function updateItemDocEntity (fromUri, toUri, item) {
+export function updateItemDocEntity (fromUri: EntityUri, toUri: EntityUri, item: Item) {
   if (item.entity !== fromUri) {
-    throw newError(`wrong entity uri: expected ${fromUri}, got ${item.entity}`, 500)
+    throw newError(`wrong entity uri: expected ${fromUri}, got ${item.entity}`, 500, { fromUri, toUri })
   }
 
   item.entity = toUri
@@ -120,16 +120,16 @@ export function updateItemDocEntity (fromUri, toUri, item) {
   return item
 }
 
-export function revertItemDocEntity (fromUri, toUri, item) {
+export function revertItemDocEntity (fromUri: EntityUri, toUri: EntityUri, item: Item) {
   const { entity } = item
   const previousEntity = item.previousEntity[0]
   if (item.entity !== toUri) {
-    throw newError(`wrong entity uri: expected ${entity}, got ${toUri}`, 500)
+    throw newError(`wrong entity uri: expected ${entity}, got ${toUri}`, 500, { fromUri, toUri })
   }
 
   if (fromUri !== previousEntity) {
     const message = `wrong previous entity: expected ${previousEntity}, got ${fromUri}`
-    throw newError(message, 500)
+    throw newError(message, 500, { fromUri, toUri })
   }
 
   item.entity = previousEntity
