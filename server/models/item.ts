@@ -132,7 +132,7 @@ export function revertItemDocEntity (fromUri: EntityUri, toUri: EntityUri, item:
 
   const restoredUriIndex = previousEntities.indexOf(fromUri)
   // Keep only the entities associated to that item before the currently reverted merge,
-  // in the rather unlikely case (but seen to happen in prod) were an item was redirected several times
+  // in the rather unlikely case (but seen to happen in prod) were an entity was redirected several times
   item.previousEntities = item.previousEntities.splice(restoredUriIndex + 1)
   if (item.previousEntities.length === 0) delete item.previousEntities
 
