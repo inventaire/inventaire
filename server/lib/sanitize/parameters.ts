@@ -112,11 +112,6 @@ function formatStringArrayElement (str) {
   else return str
 }
 
-function formatPipedPosition (str) {
-  const arrayOfNumbers = arrayOrPipedString(str)
-  return truncateLatLng(arrayOfNumbers)
-}
-
 const arrayOrPipedString = arrayOrSeparatedString('|')
 const arrayOrCommaSeparatedString = arrayOrSeparatedString(',')
 
@@ -347,7 +342,9 @@ export const sanitizationParameters = {
     rename: renameId,
   },
   position: {
-    format: formatPipedPosition,
+    // Do not use arrayOrPipedString, as the array represents a single value,
+    // and its elements should not be deduplicated
+    format: truncateLatLng,
     validate: arrayOfNumbers.validate,
   },
   prefix: allowlistedString,
