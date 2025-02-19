@@ -16,8 +16,8 @@ import { getIndexedDoc } from './search.js'
 import { publicReq, adminReq, getDataadminUser, getUser, getRemoteInstanceDataadmin } from './utils.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
-export function getByUris (uris: EntityUri[], relatives?: PropertyUri[], refresh?: boolean) {
-  uris = forceArray(uris)
+export function getByUris (uris: EntityUri | EntityUri[], relatives?: PropertyUri[], refresh?: boolean) {
+  uris = forceArray<EntityUri>(uris)
   assertStrings(uris)
   const url = buildUrl('/api/entities', {
     action: 'by-uris',

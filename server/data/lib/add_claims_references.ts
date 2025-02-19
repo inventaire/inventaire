@@ -21,6 +21,7 @@ export function addReferenceToSeedClaims (seed: EntityLooseSeed, sourceProperty:
   }
   for (const [ property, propertyLooseClaims ] of objectEntries(claims)) {
     if (property !== sourceProperty) {
+      // @ts-expect-error
       const propertyClaimsValues: InvSimplifiedPropertyClaims = forceArray(propertyLooseClaims)
       const propertyClaimsObjects = propertyClaimsValues.map(claim => {
         return {

@@ -33,6 +33,7 @@ export async function resolveExternalIds (claims: Claims, options: ResolveExtern
     // Checks for external ids and identifiers typed as concurrent strings such as ISBNs
     if (concurrency) {
       const { format } = propertyConstraints
+      // @ts-expect-error There are still untyped consumers that might pass loose claims, thus the need to forceArray
       forceArray(propertyClaims).map(getClaimValue).forEach(value => {
         if (format) value = format(value)
         propertyValuePairs.push([ property, value ])

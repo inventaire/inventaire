@@ -110,7 +110,7 @@ export function simpleDay (date?: Date | EpochTimeStamp) {
 }
 
 // Helpers to simplify polymorphisms
-export function forceArray (keys) {
+export function forceArray <T extends (Exclude<unknown, unknown[]>)> (keys: T | T[]): T[] {
   if (keys == null || keys === '') return []
   if (isArray(keys)) return keys
   else return [ keys ]
