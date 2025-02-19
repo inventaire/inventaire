@@ -4,7 +4,7 @@ import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
 import { arrayIncludes } from '#lib/utils/base'
 import { info } from '#lib/utils/logs'
-import { remoteEntitiesOrigin } from '#server/config'
+import { federatedMode, remoteEntitiesOrigin } from '#server/config'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { AuthentifiedReq, RemoteUserAuthentifiedReq } from '#types/server'
 
@@ -17,6 +17,8 @@ const sanitization = {
 } as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq | RemoteUserAuthentifiedReq) {
+  if (!federatedMode) throw newError('this endpoint is open only in federated mode', 403)
+
   if (!('remoteUser' in req)) {
     throw newError('expected request to be signed by a remote user', 403)
   }
