@@ -74,7 +74,10 @@ async function revertMergePatch (userAcct: UserAccountUri, fromUri: InvEntityUri
   // There might be no mergePatch: that happens when the merged entity didn't bring
   // any label or claim value that the merge target hadn't already
   if (mergePatch) {
-    return revertFromPatchDoc(mergePatch, userAcct)
+    const currentDoc = await getEntityById(toId)
+    if (!('redirect' in currentDoc)) {
+      return revertFromPatchDoc(mergePatch, userAcct)
+    }
   }
 }
 

@@ -121,19 +121,20 @@ export function updateItemDocEntity (fromUri: EntityUri, toUri: EntityUri, item:
 }
 
 export function revertItemDocEntity (fromUri: EntityUri, toUri: EntityUri, item: Item) {
-  const { entity } = item
-  const previousEntity = item.previousEntity[0]
-  if (item.entity !== toUri) {
-    throw newError(`wrong entity uri: expected ${entity}, got ${toUri}`, 500, { fromUri, toUri })
-  }
+  item.entity = fromUri
 
-  if (fromUri !== previousEntity) {
-    const message = `wrong previous entity: expected ${previousEntity}, got ${fromUri}`
+  const { previousEntity } = item
+
+  if (!previousEntity.includes(fromUri)) {
+    const message = `wrong previous entity: expected one of ${previousEntity}, got ${fromUri}`
     throw newError(message, 500, { fromUri, toUri })
   }
 
-  item.entity = previousEntity
-  item.previousEntity.shift()
+  const restoredUriIndex = previousEntity.indexOf(fromUri)
+  // Keep only the entities associated to that item before the currently reverted merge,
+  // in the rather unlikely case (but seen to happen in prod) were an item was redirected several times
+  item.previousEntity = item.previousEntity.splice(restoredUriIndex + 1)
+  if (item.previousEntity.length === 0) delete item.previousEntity
 
   return item
 }

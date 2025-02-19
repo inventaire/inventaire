@@ -178,8 +178,10 @@ const operationFix = {
       const arrayPath = op.path.replace(/\/\d+$/, '') as OperationPath
       const patchedArray = getFromPatchPath(currentDoc, arrayPath)
 
+      // Known case: when there is an attempt to revert a patch containing claim edits on a entity
+      // that was since then turned into a redirection
       if (!patchedArray) {
-        throw newError('unhandled patch case', 500, { currentDoc, inverseOperations, op, index, arrayPath })
+        throw newError('unhandled patch case', 500, { currentDoc, inverseOperations, op, index, arrayPathMissingOnCurrentDoc: arrayPath })
       }
 
       if ('value' in op) {
