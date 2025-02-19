@@ -7,6 +7,11 @@ export interface RevertMergeSubscription extends CouchDoc {
   uri: EntityUri
   instance: Origin
   timestamp: EpochTimeStamp
+  notificationFailed?: {
+    attempts: number
+    firstAttempt: EpochTimeStamp
+    lastAttempt: EpochTimeStamp
+  }
 }
 
 export type InstanceSubscription = RevertMergeSubscription

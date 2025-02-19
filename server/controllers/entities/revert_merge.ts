@@ -20,8 +20,8 @@ async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
     throw newError(message, 400, params)
   }
 
-  const { updateRes, toUri } = await revertMerge(user, fromId)
-  await emit('entity:revert:merge', fromUri, toUri)
+  const updateRes = await revertMerge(user, fromId)
+  await emit('entity:revert:merge', fromUri)
   return updateRes
 }
 

@@ -33,7 +33,7 @@ export default async function (user: UserWithAcct, fromId: InvEntityId) {
     await revertMergePatch(userAcct, fromUri, toUri)
     await revertClaimsRedirections(userAcct, fromUri)
 
-    return { updateRes, fromUri, toUri }
+    return updateRes
   } else {
     throw newError('"from" entity is not a redirection', 400, { fromId })
   }

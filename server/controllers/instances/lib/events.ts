@@ -3,9 +3,11 @@ import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
 import { maxKey, minKey } from '#lib/couch'
 import { signedFederatedRequestAsUser } from '#lib/federation/signed_federated_request'
 import { radio } from '#lib/radio'
-import { logError, warn } from '#lib/utils/logs'
+import { oneMinute, oneYear } from '#lib/time'
+import { info, log, logError, warn } from '#lib/utils/logs'
 import { federatedMode } from '#server/config'
 import type { Origin } from '#types/common'
+import type { NewCouchDoc } from '#types/couchdb'
 import type { EntityUri } from '#types/entity'
 import type { EventName, InstanceSubscription } from '#types/instances'
 
@@ -19,13 +21,13 @@ export async function recordSubscription (eventName: EventName, uri: EntityUri, 
     warn({ eventName, uri, instance }, 'subscription already exists')
     return
   }
-  const doc = await db.post({
+  const subscription: NewCouchDoc<InstanceSubscription> = {
     event: eventName,
     uri,
     instance,
     timestamp: Date.now(),
-  })
-  return doc
+  }
+  await db.post(subscription)
 }
 
 export async function getSubscriptionByEventAndEntityAndOrigin (eventName: EventName, uri: EntityUri, instance: Origin) {
@@ -34,11 +36,18 @@ export async function getSubscriptionByEventAndEntityAndOrigin (eventName: Event
   return docs
 }
 
-export async function emitInstancesEvent (eventName: EventName, fromUri: EntityUri, toUri: EntityUri) {
+export async function emitInstancesEvent (eventName: EventName, fromUri: EntityUri) {
   const subscriptions = await getSubscriptions(eventName, fromUri)
-  // TODO: notify in a job queue
+  await emitInstancesEventFromSubscriptions(subscriptions)
+}
+
+async function emitInstancesEventFromSubscriptions (subscriptions: InstanceSubscription[]) {
   for (const subscription of subscriptions) {
-    await notifyInstance(subscription, toUri)
+    try {
+      await notifyInstance(subscription)
+    } catch (err) {
+      logError(err, 'instance notification failed')
+    }
   }
 }
 
@@ -51,17 +60,52 @@ async function getSubscriptions (eventName: EventName, uri: EntityUri) {
   return subscriptions
 }
 
-async function notifyInstance (subscription: InstanceSubscription, toUri: EntityUri) {
+async function notifyInstance (subscription: InstanceSubscription) {
   try {
     const { event: eventName, uri, instance } = subscription
-    await signedFederatedRequestAsUser(hookUser, 'post', `${instance}/api/instances?action=event`, { event: eventName, from: uri, to: toUri })
+    await signedFederatedRequestAsUser(hookUser, 'post', `${instance}/api/instances?action=event`, { event: eventName, uri })
     await db.delete(subscription._id, subscription._rev)
   } catch (err) {
-    // TODO: plan retry
     logError(err, 'failed to notify instance')
+    await recordNotificationFailure(subscription)
   }
 }
 
 if (!federatedMode) {
-  radio.on('entity:revert:merge', (fromUri, toUri) => emitInstancesEvent('revert-merge', fromUri, toUri))
+  radio.on('entity:revert:merge', fromUri => emitInstancesEvent('revert-merge', fromUri))
+}
+
+async function recordNotificationFailure (subscription: InstanceSubscription) {
+  const now = Date.now()
+  subscription.notificationFailed ??= { attempts: 0, firstAttempt: now, lastAttempt: now }
+  const firstAttemptWasMoreThanAYearAgo = (now - oneYear) > subscription.notificationFailed.firstAttempt
+  if (firstAttemptWasMoreThanAYearAgo) {
+    await db.delete(subscription._id, subscription._rev)
+    warn(subscription, 'expired instance event subscription: will not retry')
+  } else {
+    subscription.notificationFailed.attempts++
+    subscription.notificationFailed.lastAttempt = now
+    await db.put(subscription)
+    log(subscription, 'planning instance notification retry')
+  }
+}
+
+async function retryFailedNotifications () {
+  const subscriptions = await getSubscriptionsDueForRetry()
+  if (subscriptions.length === 0) return
+  info(`retry failed notifications: ${subscriptions.length}`)
+  await emitInstancesEventFromSubscriptions(subscriptions)
+}
+
+async function getSubscriptionsDueForRetry () {
+  const subscriptions = await db.getDocsByViewQuery<InstanceSubscription>('byNextNotificationAttemptTime', {
+    startkey: 0,
+    endkey: Date.now(),
+    include_docs: true,
+  })
+  return subscriptions
+}
+
+if (!federatedMode) {
+  setInterval(retryFailedNotifications, 5 * oneMinute)
 }

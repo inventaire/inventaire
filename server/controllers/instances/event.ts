@@ -13,8 +13,7 @@ const sanitization = {
     generic: 'allowlist',
     allowlist: eventNames,
   },
-  from: {},
-  to: {},
+  uri: {},
 } as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq | RemoteUserAuthentifiedReq) {
@@ -28,18 +27,17 @@ async function controller (params: SanitizedParameters, req: AuthentifiedReq | R
     throw newError('only the remote entities origin can post instance events', 403, { origin, remoteEntitiesOrigin })
   }
 
-  const { event: eventName, from: fromUri, to: toUri } = params
+  const { event: eventName, uri } = params
 
   if (!(arrayIncludes(eventNames, eventName))) {
     throw newError('invalid event name', 400, { eventName })
   }
 
-  if (!isEntityUri(fromUri)) throw newError('invalid entity uri', 400, { fromUri })
-  if (!isEntityUri(toUri)) throw newError('invalid entity uri', 400, { toUri })
+  if (!isEntityUri(uri)) throw newError('invalid entity uri', 400, { uri })
 
   info(params, 'received event from remote entities origin')
 
-  await emit('entity:revert:merge', fromUri, toUri)
+  await emit('entity:revert:merge', uri)
 
   return { ok: true }
 }
