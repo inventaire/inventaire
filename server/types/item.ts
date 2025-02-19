@@ -29,7 +29,7 @@ export interface Item extends CouchDoc {
   details?: string
   notes?: string
   history?: ItemHistoryEvent[]
-  previousEntity?: EntityUri[]
+  previousEntities?: EntityUri[]
   busy?: boolean
 }
 

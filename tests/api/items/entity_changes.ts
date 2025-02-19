@@ -61,7 +61,7 @@ describe('items:entity changes', () => {
       await revertMerge(uriA, uriB)
       const reupdatedItem = await getItem(item)
       reupdatedItem.entity.should.equal(uriA)
-      should(reupdatedItem.previousEntity).not.be.ok()
+      should(reupdatedItem.previousEntities).not.be.ok()
     })
 
     it('should trigger the revert of an item entity several times redirected (intermediary merge)', async () => {
@@ -85,7 +85,7 @@ describe('items:entity changes', () => {
       await revertMerge(uriB, uriC)
       const reupdatedItem = await getItem(item)
       reupdatedItem.entity.should.equal(uriB)
-      reupdatedItem.previousEntity.should.deepEqual([ uriA ])
+      reupdatedItem.previousEntities.should.deepEqual([ uriA ])
     })
   })
 })

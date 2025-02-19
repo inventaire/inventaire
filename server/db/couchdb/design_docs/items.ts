@@ -78,8 +78,8 @@ export const views: Views<Item> = {
   },
   byPreviousEntity: {
     map: doc => {
-      if (doc.previousEntity != null) {
-        for (const uri of doc.previousEntity) {
+      if (doc.previousEntities != null) {
+        for (const uri of doc.previousEntities) {
           emit(uri, null)
         }
       }
