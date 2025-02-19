@@ -1,21 +1,29 @@
 import { getItemsByEntity, getItemsByPreviousEntity } from '#controllers/items/lib/items'
 import { dbFactory } from '#db/couchdb/base'
-import { revertItemDocEntity, updateItemDocEntity } from '#models/item'
+import type { EntityUri } from '#types/entity'
 
 const db = await dbFactory('items')
 
-const AfterFn = (viewName, modelFn) => async (fromUri, toUri) => {
-  let items
-  if (viewName === 'byPreviousEntity') {
-    items = await getItemsByPreviousEntity(fromUri)
-  } else {
-    items = await getItemsByEntity(fromUri)
+export async function updateItemsEntityAfterMerge (currentUri: EntityUri, newUri: EntityUri) {
+  const items = await getItemsByEntity(currentUri)
+  for (const item of items) {
+    item.entity = newUri
+    // Keeping track of previous entity URI in case of a revert merge
+    item.previousEntities ??= []
+    item.previousEntities.unshift(currentUri)
   }
-  const updatedItems = items.map(modelFn.bind(null, fromUri, toUri))
-  return db.bulk(updatedItems)
+  return db.bulk(items)
 }
 
-export default {
-  afterMerge: AfterFn('byEntity', updateItemDocEntity),
-  afterRevert: AfterFn('byPreviousEntity', revertItemDocEntity),
+export async function updateItemsEntityAfterMergeRevert (revertedUri: EntityUri) {
+  const items = await getItemsByPreviousEntity(revertedUri)
+  for (const item of items) {
+    item.entity = revertedUri
+    // Keep only the uris associated to that item before the currently reverted merge,
+    // in the rather unlikely case (but seen to happen in prod) were an entity was redirected several times
+    const revertedUriIndex = item.previousEntities.indexOf(revertedUri)
+    item.previousEntities = item.previousEntities.splice(revertedUriIndex + 1)
+    if (item.previousEntities.length === 0) delete item.previousEntities
+  }
+  return db.bulk(items)
 }

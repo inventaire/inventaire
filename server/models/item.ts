@@ -4,7 +4,6 @@ import { assertTypes, assertObjects, assertObject, assertString } from '#lib/uti
 import { arrayIncludes } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import { objectKeys } from '#lib/utils/types'
-import type { EntityUri } from '#types/entity'
 import type { Item } from '#types/item'
 import type { UserId } from '#types/user'
 import itemAttributes, { type UpdatableItemAttributes } from './attributes/item.js'
@@ -105,36 +104,4 @@ export function changeItemDocOwner (transacDoc, item) {
 
 export function itemAllowsTransactions (item) {
   return itemAttributes.allowTransaction.includes(item.transaction)
-}
-
-export function updateItemDocEntity (fromUri: EntityUri, toUri: EntityUri, item: Item) {
-  if (item.entity !== fromUri) {
-    throw newError(`wrong entity uri: expected ${fromUri}, got ${item.entity}`, 500, { fromUri, toUri })
-  }
-
-  item.entity = toUri
-  // Keeping track of previous entity URI in case a rollback is needed
-  item.previousEntities ??= []
-  item.previousEntities.unshift(fromUri)
-
-  return item
-}
-
-export function revertItemDocEntity (fromUri: EntityUri, toUri: EntityUri, item: Item) {
-  item.entity = fromUri
-
-  const { previousEntities } = item
-
-  if (!previousEntities.includes(fromUri)) {
-    const message = `wrong previous entity: expected one of ${previousEntities}, got ${fromUri}`
-    throw newError(message, 500, { fromUri, toUri })
-  }
-
-  const restoredUriIndex = previousEntities.indexOf(fromUri)
-  // Keep only the entities associated to that item before the currently reverted merge,
-  // in the rather unlikely case (but seen to happen in prod) were an entity was redirected several times
-  item.previousEntities = item.previousEntities.splice(restoredUriIndex + 1)
-  if (item.previousEntities.length === 0) delete item.previousEntities
-
-  return item
 }

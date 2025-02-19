@@ -1,5 +1,5 @@
 import { redirectCachedRelations } from '#controllers/entities/lib/temporarily_cache_relations'
-import updateItemEntity from '#controllers/items/lib/update_entity'
+import { updateItemsEntityAfterMerge, updateItemsEntityAfterMergeRevert } from '#controllers/items/lib/update_entity'
 import { updateElementsUrisAfterMerge, updateElementsUrisAfterMergeRevert } from '#controllers/listings/lib/update_element_uri'
 import { radio } from '#lib/radio'
 import type { EntityUri } from '#types/entity'
@@ -22,15 +22,15 @@ export async function propagateRedirection (userAcct: UserAccountUri, fromUri: E
 
 export async function propagateRedirectionToSocialCore (fromUri: EntityUri, toUri: EntityUri) {
   await Promise.all([
-    updateItemEntity.afterMerge(fromUri, toUri),
+    updateItemsEntityAfterMerge(fromUri, toUri),
     updateElementsUrisAfterMerge(fromUri, toUri),
   ])
 }
 
-export async function propagateRedirectionRevertToSocialCore (fromUri: EntityUri, toUri: EntityUri) {
+export async function propagateRedirectionRevertToSocialCore (fromUri: EntityUri) {
   await Promise.all([
-    updateItemEntity.afterRevert(fromUri, toUri),
-    updateElementsUrisAfterMergeRevert(fromUri, toUri),
+    updateItemsEntityAfterMergeRevert(fromUri),
+    updateElementsUrisAfterMergeRevert(fromUri),
   ])
 }
 
