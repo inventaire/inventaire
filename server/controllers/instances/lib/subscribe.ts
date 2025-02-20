@@ -10,5 +10,5 @@ export const eventNames = [
 ] as const
 
 export async function subscribeToCrossInstanceEvent (eventName: EventName, uri: EntityUri) {
-  await signedFederatedRequestAsUser(hookUser, 'post', '/api/instances?action=subscribe', { event: eventName, uri })
+  await signedFederatedRequestAsUser(hookUser, 'post', '/api/instances?action=subscribe', { event: eventName, uris: [ uri ] })
 }

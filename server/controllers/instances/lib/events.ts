@@ -63,7 +63,7 @@ async function getSubscriptions (eventName: EventName, uri: EntityUri) {
 async function notifyInstance (subscription: InstanceSubscription) {
   try {
     const { event: eventName, uri, instance } = subscription
-    await signedFederatedRequestAsUser(hookUser, 'post', `${instance}/api/instances?action=event`, { event: eventName, uri })
+    await signedFederatedRequestAsUser(hookUser, 'post', `${instance}/api/instances?action=events`, { event: eventName, uris: [ uri ] })
     await db.delete(subscription._id, subscription._rev)
   } catch (err) {
     logError(err, 'failed to notify instance')
