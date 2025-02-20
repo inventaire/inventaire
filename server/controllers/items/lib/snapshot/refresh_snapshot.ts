@@ -21,7 +21,7 @@ async function refreshSnapshotFromEntity (changedEntityDoc: InvEntityDoc | Seria
   const ops = await getSnapshotsByType[type](uri)
 
   // In federated mode, items keep a reference to redirected entity uris,
-  // in order to not have to not have to handle the case of merge/revert merge
+  // in order to not have to handle the case of merge/revert merge
   if (federatedMode && redirect) {
     const redirectedOp = ops.find(op => op.key === redirect.to)
     // Overriding the key: the redirect.to snapshot will be updated on its own if needed

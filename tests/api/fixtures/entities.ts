@@ -205,7 +205,13 @@ export function createItemFromEntityUri ({ user, uri, item = {} }: { user?: Awai
   return customAuthReq(user, 'post', '/api/items', { ...item, entity: uri })
 }
 
-export const getRandomInvUri = () => `inv:${getRandomUuid()}` as InvEntityUri
+export function getRandomInvUri () {
+  const randomUuid = getRandomUuid()
+  const suffix = randomUuid.slice(-24)
+  // DX: prefix UUID with "a" to recognize it easily from real ones
+  const recognisableUuid = suffix.padStart(randomUuid.length, 'a')
+  return `inv:${recognisableUuid}` as InvEntityUri
+}
 
 export const someFakeUri = getRandomInvUri()
 
