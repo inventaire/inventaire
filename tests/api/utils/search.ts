@@ -1,6 +1,7 @@
 import { isArray, map } from 'lodash-es'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
 import { waitForElasticsearchInit } from '#db/elasticsearch/init'
+import { getWikidataIndexationQueueLength } from '#db/elasticsearch/wikidata_entities_indexation_queue'
 import { elasticReqOptions, getIndexedDocUrl } from '#lib/elasticsearch'
 import { newError } from '#lib/error/error'
 import { wait } from '#lib/promises'
@@ -26,7 +27,7 @@ interface GetIndexedDocOptions {
   retry?: boolean
   attempt?: number
 }
-export async function getIndexedDoc (index, id, options: GetIndexedDocOptions = {}) {
+export async function getIndexedDoc (index: string, id: string, options: GetIndexedDocOptions = {}) {
   assertString(index)
   assertString(id)
   if (options) assertObject(options)
@@ -39,6 +40,7 @@ export async function getIndexedDoc (index, id, options: GetIndexedDocOptions = 
     if (err.statusCode === 404) {
       if (retry) {
         if (attempt < 5) {
+          await warnOnLongIndexationQueueLength(index)
           await wait(1000)
           return getIndexedDoc(index, id, { attempt: attempt + 1 })
         } else {
@@ -50,6 +52,13 @@ export async function getIndexedDoc (index, id, options: GetIndexedDocOptions = 
     } else {
       throw err
     }
+  }
+}
+
+async function warnOnLongIndexationQueueLength (index: string) {
+  if (index === 'wikidata') {
+    const queueLength = await getWikidataIndexationQueueLength()
+    if (queueLength > 0) warn(`wd indexation job queue length: ${queueLength}`)
   }
 }
 
@@ -147,10 +156,10 @@ export async function customAuthSearch (user, types, search) {
   return results
 }
 
-export async function deindex (index, id) {
+export async function deindex (index: string, id: string) {
   assertString(index)
   assertString(id)
-  const url = `${elasticOrigin}/${index}/_doc/${id}`
+  const url = `${elasticOrigin}/${index}/_doc/${id}` as AbsoluteUrl
   try {
     await rawRequest('delete', url, elasticReqOptions)
     success(url, 'deindexed')
@@ -163,10 +172,10 @@ export async function deindex (index, id) {
   }
 }
 
-export async function indexPlaceholder (index, id) {
+export async function indexPlaceholder (index: string, id: string) {
   assertString(index)
   assertString(id)
-  const url = `${elasticOrigin}/${index}/_doc/${id}`
+  const url = `${elasticOrigin}/${index}/_doc/${id}` as AbsoluteUrl
   await rawRequest('put', url, { body: { testPlaceholder: true }, ...elasticReqOptions })
   success(url, 'placeholder added')
 }

@@ -12,7 +12,12 @@ import { info, logError, warn } from '#lib/utils/logs'
 import config from '#server/config'
 import type { WdEntityId } from '#types/entity'
 
-const { nice } = config
+const { env, nice } = config
+if (env.startsWith('tests') && nice) {
+  // Comment-out to test niceness in tests environment
+  throw new Error('config.nice should be false in tests env, as otherwise it makes tests fails')
+}
+
 const { minReindexationInterval } = config.elasticsearch
 assertNumber(minReindexationInterval)
 
@@ -81,3 +86,5 @@ export function addWdEntityToIndexationQueue (wdId: WdEntityId) {
     logError(newError('invalid wd entity id', 500, { wdId }), 'addWdEntityToIndexationQueue err')
   }
 }
+
+export const getWikidataIndexationQueueLength = wdEntitiesIndexationJobQueue.getQueueLength

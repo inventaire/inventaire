@@ -1,11 +1,12 @@
 import { promisify } from 'node:util'
 import JobQueueServerAndClient from 'level-jobs'
 import JobsQueueClient from 'level-jobs/client.js'
+import { getKeys } from '#db/level/utils'
 import { serverMode } from '#lib/server_mode'
 import { oneMinute } from '#lib/time'
 import { warn, info } from '#lib/utils/logs'
 import config from '#server/config'
-import { leveldbFactory } from './get_sub_db.js'
+import { leveldbFactory, type CustomLevelDb } from './get_sub_db.js'
 
 const levelJobsOptions = {
   maxRetries: 20,
@@ -16,9 +17,11 @@ const levelJobsOptions = {
   },
 }
 
+type Worker = (jobId: string, payload: unknown) => Promise<void>
+
 // always return an object with 'push' and 'pushBatch' function
 // taking a payload and returning a promise
-export function initJobQueue (jobName, worker, maxConcurrency) {
+export function initJobQueue (jobName: string, worker: Worker, maxConcurrency: number) {
   const db = leveldbFactory(`job:${jobName}`, 'utf8')
 
   const run = config.jobs[jobName] && config.jobs[jobName].run
@@ -32,7 +35,7 @@ export function initJobQueue (jobName, worker, maxConcurrency) {
     const depromisifiedWorker = workerDepromisifier(worker)
     const queue = JobQueueServerAndClient(db, depromisifiedWorker, { maxConcurrency, ...levelJobsOptions })
     keepWorkerAwake(queue)
-    return promisifyApi(queue)
+    return promisifyApi(queue, db)
 
   // Otherwise, only push jobs to the queue, let another process run the jobs
   // See https://github.com/pgte/level-jobs#client-isolated-api
@@ -40,18 +43,19 @@ export function initJobQueue (jobName, worker, maxConcurrency) {
   // and let the main instance focus on answering user requests
   } else {
     warn(`${jobName} job in client mode only`)
-    return promisifyApi(JobsQueueClient(db))
+    return promisifyApi(JobsQueueClient(db), db)
   }
 }
 
-function promisifyApi (queue) {
+function promisifyApi (queue, db: CustomLevelDb) {
   // Binding context, see https://nodejs.org/api/util.html#util_util_promisify_original
   queue.push = promisify(queue.push).bind(queue)
   queue.pushBatch = promisify(queue.pushBatch).bind(queue)
+  queue.getQueueLength = getQueueLength.bind(null, db)
   return queue
 }
 
-const workerDepromisifier = workerFn => (jobId, payload, cb) => {
+const workerDepromisifier = (workerFn: Worker) => (jobId, payload, cb) => {
   return workerFn(jobId, payload)
   .then(() => cb())
   .catch(cb)
@@ -67,4 +71,9 @@ function keepWorkerAwake (queue) {
   setInterval(() => {
     queue._work.del('fakekey')
   }, oneMinute)
+}
+
+async function getQueueLength (db: CustomLevelDb) {
+  const keys = await getKeys(db)
+  return keys.length
 }

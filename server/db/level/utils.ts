@@ -1,3 +1,4 @@
+import type { CustomLevelDb } from '#db/level/get_sub_db'
 import { forceArray } from '#lib/utils/base'
 
 export const formatBatchOps = ops => forceArray(ops).map(setDefaultType)
@@ -10,4 +11,18 @@ export const emptyValue = ''
 function setDefaultType (operation) {
   operation.type = operation.type || 'put'
   return operation
+}
+
+export async function getKeys (db: CustomLevelDb) {
+  return getStreamPromise(db.createKeyStream()) as Promise<string[]>
+}
+
+function getStreamPromise (stream) {
+  return new Promise((resolve, reject) => {
+    const results = []
+    return stream
+    .on('data', results.push.bind(results))
+    .on('end', () => resolve(results))
+    .on('error', reject)
+  })
 }

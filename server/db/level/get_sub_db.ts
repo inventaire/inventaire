@@ -13,3 +13,5 @@ export const leveldbFactory = memoize((dbName: string, valueEncoding: ValueEncod
   assertString(valueEncoding)
   return sub(generalDb, dbName, { valueEncoding })
 })
+
+export type CustomLevelDb = ReturnType<typeof leveldbFactory>
