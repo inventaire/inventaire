@@ -9,7 +9,7 @@ import {
 import { createElement } from '#fixtures/listings'
 import { wait } from '#lib/promises'
 import config, { federatedMode } from '#server/config'
-import { getByUri, getByUris, deleteByUris } from '#tests/api/utils/entities'
+import { getByUri, getByUris, deleteByUris, merge } from '#tests/api/utils/entities'
 import { getItemById } from '#tests/api/utils/items'
 import { authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
@@ -218,9 +218,23 @@ describe('entities:delete', () => {
       await createElement({ type: 'author', uri })
       await deleteByUris([ uri ])
       // Trigger the check
-      const updatedWork = await getByUri(uri)
+      const updatedHuman = await getByUri(uri)
       // @ts-expect-error
-      should(updatedWork._meta_type).not.equal('removed:placeholder')
+      should(updatedHuman._meta_type).not.equal('removed:placeholder')
+    })
+
+    it('should recover a deleted human that is the entity of a listing element, after a work merge', async () => {
+      const human = await createHuman()
+      const [ workA, workB ] = await Promise.all([
+        createWorkWithAuthor(human),
+        createWorkWithAuthor(human),
+        createElement({ type: 'author', uri: human.uri }),
+      ])
+      await merge(workA.uri, workB.uri)
+      // Trigger the check
+      const updatedHuman = await getByUri(human.uri)
+      // @ts-expect-error
+      should(updatedHuman._meta_type).not.equal('removed:placeholder')
     })
   })
 })
