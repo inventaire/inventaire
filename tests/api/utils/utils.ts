@@ -1,21 +1,20 @@
 import 'should'
 import { getOrCreateUser, getRefreshedUser, type CustomUserData } from '#fixtures/users'
-import { newError } from '#lib/error/error'
-import { federatedMode } from '#server/config'
+import { remoteEntitiesOrigin } from '#server/config'
+import type { AbsoluteUrl, HttpHeaders, HttpMethod, RelativeUrl } from '#types/common'
 import type { UserRole } from '#types/user'
 import { request, customAuthReq, rawCustomAuthReq } from './request.js'
 import type { ArrayTail } from 'type-fest'
 
 const userPromises = {}
 
-export const getUserGetter = (key: string, role?: UserRole, customData?: CustomUserData) => () => {
-  if (federatedMode && role === 'dataadmin') {
-    throw newError('Tests relying on the dataadmin role are not available in federated mode yet', 500, { role })
+export function getUserGetter (key: string, role?: UserRole, customData?: CustomUserData, origin?: AbsoluteUrl) {
+  return function () {
+    if (userPromises[key] == null) {
+      userPromises[key] = getOrCreateUser(customData, role, origin)
+    }
+    return getRefreshedUser(userPromises[key], origin)
   }
-  if (userPromises[key] == null) {
-    userPromises[key] = getOrCreateUser(customData, role)
-  }
-  return getRefreshedUser(userPromises[key])
 }
 
 export const publicReq = request
@@ -36,11 +35,28 @@ export const getUserA = getUserGetter('a')
 export const getUserB = getUserGetter('b')
 export const getUserC = getUserGetter('c')
 export const getUserId = () => getUser().then(({ _id }) => _id)
-export const getFediversableUser = getUserGetter(null, null, { fediversable: true })
+export const getFediversableUser = getUserGetter(undefined, undefined, { fediversable: true })
 export const getAdminUser = getUserGetter('admin', 'admin')
 export const getDataadminUser = getUserGetter('dataadmin', 'dataadmin')
-export const getDeanonymizedUser = getUserGetter('deanonymized', null, {
+export const getDeanonymizedUser = getUserGetter('deanonymized', undefined, {
   'settings.contributions.anonymize': false,
 })
 
-export type Awaitable <T> = T | Promise<T>
+export const getRemoteInstanceUser = getUserGetter('remote', undefined, undefined, remoteEntitiesOrigin)
+export const getRemoteInstanceAdmin = getUserGetter('remote_admin', 'admin', undefined, remoteEntitiesOrigin)
+export const getRemoteInstanceDataadmin = getUserGetter('remote_admin', 'dataadmin', undefined, remoteEntitiesOrigin)
+
+export function remoteUserAuthReq (method: HttpMethod, endpoint: RelativeUrl, body?: unknown, headers: HttpHeaders = {}) {
+  const url = `${remoteEntitiesOrigin}${endpoint}` as AbsoluteUrl
+  return customAuthReq(getRemoteInstanceUser(), method, url, body, headers)
+}
+
+export function remoteAdminReq (method: HttpMethod, endpoint: RelativeUrl, body?: unknown, headers: HttpHeaders = {}) {
+  const url = `${remoteEntitiesOrigin}${endpoint}` as AbsoluteUrl
+  return customAuthReq(getRemoteInstanceAdmin(), method, url, body, headers)
+}
+
+export function remoteDataadminReq (method: HttpMethod, endpoint: RelativeUrl, body?: unknown, headers: HttpHeaders = {}) {
+  const url = `${remoteEntitiesOrigin}${endpoint}` as AbsoluteUrl
+  return customAuthReq(getRemoteInstanceDataadmin(), method, url, body, headers)
+}

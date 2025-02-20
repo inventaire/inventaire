@@ -1,16 +1,17 @@
 import { flatMap, map, some } from 'lodash-es'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
-import { buildLocalUserAcct } from '#lib/federation/remote_user'
+import type { UserWithAcct } from '#lib/federation/remote_user'
 import { wait } from '#lib/promises'
 import { log } from '#lib/utils/logs'
+import type { EntityUri } from '#types/entity'
 import automergeAuthorWorks from './automerge_author_works.js'
 
-const reconcilerUserAcct = buildLocalUserAcct(hardCodedUsers.reconciler.anonymizableId)
+const reconcilerUser = hardCodedUsers.reconciler
 const longTitleLimit = 12
 
 // Merge if perfect matched of works title and if title is long enough
-export async function validateAndAutomerge (suspectUri, suggestion) {
+export async function validateAndAutomerge (suspectUri: EntityUri, suggestion) {
   const { uri: suggestionUri } = suggestion
   if (!hasConvincingOccurrences(suggestion.occurrences)) {
     return [ suggestion ]
@@ -18,11 +19,11 @@ export async function validateAndAutomerge (suspectUri, suggestion) {
   return automerge(suspectUri, suggestionUri)
 }
 
-export async function automerge (suspectUri, suggestionUri, userAcct = reconcilerUserAcct) {
+export async function automerge (suspectUri: EntityUri, suggestionUri: EntityUri, user: UserWithAcct = reconcilerUser) {
   log({ suspectUri, suggestionUri }, 'automerging')
 
   await mergeEntities({
-    userAcct,
+    user,
     fromUri: suspectUri,
     toUri: suggestionUri,
   })

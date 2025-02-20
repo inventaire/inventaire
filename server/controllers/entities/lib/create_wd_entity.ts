@@ -1,14 +1,13 @@
 import { getClaimValue, getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { getWikidataOAuthCredentials, validateUserHasWikidataOAuth } from '#controllers/entities/lib/wikidata_oauth'
 import { newError } from '#lib/error/error'
-import type { MinimalRemoteUser } from '#lib/federation/remote_user'
+import type { UserWithAcct } from '#lib/federation/remote_user'
 import { mapKeysValues, objectEntries } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
 import { info, log } from '#lib/utils/logs'
 import { relocateQualifierProperties } from '#lib/wikidata/data_model_adapter'
 import wdEdit from '#lib/wikidata/edit'
 import type { EntityUri, EntityValue, ExpandedClaims, InvExpandedPropertyClaims, InvSnakValue, Labels, PropertyUri, Reference, ReferenceProperty, ReferencePropertySnaks, WdEntityId, WdEntityUri, WdPropertyId, InvClaimObject, Descriptions } from '#types/entity'
-import type { User } from '#types/user'
 import { prefixifyWd, unprefixify } from './prefix.js'
 import { getPropertyDatatype } from './properties/properties_values_constraints.js'
 import { validateInvEntity } from './validate_entity.js'
@@ -20,7 +19,7 @@ interface CreateWdEntityParams {
   labels: Labels
   descriptions?: Descriptions
   claims: ExpandedClaims
-  user: User | MinimalRemoteUser
+  user: UserWithAcct
   isAlreadyValidated?: boolean
 }
 

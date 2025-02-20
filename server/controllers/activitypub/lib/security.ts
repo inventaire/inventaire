@@ -10,7 +10,7 @@ import { assertObject } from '#lib/utils/assert_types'
 import { logError, warn } from '#lib/utils/logs'
 import config from '#server/config'
 import type { ActorKeyId } from '#types/activity'
-import type { AbsoluteUrl, HttpHeaders, RelativeUrl } from '#types/common'
+import type { AbsoluteUrl, HttpHeaders, Origin, RelativeUrl } from '#types/common'
 import type { LowerCasedHttpMethod } from '#types/controllers'
 import type { MaybeSignedReq, SignedReq } from '#types/server'
 
@@ -65,8 +65,8 @@ export async function verifySignature (req: MaybeSignedReq) {
     logError(err, 'Signature verification failed: retrying with a refreshed cache')
     await attemptToVerifySignature(req, parsedSignature, true)
   }
-  const { host } = new URL(actorKeyUrl)
-  req.signed = { host }
+  const { host, origin } = new URL(actorKeyUrl)
+  req.signed = { host, origin: origin as Origin }
   return req as SignedReq
 }
 

@@ -12,12 +12,11 @@ import { assertArray, assertObject, assertString } from '#lib/utils/assert_types
 import { objectEntries } from '#lib/utils/base'
 import { Log } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
-import config, { federatedMode } from '#server/config'
+import { federatedMode, remoteEntitiesOrigin } from '#server/config'
 import type { AbsoluteUrl, HttpHeaders } from '#types/common'
 import type { AuthentifiedReq, RemoteUserAuthentifiedReq, Req, Res } from '#types/server'
 import { containers, uploadContainersNames } from './lib/containers.js'
 
-const { remoteEntitiesOrigin } = config.federation
 const streamRequest = remoteEntitiesOrigin?.startsWith('https') ? httpsRequest : httpRequest
 
 const sanitization = {

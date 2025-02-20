@@ -9,13 +9,12 @@ import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { assertString, assertStrings } from '#lib/utils/assert_types'
 import { setHas, someMatch } from '#lib/utils/base'
-import config from '#server/config'
+import config, { remoteEntitiesOrigin } from '#server/config'
 import type { AbsoluteUrl } from '#types/common'
 import entitiesQueryBuilder from './entities_query_builder.js'
 import socialQueryBuilder from './social_query_builder.js'
 
 const { origin: elasticOrigin } = config.elasticsearch
-const { remoteEntitiesOrigin } = config.federation
 const federatedMode = remoteEntitiesOrigin != null
 
 const indexedTypesSet = new Set(indexedTypes)

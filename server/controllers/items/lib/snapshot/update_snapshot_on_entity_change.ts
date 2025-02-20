@@ -26,6 +26,7 @@ export function updateSnapshotOnEntityChange () {
   radio.on('entity:merge', updateSnapshotOnEntityMerge)
   radio.on('entity:revert:merge', lazyRefreshSnapshotFromUri)
   radio.on('wikidata:entity:refreshed', lazyRefreshSnapshotFromEntity)
+  radio.on('entity:changed', lazyRefreshSnapshotFromUri)
 }
 
 // Using the toUri as its the URI the items are using now

@@ -5,12 +5,14 @@ import { views as entitiesViews } from '#db/couchdb/design_docs/entities'
 import { views as entitiesDeduplicateViews } from '#db/couchdb/design_docs/entities_deduplicate'
 import { views as groupsViews } from '#db/couchdb/design_docs/groups'
 import { views as imagesViews } from '#db/couchdb/design_docs/images'
+import { views as instancesSubscriptions } from '#db/couchdb/design_docs/instances_subscriptions'
 import { views as invitedViews } from '#db/couchdb/design_docs/invited'
 import { views as itemsViews } from '#db/couchdb/design_docs/items'
 import { views as listsViews } from '#db/couchdb/design_docs/lists'
 import { views as notificationsViews } from '#db/couchdb/design_docs/notifications'
 import { views as patchesViews } from '#db/couchdb/design_docs/patches'
 import { views as relationsViews } from '#db/couchdb/design_docs/relations'
+import { views as removedPlaceholdersViews } from '#db/couchdb/design_docs/removed_placeholders'
 import { views as shelvesViews } from '#db/couchdb/design_docs/shelves'
 import { views as tasksViews } from '#db/couchdb/design_docs/tasks'
 import { views as transactionsViews } from '#db/couchdb/design_docs/transactions'
@@ -27,6 +29,7 @@ const entitiesRelatedDatabases = {
   entities: {
     entities: entitiesViews,
     entities_deduplicate: entitiesDeduplicateViews,
+    removed_placeholders: removedPlaceholdersViews,
   },
   patches: {
     patches: patchesViews,
@@ -52,6 +55,9 @@ export const databases: Databases = {
   },
   images: {
     images: imagesViews,
+  },
+  instances_subscriptions: {
+    instances_subscriptions: instancesSubscriptions,
   },
   items: {
     items: itemsViews,

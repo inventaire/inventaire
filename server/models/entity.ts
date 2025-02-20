@@ -285,7 +285,7 @@ export function convertEntityDocToPlaceholder (entityDoc: InvEntity) {
   return Object.assign(cloneDeep(entityDoc), { type: 'removed:placeholder' })
 }
 
-export function recoverEntityDocFromPlaceholder (entityDoc: InvEntity) {
+export function recoverEntityDocFromPlaceholder (entityDoc: RemovedPlaceholderEntity) {
   return Object.assign(cloneDeep(entityDoc), { type: 'entity' })
 }
 

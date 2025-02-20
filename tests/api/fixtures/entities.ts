@@ -4,11 +4,12 @@ import wdk from 'wikibase-sdk/wikidata.org'
 import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { isEntityUri } from '#lib/boolean_validations'
-import { sha1 } from '#lib/crypto'
+import { getRandomUuid, sha1 } from '#lib/crypto'
 import { newError } from '#lib/error/error'
 import { isValidIsbn, toIsbn13h } from '#lib/isbn/isbn'
 import { forceArray, objectValues } from '#lib/utils/base'
 import { requireJson } from '#lib/utils/json'
+import { localOrigin } from '#server/config'
 import { getByUri, addClaim, getByUris } from '#tests/api/utils/entities'
 import { customAuthReq, request } from '#tests/api/utils/request'
 import { authReq, getUser } from '#tests/api/utils/utils'
@@ -45,19 +46,25 @@ interface CreateEntityParams {
   labels?: Labels
   claims?: Claims
   user?: AwaitableUserWithCookie
+  origin?: AbsoluteUrl
 }
-export const createEntity = (P31: WdEntityUri, options: CreateEntityOptions = {}) => (params: CreateEntityParams = {}) => {
-  const { canHaveLabels = true, defaultClaims } = options
-  const defaultLabel = P31 === 'wd:Q5' ? humanName() : randomLabel(4)
-  let labels
-  if (canHaveLabels) {
-    labels = params.labels || { en: defaultLabel }
+export function createEntity (P31: WdEntityUri, options: CreateEntityOptions = {}) {
+  return async function (params: CreateEntityParams = {}) {
+    const { canHaveLabels = true, defaultClaims } = options
+    const { origin = localOrigin } = params
+    const defaultLabel = P31 === 'wd:Q5' ? humanName() : randomLabel(4)
+    let labels
+    if (canHaveLabels) {
+      labels = params.labels || { en: defaultLabel }
+    }
+    let claims = params.claims || {}
+    claims['wdt:P31'] = [ P31 ]
+    if (defaultClaims) claims = Object.assign({}, defaultClaims, claims)
+    const user = params.user || getUser()
+    const url = `${origin}/api/entities?action=create` as AbsoluteUrl
+    const entity: SerializedEntity = await customAuthReq(user, 'post', url, { labels, claims })
+    return entity
   }
-  let claims = params.claims || {}
-  claims['wdt:P31'] = [ P31 ]
-  if (defaultClaims) claims = Object.assign({}, defaultClaims, claims)
-  const user = params.user || getUser()
-  return customAuthReq(user, 'post', '/api/entities?action=create', { labels, claims })
 }
 
 export const createHuman = createEntity('wd:Q5')
@@ -198,7 +205,15 @@ export function createItemFromEntityUri ({ user, uri, item = {} }: { user?: Awai
   return customAuthReq(user, 'post', '/api/items', { ...item, entity: uri })
 }
 
-export const someFakeUri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+export function getRandomInvUri () {
+  const randomUuid = getRandomUuid()
+  const suffix = randomUuid.slice(-24)
+  // DX: prefix UUID with "a" to recognize it easily from real ones
+  const recognisableUuid = suffix.padStart(randomUuid.length, 'a')
+  return `inv:${recognisableUuid}` as InvEntityUri
+}
+
+export const someFakeUri = getRandomInvUri()
 
 export const someBnfId = () => `1${Math.random().toString().slice(2, 9)}p`
 

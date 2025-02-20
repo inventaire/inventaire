@@ -14,6 +14,7 @@ import images from './images.js'
 import merge from './merge.js'
 import moveToWikidata from './move_to_wikidata.js'
 import popularity from './popularity.js'
+import recover from './recover.js'
 import resolve from './resolve.js'
 import restoreVersion from './restore_version.js'
 import reverseClaims from './reverse_claims.js'
@@ -51,6 +52,7 @@ const localEntitiesControllersParams = {
       create,
       resolve,
       delete: delet,
+      recover,
     },
   },
 

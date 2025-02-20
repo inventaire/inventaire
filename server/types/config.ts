@@ -1,6 +1,6 @@
 // Inspired by https://blog.goncharov.page/node-config-made-type-safe
 
-import type { AbsoluteUrl, Path, RelativeUrl } from '#types/common'
+import type { AbsoluteUrl, Origin, Path, RelativeUrl } from '#types/common'
 import type { ImagePath } from '#types/image'
 import type { Email, OAuthConsumer, OwnerOnlyOAuthConsumer } from '#types/user'
 import type { ReadonlyDeep } from 'type-fest'
@@ -49,8 +49,8 @@ export type Config = ReadonlyDeep<{
     username: string
     password: string
     suffix?: string | null
-    getOrigin: () => AbsoluteUrl
-    getOriginSansAuth: () => AbsoluteUrl
+    getOrigin: () => Origin
+    getOriginSansAuth: () => Origin
     databaseUrl: (string) => AbsoluteUrl
     name: (string) => string
     follow: {
@@ -73,20 +73,20 @@ export type Config = ReadonlyDeep<{
   }
 
   elasticsearch: {
-    origin: AbsoluteUrl
+    origin: Origin
     selfSignedCertificate: boolean
     updateDelay: number
     minReindexationInterval: number
   }
 
   federation: {
-    remoteEntitiesOrigin: AbsoluteUrl
+    remoteEntitiesOrigin: Origin
   }
 
   // See server/data/dataseed/dataseed.js
   dataseed: {
     enabled: boolean
-    origin: AbsoluteUrl
+    origin: Origin
   }
 
   serveStaticFiles: boolean

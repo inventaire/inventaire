@@ -1,8 +1,9 @@
 import type { UserWithCookie } from '#fixtures/users'
 import type { ContextualizedError } from '#lib/error/format_error'
 import { assertObject, assertString } from '#lib/utils/assert_types'
+import { localOrigin } from '#server/config'
 import { customAuthReq } from '#tests/api/utils/request'
-import type { RelativeUrl } from '#types/common'
+import type { Origin, RelativeUrl } from '#types/common'
 import { getUser } from './utils.js'
 
 export async function getUsersNearPosition (position, user) {
@@ -13,16 +14,16 @@ export async function getUsersNearPosition (position, user) {
   return users
 }
 
-export async function updateUser ({ user, attribute, value }: { user: UserWithCookie, attribute: string, value }) {
+export async function updateUser ({ user, attribute, value, origin = localOrigin }: { user: UserWithCookie, attribute: string, value, origin: Origin }) {
   user = await (user || getUser())
   assertObject(user)
   assertString(attribute)
-  return customAuthReq(user, 'put', '/api/user', { attribute, value })
+  return customAuthReq(user, 'put', `${origin}/api/user`, { attribute, value })
 }
 
 export const deleteUser = user => customAuthReq(user, 'delete', '/api/user')
 
-const getBboxFromPosition = ([ lat, lng ]) => {
+function getBboxFromPosition ([ lat, lng ]) {
   return [ lng - 0.1, lat - 0.1, lng + 0.1, lat + 0.1 ]
 }
 

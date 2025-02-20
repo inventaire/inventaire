@@ -8,14 +8,17 @@ import {
   createHuman,
   createWork,
   createWorkWithAuthor,
+  getSomeWdEditionUriWithoutLocalLayer,
   someImageHash,
+  someRandomImageHash,
 } from '#fixtures/entities'
-import { humanName } from '#fixtures/text'
+import { humanName, randomWords } from '#fixtures/text'
 import { wait } from '#lib/promises'
 import { getRandomString } from '#lib/utils/random_string'
-import config, { federatedMode } from '#server/config'
+import config, { federatedMode, remoteEntitiesOrigin } from '#server/config'
 import 'should'
 import {
+  addClaim,
   getByUri,
   getByUris,
   merge,
@@ -26,7 +29,7 @@ import {
   updateLabel,
 } from '#tests/api/utils/entities'
 import { getItem } from '#tests/api/utils/items'
-import { authReq, getUserB } from '#tests/api/utils/utils'
+import { authReq, getRemoteInstanceAdmin, getRemoteInstanceUser, getUserB } from '#tests/api/utils/utils'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 const debounceDelay = config.snapshotsDebounceTime + 100
@@ -356,5 +359,90 @@ describe('items:snapshot', () => {
     })
 
     // TODO: add series tests
+  })
+
+  describe('federated mode', () => {
+    before(function () { if (!federatedMode) this.skip() })
+
+    it('should update the item snapshot after an update on the remote entities origin', async () => {
+      const titleA = randomWords(3)
+      const titleB = randomWords(3)
+      const { uri } = await createEdition({ title: titleA })
+      const item = await authReq('post', '/api/items', { entity: uri })
+      item.snapshot['entity:title'].should.equal(titleA)
+      await wait(debounceDelay)
+      // Trigger a change directly on the remote instance
+      await updateClaim({
+        origin: remoteEntitiesOrigin,
+        user: getRemoteInstanceUser(),
+        uri,
+        property: 'wdt:P1476',
+        oldValue: titleA,
+        newValue: titleB,
+      })
+      // Trigger an entity revision cache refresh
+      // This supposes that the snapshot cache might stay outdated for as long as the entity itself
+      // has not been re-requested
+      await getByUri(uri)
+      await wait(debounceDelay)
+      const updatedItem = await getItem(item)
+      updatedItem.snapshot['entity:title'].should.equal(titleB)
+    })
+
+    it('should update the item snapshot after a merge on the remote entities origin', async () => {
+      const titleA = randomWords(3)
+      const titleB = randomWords(3)
+      const [ { uri: uriA }, { uri: uriB } ] = await Promise.all([
+        createEdition({ title: titleA }),
+        createEdition({ title: titleB }),
+      ])
+      const item = await authReq('post', '/api/items', { entity: uriA })
+      item.snapshot['entity:title'].should.equal(titleA)
+      await wait(debounceDelay)
+      await merge(uriA, uriB, { user: getRemoteInstanceAdmin(), origin: remoteEntitiesOrigin })
+      // Trigger an entity revision cache refresh
+      await getByUri(uriA)
+      await wait(debounceDelay)
+      const updatedItem = await getItem(item)
+      updatedItem.entity.should.equal(uriB)
+      updatedItem.snapshot['entity:title'].should.equal(titleB)
+    })
+
+    it('should revert items entity uri after a merge revert', async () => {
+      const [ { uri: uriA }, { uri: uriB } ] = await Promise.all([
+        createEdition(),
+        createEdition(),
+      ])
+      const item = await authReq('post', '/api/items', { entity: uriA })
+      await wait(debounceDelay)
+      await merge(uriA, uriB, { user: getRemoteInstanceAdmin(), origin: remoteEntitiesOrigin })
+      // Trigger an entity revision cache refresh
+      await getByUri(uriA)
+      await wait(debounceDelay)
+      const updatedItem = await getItem(item)
+      updatedItem.entity.should.equal(uriB)
+      await revertMerge(uriA, { user: getRemoteInstanceAdmin(), origin: remoteEntitiesOrigin })
+      await wait(debounceDelay)
+      const reupdatedItem = await getItem(item)
+      reupdatedItem.entity.should.equal(uriA)
+    })
+
+    it('should update the item snapshot after an update on the remote layer', async () => {
+      const uri = await getSomeWdEditionUriWithoutLocalLayer()
+      const item = await authReq('post', '/api/items', { entity: uri })
+      const imageHash = someRandomImageHash()
+      await addClaim({
+        origin: remoteEntitiesOrigin,
+        user: getRemoteInstanceUser(),
+        uri,
+        property: 'invp:P2',
+        value: imageHash,
+      })
+      // Trigger an entity revision cache refresh
+      await getByUri(uri)
+      await wait(debounceDelay)
+      const updatedItem = await getItem(item)
+      updatedItem.snapshot['entity:image'].should.equal(`/img/entities/${imageHash}`)
+    })
   })
 })

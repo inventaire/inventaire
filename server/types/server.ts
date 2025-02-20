@@ -1,5 +1,5 @@
 import type { MinimalRemoteUser } from '#lib/federation/remote_user'
-import type { RelativeUrl, Host } from '#types/common'
+import type { RelativeUrl, Host, Origin } from '#types/common'
 import type { User, UserId } from '#types/user'
 import type Express from 'express'
 import type { SetOptional } from 'type-fest'
@@ -14,6 +14,7 @@ export type UserAccountUri = `${UserId}@${Host}`
 export interface SignedReq extends Express.Request {
   signed: {
     host: Host
+    origin: Origin
   }
   mute?: boolean
 }

@@ -18,6 +18,7 @@ import i18n from '#controllers/i18n'
 import images from '#controllers/images/images'
 import localFsMediaStorage from '#controllers/images/local_fs_media_storage'
 import resizeImages from '#controllers/images/resize'
+import instances from '#controllers/instances/instances'
 import invitations from '#controllers/invitations/invitations'
 import items from '#controllers/items/items'
 import listings from '#controllers/listings/listings'
@@ -47,6 +48,7 @@ addRoute('api/feedback', feedback)
 addRoute('api/feeds', feeds)
 addRoute('api/groups', groups)
 addRoute('api/images', images)
+addRoute('api/instances', instances)
 addRoute('api/invitations', invitations)
 addRoute('api/items', items)
 addRoute('api/lists', listings)

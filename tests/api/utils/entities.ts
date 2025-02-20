@@ -6,16 +6,18 @@ import { isInvEntityId, isNonEmptyArray } from '#lib/boolean_validations'
 import { assertStrings, assertString } from '#lib/utils/assert_types'
 import { forceArray, objectValues } from '#lib/utils/base'
 import { buildUrl } from '#lib/utils/url'
+import { federatedMode, localOrigin, remoteEntitiesOrigin } from '#server/config'
 import { customAuthReq } from '#tests/api/utils/request'
 import { waitForIndexation } from '#tests/api/utils/search'
+import type { AbsoluteUrl, Url } from '#types/common'
 import type { EntityUri, ExpandedSerializedEntitiesByUris, InvClaimValue, InvEntityId, PropertyUri, SerializedEntitiesByUris, SerializedEntity } from '#types/entity'
 import type { PatchId } from '#types/patch'
 import { getIndexedDoc } from './search.js'
-import { publicReq, dataadminReq, adminReq, getDataadminUser, getUser } from './utils.js'
+import { publicReq, adminReq, getDataadminUser, getUser, getRemoteInstanceDataadmin } from './utils.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
-export function getByUris (uris: EntityUri[], relatives?: PropertyUri[], refresh?: boolean) {
-  uris = forceArray(uris)
+export function getByUris (uris: EntityUri | EntityUri[], relatives?: PropertyUri[], refresh?: boolean) {
+  uris = forceArray<EntityUri>(uris)
   assertStrings(uris)
   const url = buildUrl('/api/entities', {
     action: 'by-uris',
@@ -68,10 +70,15 @@ export async function findOrIndexEntities (uris: EntityUri[], index = 'wikidata'
 
 export const parseLabel = entity => Object.values(entity.labels)[0]
 
-export function deleteByUris (uris: EntityUri[], options: { user?: AwaitableUserWithCookie } = {}) {
+interface UserRequestOptions {
+  user?: AwaitableUserWithCookie
+  origin?: AbsoluteUrl
+}
+
+export function deleteByUris (uris: EntityUri[], options: UserRequestOptions = {}) {
   if (uris.length === 0) return
-  const user = options.user || getDataadminUser()
-  return customAuthReq(user, 'post', '/api/entities?action=delete', { uris })
+  const { url, user } = parseDataadminRequestOptions('/api/entities?action=delete', options)
+  return customAuthReq(user, 'post', url, { uris })
 }
 
 export async function getReverseClaims (property: PropertyUri, value: InvClaimValue) {
@@ -85,25 +92,33 @@ export async function deleteByExternalId (property: PropertyUri, externalId: str
   return deleteByUris(uris)
 }
 
-export function merge (fromUri: EntityUri, toUri: EntityUri, options: { user?: AwaitableUserWithCookie } = {}) {
+export function merge (fromUri: EntityUri, toUri: EntityUri, options: UserRequestOptions = {}) {
   assertString(fromUri)
   assertString(toUri)
   fromUri = normalizeUri(fromUri)
   toUri = normalizeUri(toUri)
-  const user = options.user || getDataadminUser()
-  return customAuthReq(user, 'put', '/api/entities?action=merge', { from: fromUri, to: toUri })
+  const { url, user } = parseDataadminRequestOptions('/api/entities?action=merge', options)
+  return customAuthReq(user, 'put', url, { from: fromUri, to: toUri })
 }
 
-export function revertMerge (fromUri: EntityUri) {
+function parseDataadminRequestOptions (url: Url, options: UserRequestOptions) {
+  const user = options.user || (federatedMode ? getRemoteInstanceDataadmin() : getDataadminUser())
+  const origin = options.origin || (federatedMode ? remoteEntitiesOrigin : localOrigin)
+  url = `${origin}${url}` as AbsoluteUrl
+  return { url, user, origin }
+}
+
+export function revertMerge (fromUri: EntityUri, options: UserRequestOptions = {}) {
   assertString(fromUri)
   fromUri = normalizeUri(fromUri)
-  return dataadminReq('put', '/api/entities?action=revert-merge', { from: fromUri })
+  const { url, user } = parseDataadminRequestOptions('/api/entities?action=revert-merge', options)
+  return customAuthReq(user, 'put', url, { from: fromUri })
 }
 
-export function getHistory (entityId: InvEntityId) {
+export async function getHistory (entityId: InvEntityId) {
   entityId = entityId.replace('inv:', '')
-  return adminReq('get', `/api/entities?action=history&id=${entityId}`)
-  .then(({ patches }) => patches)
+  const { patches } = await adminReq('get', `/api/entities?action=history&id=${entityId}`)
+  return patches
 }
 
 export function updateLabel ({ uri, lang, value, user }: { uri: EntityUri, lang: WikimediaLanguageCode, value: string, user?: AwaitableUserWithCookie }) {
@@ -124,22 +139,24 @@ interface UpdateClaimParams {
   oldValue?: InvClaimValue
   newValue?: InvClaimValue
   user?: AwaitableUserWithCookie
+  origin?: AbsoluteUrl
 }
-export function updateClaim ({ uri, property, oldValue, newValue, user }: UpdateClaimParams) {
+export function updateClaim ({ uri, property, oldValue, newValue, user, origin }: UpdateClaimParams) {
   uri = normalizeUri(uri)
-  user = user || getUser()
+  user ??= getUser()
+  origin ??= localOrigin
   const body = { uri, property }
   if (oldValue) body['old-value'] = oldValue
   if (newValue) body['new-value'] = newValue
-  return customAuthReq(user, 'put', '/api/entities?action=update-claim', body)
+  return customAuthReq(user, 'put', `${origin}/api/entities?action=update-claim`, body)
 }
 
-export function addClaim ({ user, uri, property, value }: Pick<UpdateClaimParams, 'user' | 'uri' | 'property'> & { value: UpdateClaimParams['newValue'] }) {
-  return updateClaim({ user, uri, property, newValue: value })
+export function addClaim ({ user, origin, uri, property, value }: Pick<UpdateClaimParams, 'user' | 'origin' | 'uri' | 'property'> & { value: UpdateClaimParams['newValue'] }) {
+  return updateClaim({ user, origin, uri, property, newValue: value })
 }
 
-export function removeClaim ({ user, uri, property, value }: Pick<UpdateClaimParams, 'user' | 'uri' | 'property'> & { value: UpdateClaimParams['oldValue'] }) {
-  return updateClaim({ user, uri, property, oldValue: value })
+export function removeClaim ({ user, origin, uri, property, value }: Pick<UpdateClaimParams, 'user' | 'origin' | 'uri' | 'property'> & { value: UpdateClaimParams['oldValue'] }) {
+  return updateClaim({ user, origin, uri, property, oldValue: value })
 }
 
 export function getRefreshedPopularityByUris (uris: EntityUri[]) {

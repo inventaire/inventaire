@@ -6,9 +6,10 @@ import {
   createEdition,
   createEditionWithIsbn,
 } from '#fixtures/entities'
+import { createElement } from '#fixtures/listings'
 import { wait } from '#lib/promises'
 import config, { federatedMode } from '#server/config'
-import { getByUri, getByUris, deleteByUris } from '#tests/api/utils/entities'
+import { getByUri, getByUris, deleteByUris, merge } from '#tests/api/utils/entities'
 import { getItemById } from '#tests/api/utils/items'
 import { authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
@@ -36,6 +37,9 @@ describe('entities:delete', () => {
   })
 
   it('should reject non-inv URIs', async function () {
+    // `deleteByUris` is directly executed on the primary instance,
+    // so running this test in federatedMode is just duplicating tests
+    // Same goes for following skipped tests
     if (federatedMode) this.skip()
     await deleteByUris([ 'wd:Q535' ])
     .then(shouldNotBeCalled)
@@ -136,14 +140,15 @@ describe('entities:delete', () => {
     })
   })
 
-  it('should remove deleted entities from items snapshot', async function () {
-    if (federatedMode) this.skip()
+  it('should remove deleted entities from items snapshot', async () => {
     const author = await createHuman()
     const work = await createWorkWithAuthor(author)
     const item = await authReq('post', '/api/items', { entity: work.uri })
     item.snapshot['entity:title'].should.equal(work.labels.en)
     item.snapshot['entity:authors'].should.equal(author.labels.en)
     await deleteByUris([ author.uri ])
+    // Trigger the entity revision refresh
+    if (federatedMode) await getByUri(work.uri)
     await wait(debounceDelay)
     const updatedItem = await getItemById(item._id)
     updatedItem.snapshot['entity:title'].should.equal(work.labels.en)
@@ -181,6 +186,55 @@ describe('entities:delete', () => {
     .catch(err => {
       err.body.status_verbose.should.equal("entities that are used by an item can't be removed")
       err.statusCode.should.equal(403)
+    })
+  })
+
+  describe('federated mode', () => {
+    before(function () { if (!federatedMode) this.skip() })
+
+    it('should recover a deleted work that is the entity of an item', async () => {
+      const work = await createWork()
+      await authReq('post', '/api/items', { entity: work.uri })
+      await deleteByUris([ work.uri ])
+      // Trigger the check
+      const updatedWork = await getByUri(work.uri)
+      // @ts-expect-error
+      should(updatedWork._meta_type).not.equal('removed:placeholder')
+    })
+
+    it('should recover a deleted edition that is the entity of an item', async () => {
+      const { invUri, uri } = await createEditionWithIsbn()
+      await authReq('post', '/api/items', { entity: uri })
+      // Using the inv URI, as the isbn one would be rejected
+      await deleteByUris([ invUri ])
+      // Trigger the check
+      const updatedEdition = await getByUri(uri)
+      // @ts-expect-error
+      should(updatedEdition._meta_type).not.equal('removed:placeholder')
+    })
+
+    it('should recover a deleted human that is the entity of a listing element', async () => {
+      const { uri } = await createHuman()
+      await createElement({ type: 'author', uri })
+      await deleteByUris([ uri ])
+      // Trigger the check
+      const updatedHuman = await getByUri(uri)
+      // @ts-expect-error
+      should(updatedHuman._meta_type).not.equal('removed:placeholder')
+    })
+
+    it('should recover a deleted human that is the entity of a listing element, after a work merge', async () => {
+      const human = await createHuman()
+      const [ workA, workB ] = await Promise.all([
+        createWorkWithAuthor(human),
+        createWorkWithAuthor(human),
+        createElement({ type: 'author', uri: human.uri }),
+      ])
+      await merge(workA.uri, workB.uri)
+      // Trigger the check
+      const updatedHuman = await getByUri(human.uri)
+      // @ts-expect-error
+      should(updatedHuman._meta_type).not.equal('removed:placeholder')
     })
   })
 })

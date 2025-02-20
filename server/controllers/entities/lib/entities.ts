@@ -6,14 +6,14 @@ import { workAuthorRelationsProperties } from '#controllers/entities/lib/propert
 import { getReverseClaims } from '#controllers/entities/lib/reverse_claims'
 import { dbFactory } from '#db/couchdb/base'
 import { mapDoc } from '#lib/couch'
-import { newError } from '#lib/error/error'
+import { addErrorContext, newError } from '#lib/error/error'
 import { getUrlFromImageHash } from '#lib/images'
 import { toIsbn13h } from '#lib/isbn/isbn'
 import { emit } from '#lib/radio'
 import { assertString } from '#lib/utils/assert_types'
 import { beforeEntityDocSave } from '#models/entity'
 import { federatedMode } from '#server/config'
-import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity, Isbn, InvClaimValue, SerializedEntity, WdEntityId, WdEntityUri, EntityType, Claims, NewInvEntity } from '#types/entity'
+import type { EntityUri, InvEntityDoc, EntityValue, PropertyUri, InvEntity, Isbn, InvClaimValue, SerializedEntity, WdEntityId, WdEntityUri, EntityType, Claims, NewInvEntity, RemovedPlaceholderEntity } from '#types/entity'
 import type { EntityImagePath, ImageHash } from '#types/image'
 import type { BatchId, PatchContext } from '#types/patch'
 import type { UserAccountUri } from '#types/server'
@@ -23,6 +23,7 @@ import { validateProperty } from './properties/validations.js'
 import type { DocumentViewResponse } from 'blue-cot/types/nano.js'
 
 const db = await dbFactory('entities')
+const removedPlaceholdersDb = await dbFactory('entities', 'removed_placeholders')
 
 export const getEntityById = db.get<InvEntityDoc>
 export const getEntitiesByIds = db.byIds<InvEntityDoc>
@@ -33,6 +34,13 @@ export function getInvEntitiesByIsbns (isbns: Isbn[]) {
     .filter(identity)
     .map(isbn => [ 'wdt:P212', isbn ])
   return db.getDocsByViewKeys<InvEntity>('byClaim', keys)
+}
+
+export function getRemovedPlaceholdersByIsbns (isbns: Isbn[]) {
+  const keys = isbns
+    .map(toIsbn13h)
+    .filter(identity)
+  return removedPlaceholdersDb.getDocsByViewKeys<RemovedPlaceholderEntity>('byIsbn13', keys)
 }
 
 export async function getInvEntityByIsbn (isbn: Isbn) {
@@ -121,10 +129,15 @@ export async function putInvEntityUpdate <T extends InvEntityDoc = InvEntity> (p
   // It is to the consumers responsability to check if there is an update:
   // empty patches at this stage will throw 500 errors
   let docAfterUpdate
-  if (create === true) {
-    docAfterUpdate = await db.postAndReturn(updatedDoc)
-  } else {
-    docAfterUpdate = await db.putAndReturn(updatedDoc)
+  try {
+    if (create === true) {
+      docAfterUpdate = await db.postAndReturn(updatedDoc)
+    } else {
+      docAfterUpdate = await db.putAndReturn(updatedDoc)
+    }
+  } catch (err) {
+    addErrorContext(err, { currentDoc, updatedDoc, context })
+    throw err
   }
 
   try {

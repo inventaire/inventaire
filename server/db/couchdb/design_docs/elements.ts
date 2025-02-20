@@ -3,9 +3,18 @@ import type { Views } from '#types/couchdb'
 import type { ListingElement } from '#types/element'
 
 export const views: Views<ListingElement> = {
-  byEntities: {
+  byEntity: {
     map: doc => {
       if (doc.uri != null) emit(doc.uri, null)
+    },
+  },
+  byPreviousEntity: {
+    map: doc => {
+      if (doc.previousUris != null) {
+        for (const uri of doc.previousUris) {
+          emit(uri, null)
+        }
+      }
     },
   },
   byListAndEntity: {
@@ -13,7 +22,7 @@ export const views: Views<ListingElement> = {
       emit([ doc.list, doc.uri ], null)
     },
   },
-  byListings: {
+  byListing: {
     map: doc => {
       if (doc.uri != null) emit(doc.list, null)
     },

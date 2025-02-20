@@ -27,6 +27,7 @@ export interface ContextualizedError extends Error {
   forwardedFrom?: AbsoluteUrl
   url?: Url
   host?: Host
+  retryProxiedRequest?: boolean
 }
 
 export function formatContextualizedError (err: ContextualizedError, filter: number | string, context?: ErrorContext) {

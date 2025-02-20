@@ -1,4 +1,6 @@
+import { parseReqLocalOrRemoteUser } from '#lib/federation/remote_user'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
+import type { AuthentifiedReq, RemoteUserAuthentifiedReq } from '#types/server'
 import deduplicateWork from './lib/deduplicate_works.js'
 
 const sanitization = {
@@ -6,8 +8,9 @@ const sanitization = {
   isbn: {},
 }
 
-async function controller ({ uri, isbn, reqUserAcct }: SanitizedParameters) {
-  const tasks = await deduplicateWork(uri, isbn, reqUserAcct)
+async function controller ({ uri, isbn }: SanitizedParameters, req: AuthentifiedReq | RemoteUserAuthentifiedReq) {
+  const user = parseReqLocalOrRemoteUser(req)
+  const tasks = await deduplicateWork(uri, isbn, user)
   return {
     tasks: (tasks || []).flat(),
   }

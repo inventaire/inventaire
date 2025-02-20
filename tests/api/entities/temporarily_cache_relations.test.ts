@@ -2,7 +2,7 @@ import 'should'
 import { identity, map } from 'lodash-es'
 import entitiesRelationsTemporaryCache from '#controllers/entities/lib/entities_relations_temporary_cache'
 import { cacheEntityRelations, getCachedRelations, redirectCachedRelations } from '#controllers/entities/lib/temporarily_cache_relations'
-import { createWork, createWorkWithAuthor, createWorkWithSerie, someFakeUri } from '#fixtures/entities'
+import { createWork, createWorkWithAuthor, createWorkWithSerie, getRandomInvUri } from '#fixtures/entities'
 import { wait } from '#lib/promises'
 import { federatedMode } from '#server/config'
 import { addClaim, merge } from '#tests/api/utils/entities'
@@ -88,9 +88,10 @@ describe('temporarily cache relations', () => {
   it('should find a claim subject when the value has been redirected', async () => {
     const redirectedAuthorUri = 'wd:Q1'
     const canonicalAuthorUri = 'wd:Q2'
-    await entitiesRelationsTemporaryCache.set(someFakeUri, 'wdt:P50', redirectedAuthorUri)
+    const uri = getRandomInvUri()
+    await entitiesRelationsTemporaryCache.set(uri, 'wdt:P50', redirectedAuthorUri)
     await redirectCachedRelations(redirectedAuthorUri, canonicalAuthorUri)
     const subjectsUris = await entitiesRelationsTemporaryCache.get('wdt:P50', canonicalAuthorUri)
-    subjectsUris.should.containEql(someFakeUri)
+    subjectsUris.should.containEql(uri)
   })
 })

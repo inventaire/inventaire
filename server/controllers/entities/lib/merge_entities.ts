@@ -1,17 +1,16 @@
 import { cloneDeep, isEqual } from 'lodash-es'
 import { getEntitiesByIds, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { newError } from '#lib/error/error'
+import type { UserWithAcct } from '#lib/federation/remote_user'
 import { emit } from '#lib/radio'
-import { assertStrings } from '#lib/utils/assert_types'
 import { info } from '#lib/utils/logs'
 import { mergeEntitiesDocs, preventRedirectionEdit } from '#models/entity'
 import type { EntityUri, InvEntityId } from '#types/entity'
 import type { PatchContext } from '#types/patch'
-import type { UserAccountUri } from '#types/server'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
 import { turnIntoRedirectionOrLocalLayer } from './turn_into_redirection.js'
 
-export default async function ({ userAcct, fromUri, toUri, context }: { userAcct: UserAccountUri, fromUri: EntityUri, toUri: EntityUri, context?: PatchContext }) {
+export default async function ({ user, fromUri, toUri, context }: { user: UserWithAcct, fromUri: EntityUri, toUri: EntityUri, context?: PatchContext }) {
   let [ fromPrefix, fromId ] = fromUri.split(':')
   let [ toPrefix, toId ] = toUri.split(':')
 
@@ -26,18 +25,16 @@ export default async function ({ userAcct, fromUri, toUri, context }: { userAcct
 
   if (toPrefix === 'wd') {
     // no merge to do for Wikidata entities, simply creating a redirection or a local layer
-    await turnIntoRedirectionOrLocalLayer({ userAcct, fromId, toUri, context })
+    await turnIntoRedirectionOrLocalLayer({ user, fromId, toUri, context })
   } else {
     // TODO: invert fromId and toId if the merged entity is more popular
     // to reduce the amount of documents that need to be updated
-    await mergeInvEntities(userAcct, fromId, toId)
+    await mergeInvEntities(user, fromId, toId)
   }
   await emit('entity:merge', fromUri, toUri)
 }
 
-async function mergeInvEntities (userAcct: UserAccountUri, fromId: InvEntityId, toId: InvEntityId) {
-  assertStrings([ userAcct, fromId, toId ])
-
+async function mergeInvEntities (user: UserWithAcct, fromId: InvEntityId, toId: InvEntityId) {
   // Fetching non-formmatted docs
   const [ fromEntityDoc, toEntityDoc ] = await getEntitiesByIds([ fromId, toId ])
   preventRedirectionEdit(fromEntityDoc)
@@ -69,7 +66,7 @@ async function mergeInvEntities (userAcct: UserAccountUri, fromId: InvEntityId, 
   // as it will throw an 'empty patch' error
   if (!isEqual(toEntityDocBeforeMerge, toEntityDocAfterMerge)) {
     await putInvEntityUpdate({
-      userAcct,
+      userAcct: user.acct,
       currentDoc: toEntityDocBeforeMerge,
       updatedDoc: toEntityDocAfterMerge,
       context: { mergeFrom: `inv:${fromId}` },
@@ -79,5 +76,5 @@ async function mergeInvEntities (userAcct: UserAccountUri, fromId: InvEntityId, 
   // Refresh the URI in case an ISBN was transfered and the URI changed
   const toUri = getInvEntityCanonicalUri(toEntityDocAfterMerge)
 
-  return turnIntoRedirectionOrLocalLayer({ userAcct, fromId, toUri, previousToUri })
+  return turnIntoRedirectionOrLocalLayer({ user, fromId, toUri, previousToUri })
 }

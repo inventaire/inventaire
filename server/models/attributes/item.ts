@@ -33,7 +33,7 @@ const notUpdatable = [
   'history',
 
   // Updated as side effects of entity redirections
-  'previousEntity',
+  'previousEntities',
 ]
 
 const privat = [
@@ -76,7 +76,7 @@ const itemAttributes = {
   },
   snapshot: itemSnapshotAttributes,
   notIndexed: [
-    'previousEntity',
+    'previousEntities',
     'notes',
   ],
 }

@@ -11,12 +11,11 @@ import {
   getSomeRemoteEditionWithALocalImage,
 } from '#fixtures/entities'
 import { fixedEncodeURIComponent } from '#lib/utils/url'
-import config, { federatedMode, publicOrigin } from '#server/config'
+import { federatedMode, publicOrigin, remoteEntitiesOrigin } from '#server/config'
 import { rawRequest } from '#tests/api/utils/request'
 import { publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
-const { remoteEntitiesOrigin } = config.federation
 const encodedCommonsUrlChunk = fixedEncodeURIComponent('https://commons.wikimedia.org/wiki/Special:FilePath/')
 
 describe('entities:images', () => {

@@ -1,22 +1,25 @@
 import 'should'
 import { randomBytes } from 'node:crypto'
 import { isPlainObject, random, round } from 'lodash-es'
+import { red } from 'tiny-chalk'
 import { addUserRole } from '#controllers/user/lib/user'
 import { getSomeEmail, getSomeUsername } from '#fixtures/text'
 import { getRandomUuid } from '#lib/crypto'
 import { assertString } from '#lib/utils/assert_types'
+import { logError, success } from '#lib/utils/logs'
 import { getRandomString } from '#lib/utils/random_string'
-import { localOrigin } from '#server/config'
+import { shellExec } from '#scripts/scripts_utils'
+import { federatedMode, localOrigin } from '#server/config'
 import { makeFriends } from '#tests/api/utils/relations'
 import { request, rawRequest } from '#tests/api/utils/request'
+import type { Awaitable } from '#tests/api/utils/types'
 import { deleteUser } from '#tests/api/utils/users'
-import type { Awaitable } from '#tests/api/utils/utils'
-import type { LatLng } from '#types/common'
-import type { User, UserRole } from '#types/user'
+import type { LatLng, Origin } from '#types/common'
+import type { User, UserId, UserRole } from '#types/user'
 
 export type CustomUserData = Record<string, string | number | boolean | number[]>
 
-const authEndpoint = `${localOrigin}/api/auth`
+const authEndpoint = '/api/auth'
 
 let getUser, updateUser
 async function importCircularDependencies () {
@@ -26,13 +29,17 @@ async function importCircularDependencies () {
 setImmediate(importCircularDependencies)
 
 const connect = (endpoint, userData) => rawRequest('post', endpoint, { body: userData })
-const _signup = userData => connect(`${authEndpoint}?action=signup`, userData)
-async function loginOrSignup (userData) {
+
+function _signup (userData, origin: Origin = localOrigin) {
+  return connect(`${origin}${authEndpoint}?action=signup`, userData)
+}
+
+async function loginOrSignup (userData, origin = localOrigin) {
   try {
-    return await connect(`${authEndpoint}?action=login`, userData)
+    return await connect(`${origin}${authEndpoint}?action=login`, userData)
   } catch (err) {
     if (err.statusCode !== 401) throw err
-    return _signup(userData)
+    return _signup(userData, origin)
   }
 }
 
@@ -44,7 +51,7 @@ export function signup (email) {
   })
 }
 
-async function _getOrCreateUser ({ customData = {}, mayReuseExistingUser, role }: { customData: CustomUserData, mayReuseExistingUser?: boolean, role?: UserRole }) {
+async function _getOrCreateUser ({ customData = {}, mayReuseExistingUser, role, origin }: { customData: CustomUserData, mayReuseExistingUser?: boolean, role?: UserRole, origin?: Origin }) {
   const username = customData.username || createUsername()
   const userData = {
     username,
@@ -54,19 +61,37 @@ async function _getOrCreateUser ({ customData = {}, mayReuseExistingUser, role }
   }
   let cookie
   if (mayReuseExistingUser) {
-    cookie = await loginOrSignup(userData).then(parseCookie)
+    cookie = await loginOrSignup(userData, origin).then(parseCookie)
   } else {
-    cookie = await _signup(userData).then(parseCookie)
+    cookie = await _signup(userData, origin).then(parseCookie)
   }
   assertString(cookie)
-  const user = await getUserWithCookie(cookie)
-  await setCustomData(user, customData)
-  if (role) await addUserRole(user._id, role)
-  return getUserWithCookie(cookie)
+  const user = await getUserWithCookie(cookie, origin)
+  await setCustomData(user, customData, origin)
+  if (role) {
+    await addTestUserRole(user._id, role)
+  }
+  return getUserWithCookie(cookie, origin)
 }
 
-export function getOrCreateUser (customData: CustomUserData, role: UserRole) {
-  return _getOrCreateUser({ customData, role, mayReuseExistingUser: true })
+async function addTestUserRole (userId: UserId, role: UserRole) {
+  if (federatedMode) {
+    // Use a sub-process to use be able to override NODE_ENV and NODE_APP_INSTANCE to access the associated config
+    try {
+      const { stderr } = await shellExec(`export NODE_ENV=tests-api NODE_APP_INSTANCE=server; npm run db-actions:update-user-role ${userId} add ${role}`)
+      if (stderr) console.log(red('addTestUserRole stderr ###'), stderr, red('###'))
+      else success(`added role ${role} to ${userId}`)
+    } catch (err) {
+      logError(err)
+      throw err
+    }
+  } else {
+    await addUserRole(userId, role)
+  }
+}
+
+export function getOrCreateUser (customData: CustomUserData, role: UserRole, origin?: Origin) {
+  return _getOrCreateUser({ customData, role, mayReuseExistingUser: true, origin })
 }
 
 export function createUser (customData: CustomUserData = {}) {
@@ -75,23 +100,25 @@ export function createUser (customData: CustomUserData = {}) {
 
 export interface UserWithCookie extends User {
   cookie: string
+  origin: Origin
 }
 
 export type AwaitableUserWithCookie = Awaitable<UserWithCookie>
 
-export async function getUserWithCookie (cookie: string) {
-  const user = await request('get', '/api/user', null, { cookie })
+export async function getUserWithCookie (cookie: string, origin: Origin = localOrigin) {
+  const user = await request('get', `${origin}/api/user`, null, { cookie })
   user.cookie = cookie
+  user.origin = origin
   assertString(user.cookie)
   return user as UserWithCookie
 }
 
-export async function getRefreshedUser (user: AwaitableUserWithCookie) {
+export async function getRefreshedUser (user: AwaitableUserWithCookie, origin?: Origin) {
   // Allow to pass either a user doc or a user promise
   user = await user
   // Get the up-to-date user doc while keeping the cookie
   // set by tests/api/fixtures/users
-  return getUserWithCookie(user.cookie)
+  return getUserWithCookie(user.cookie, origin)
 }
 
 export const createUsername = () => getSomeUsername()
@@ -126,7 +153,7 @@ export async function getTwoFriends () {
 
 const parseCookie = res => res.headers['set-cookie']
 
-async function setCustomData (user: UserWithCookie, customData: CustomUserData) {
+async function setCustomData (user: UserWithCookie, customData: CustomUserData, origin: Origin = localOrigin) {
   delete customData.username
   delete customData.password
   for (const attribute in customData) {
@@ -135,7 +162,7 @@ async function setCustomData (user: UserWithCookie, customData: CustomUserData) 
       // ex: 'settings.contributions.anonymize': false
       throw new Error('use object path syntax')
     }
-    await updateUser({ user, attribute, value })
+    await updateUser({ user, attribute, value, origin })
   }
 }
 

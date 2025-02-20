@@ -27,7 +27,7 @@ import { getOriginalLang } from '#lib/wikidata/get_original_lang'
 import type { ExtendedEntityType, ExpandedSerializedWdEntity, SerializedWdEntity, WdEntityId, WdEntityUri, InvEntity, SimplifiedSitelinks, EntityUri } from '#types/entity'
 import { addImageData } from './add_image_data.js'
 import { getWdEntityType } from './get_entity_type.js'
-import propagateRedirection from './propagate_redirection.js'
+import { propagateRedirection } from './propagate_redirection.js'
 
 let reindexWdEntity
 async function importCircularDependencies () {
@@ -97,6 +97,7 @@ function aggregateWdEntityLayers (wdId: WdEntityId, remoteEntity: SerializedWdEn
 
 function runPostLayerAggregationFormatting (remoteEntity: SerializedWdEntity, localEntityLayer: InvEntity) {
   remoteEntity.invId = localEntityLayer._id
+  remoteEntity.invRev = localEntityLayer._rev
   if (localEntityLayer.claims['invp:P2'] != null) {
     setEntityImageFromImageHashClaims(remoteEntity)
   }

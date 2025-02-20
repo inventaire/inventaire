@@ -4,12 +4,11 @@ import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
 import { getEntityNormalizedTerms } from '#controllers/entities/lib/terms_normalization'
 import { hardCodedUsers } from '#db/couchdb/hard_coded_documents'
-import { buildLocalUserAcct } from '#lib/federation/remote_user'
 import { someMatch } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import type { EntityUri } from '#types/entity'
 
-const reconcilerUserAcct = buildLocalUserAcct(hardCodedUsers.reconciler.anonymizableId)
+const reconcilerUser = hardCodedUsers.reconciler
 
 export default function (authorUri: EntityUri) {
   return getAuthorWorksByDomain(authorUri)
@@ -68,7 +67,7 @@ const automergeWorks = authorUri => mergeableCouples => {
     const nextCouple = mergeableCouples.pop()
     if (nextCouple == null) return
     const [ fromUri, toUri ] = nextCouple
-    await mergeEntities({ userAcct: reconcilerUserAcct, fromUri, toUri })
+    await mergeEntities({ user: reconcilerUser, fromUri, toUri })
     return mergeNext()
   }
 

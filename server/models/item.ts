@@ -105,34 +105,3 @@ export function changeItemDocOwner (transacDoc, item) {
 export function itemAllowsTransactions (item) {
   return itemAttributes.allowTransaction.includes(item.transaction)
 }
-
-export function updateItemDocEntity (fromUri, toUri, item) {
-  if (item.entity !== fromUri) {
-    throw newError(`wrong entity uri: expected ${fromUri}, got ${item.entity}`, 500)
-  }
-
-  item.entity = toUri
-  // Keeping track of previous entity URI in case a rollback is needed
-  if (!item.previousEntity) { item.previousEntity = [] }
-  item.previousEntity.unshift(fromUri)
-
-  return item
-}
-
-export function revertItemDocEntity (fromUri, toUri, item) {
-  const { entity } = item
-  const previousEntity = item.previousEntity[0]
-  if (item.entity !== toUri) {
-    throw newError(`wrong entity uri: expected ${entity}, got ${toUri}`, 500)
-  }
-
-  if (fromUri !== previousEntity) {
-    const message = `wrong previous entity: expected ${previousEntity}, got ${fromUri}`
-    throw newError(message, 500)
-  }
-
-  item.entity = previousEntity
-  item.previousEntity.shift()
-
-  return item
-}

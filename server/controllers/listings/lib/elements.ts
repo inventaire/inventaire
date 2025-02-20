@@ -8,7 +8,7 @@ import { getNextHighestOrdinal } from '#lib/utils/lexicographic_ordinal'
 import { createElementDoc, updateElementDoc, type ListingElementNewAttributes } from '#models/element'
 import type { ListingElement } from '#types/element'
 import type { EntityUri } from '#types/entity'
-import type { ListingWithElements } from '#types/listing'
+import type { Listing, ListingId, ListingWithElements } from '#types/listing'
 import type { UserId } from '#types/user'
 
 const db = await dbFactory('elements')
@@ -17,20 +17,24 @@ export const getElementById = db.get<ListingElement>
 
 export const getElementsByIds = db.byIds<ListingElement>
 
-export async function getElementsByEntities (uris) {
-  return db.getDocsByViewKeys<ListingElement>('byEntities', uris)
+export async function getElementsByEntities (uris: EntityUri[]) {
+  return db.getDocsByViewKeys<ListingElement>('byEntity', uris)
 }
 
-export async function getElementsByListingsAndEntity (listingsIds, entitiesUris) {
+export async function getElementsByPreviousEntities (uris: EntityUri[]) {
+  return db.getDocsByViewKeys<ListingElement>('byPreviousEntity', uris)
+}
+
+export async function getElementsByListingsAndEntity (listingsIds: ListingId[], entitiesUris: EntityUri[]) {
   const keys = combinations(listingsIds, entitiesUris)
   return db.getDocsByViewKeys<ListingElement>('byListAndEntity', keys)
 }
 
-export async function getElementsByListings (listingsIds) {
-  return db.getDocsByViewKeys<ListingElement>('byListings', listingsIds)
+export async function getElementsByListings (listingsIds: ListingId[]) {
+  return db.getDocsByViewKeys<ListingElement>('byListing', listingsIds)
 }
 
-export async function getElementsByListing (listingId) {
+export async function getElementsByListing (listingId: ListingId) {
   return db.getDocsByViewQuery<ListingElement>('byListingAndOrdinal', {
     startkey: [ listingId, minKey ],
     endkey: [ listingId, maxKey ],
@@ -40,7 +44,7 @@ export async function getElementsByListing (listingId) {
 
 export const bulkDeleteElements = db.bulkDelete
 
-export async function deleteListingsElements (listings) {
+export async function deleteListingsElements (listings: Listing[]) {
   const listingsIds = map(listings, '_id')
   const listingsElements = await getElementsByListings(listingsIds)
   if (isNonEmptyArray(listingsElements)) {
@@ -75,11 +79,3 @@ export async function updateElementDocAttributes ({ element, newAttributes, elem
   const updatedElement = updateElementDoc(newAttributes, element, elements)
   return db.putAndReturn(updatedElement)
 }
-
-export async function bulkUpdateElements ({ oldElements, attribute, value }) {
-  const elementUpdateData = { [attribute]: value }
-  const newElements = oldElements.map(oldElement => updateElementDoc(elementUpdateData, oldElement))
-  return elementsBulkUpdate(newElements)
-}
-
-const elementsBulkUpdate = db.bulk

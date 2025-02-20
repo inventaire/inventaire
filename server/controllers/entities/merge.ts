@@ -5,7 +5,7 @@ import { mergeOrCreateOrUpdateTask } from '#controllers/tasks/lib/merge_or_creat
 import { validateThatEntitiesAreNotRelated, validateAbsenceOfConflictingProperties } from '#controllers/tasks/lib/merge_validation'
 import { isIsbnEntityUri, isInvEntityUri } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
-import { getMaybeRemoteReqUser } from '#lib/federation/remote_user'
+import { parseReqLocalOrRemoteUser } from '#lib/federation/remote_user'
 import { hasDataadminAccess } from '#lib/user_access_levels'
 import { log } from '#lib/utils/logs'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
@@ -38,7 +38,7 @@ async function controller (params: SanitizedParameters, req: AuthentifiedReq | R
     throw newError(message, 400, params)
   }
 
-  const user = getMaybeRemoteReqUser(req)
+  const user = parseReqLocalOrRemoteUser(req)
   const isDataadmin = hasDataadminAccess(user)
 
   log({
@@ -58,10 +58,10 @@ async function controller (params: SanitizedParameters, req: AuthentifiedReq | R
   validateThatEntitiesAreNotRelated(fromEntity, toEntity)
 
   if (isDataadmin) {
-    await mergeEntities({ userAcct: reqUserAcct, fromUri, toUri })
+    await mergeEntities({ user, fromUri, toUri })
     return { ok: true }
   } else {
-    return mergeOrCreateOrUpdateTask(entitiesType, fromUri, toUri, fromEntity, toEntity, reqUserAcct)
+    return mergeOrCreateOrUpdateTask(entitiesType, fromUri, toUri, fromEntity, toEntity, user)
   }
 }
 

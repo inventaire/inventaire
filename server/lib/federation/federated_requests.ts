@@ -1,13 +1,12 @@
+import { isRelativeUrl } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import type { ContextualizedError } from '#lib/error/format_error'
 import { request, type RequestOptions } from '#lib/requests'
-import config from '#server/config'
-import type { AbsoluteUrl, HttpMethod, RelativeUrl } from '#types/common'
+import { remoteEntitiesOrigin } from '#server/config'
+import type { AbsoluteUrl, HttpMethod, Url } from '#types/common'
 
-const { remoteEntitiesOrigin } = config.federation
-
-export async function federatedRequest <Response = unknown> (method: HttpMethod, url: RelativeUrl, options: RequestOptions = {}) {
-  const remoteUrl = `${remoteEntitiesOrigin}${url}` as AbsoluteUrl
+export async function federatedRequest <Response = unknown> (method: HttpMethod, url: Url, options: RequestOptions = {}) {
+  const remoteUrl = isRelativeUrl(url) ? `${remoteEntitiesOrigin}${url}` as AbsoluteUrl : url
   try {
     const res = await request(method, remoteUrl, options)
     return res as Response

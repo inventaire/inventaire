@@ -28,7 +28,8 @@ if (publicPort === null) {
 export const publicHost = publicOrigin.split('://')[1]
 export const localOrigin = `${protocol}://${hostname}:${port}` as AbsoluteUrl
 
-export const federatedMode = config.federation.remoteEntitiesOrigin != null
+export const remoteEntitiesOrigin = config.federation.remoteEntitiesOrigin
+export const federatedMode = remoteEntitiesOrigin != null
 
 export const defaultFrom = `${config.instanceName} <${config.contactAddress}>`
 
@@ -41,5 +42,10 @@ if (mode === 'local') {
   if (!publicURL.endsWith('/')) publicURL += '/'
   mediaStorageEndpoint = publicURL
 }
+
+// It's convenient in tests to have the guaranty that event listeners and other side effects were called,
+// but in production, that would mean delaying API responses for secondary actions
+// (setting notifications, sending emails, analytics, etc)
+export const waitForSideEffects = config.env.includes('tests')
 
 export default config

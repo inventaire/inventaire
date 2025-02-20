@@ -1,5 +1,5 @@
 import should from 'should'
-import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri, someBnfId, createEditionWithIsbn, someImageHash, generateSomeRecoverableIsni } from '#fixtures/entities'
+import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri, someBnfId, createEditionWithIsbn, someImageHash, generateSomeRecoverableIsni, getRandomInvUri } from '#fixtures/entities'
 import { federatedMode } from '#server/config'
 import { getByUri, addClaim, updateClaim, removeClaim, merge } from '#tests/api/utils/entities'
 import { getAdminUser } from '#tests/api/utils/utils'
@@ -63,8 +63,8 @@ describe('entities:update-claims:inv', () => {
 
   it('should reject an unknown entity value', async () => {
     const work = await createWork()
-    const fakeUri = 'inv:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-    await updateClaim({ uri: work.uri, property: 'wdt:P50', oldValue: null, newValue: fakeUri })
+    const uri = getRandomInvUri()
+    await updateClaim({ uri: work.uri, property: 'wdt:P50', oldValue: null, newValue: uri })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal('invalid claim value: entity not found')
