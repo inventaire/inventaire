@@ -34,11 +34,14 @@ describe('items:public:by-bbox', () => {
 
   it('should include users public data', async () => {
     await waitForIndexation('users', geolocatedUser._id)
-    const { users } = await publicReq('get', `${endpoint}&bbox=${bbox}`)
+    const { items, users } = await publicReq('get', `${endpoint}&bbox=${bbox}`)
     users.length.should.be.above(0)
     for (const user of users) {
       user.username.should.be.ok()
       should(user.email).not.be.ok()
+    }
+    for (const item of items) {
+      should(users.find(user => user._id === item.owner)).be.ok()
     }
   })
 })
