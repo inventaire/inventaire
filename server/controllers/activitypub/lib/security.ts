@@ -74,6 +74,8 @@ async function attemptToVerifySignature (req: MaybeSignedReq, signature: Signatu
   // "headers" below specify the list of HTTP headers included when generating the signature for the message
   const { keyId: actorKeyUrl, signature: signatureString, headers: signedHeadersNames } = signature
   const { method, path: pathname, headers: reqHeaders } = req
+
+  console.log('##### 77 🧞‍security.ts🧞‍', { method, pathname, reqHeaders, actorKeyUrl, signatureString, signedHeadersNames })
   let publicKeyPem
   try {
     publicKeyPem = await getActorPublicKeyPem(actorKeyUrl, refresh)
@@ -88,6 +90,8 @@ async function attemptToVerifySignature (req: MaybeSignedReq, signature: Signatu
     method: method.toLowerCase() as LowerCasedHttpMethod,
     pathname: pathname as RelativeUrl,
   })
+  console.log('##### 93 🧞‍security.ts🧞‍', { signedString })
+  console.log('##### 94 🧞‍security.ts🧞‍', { publicKeyPem })
   verifier.update(signedString)
   if (!verifier.verify(publicKeyPem, signatureString, 'base64')) {
     throw newError('signature verification failed', 400, { actorKeyUrl, publicKeyPem })
