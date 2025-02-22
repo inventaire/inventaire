@@ -1,10 +1,11 @@
 import { sendStaticJson } from '#lib/responses'
 import config, { publicHost } from '#server/config'
 
-const { instanceName, orgName, orgUrl, mapTilesAccessToken } = config
+const { env, instanceName, orgName, orgUrl, mapTilesAccessToken } = config
 const { remoteEntitiesOrigin } = config.federation
 
 const clientConfig = {
+  env,
   instanceName,
   orgName,
   orgUrl,
