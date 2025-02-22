@@ -41,6 +41,7 @@ const userAttributes = {
     // snapshot.network (unless requested by someone of the user network)
     // cf server/controllers/user/lib/authorized_user_data_pickers omitPrivateData
     'snapshot',
+    'fediversable',
   ] as const,
 
   // Attributes that need availability check before update
