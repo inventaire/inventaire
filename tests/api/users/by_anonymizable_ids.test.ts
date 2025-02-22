@@ -24,6 +24,7 @@ describe('users:by-anonymizable-ids', () => {
     const { anonymizableId } = user
     const res = await publicReq('get', `${endpoint}&ids=${anonymizableId}`)
     const foundUser = res.users[anonymizableId]
+    should(foundUser.email).not.be.ok()
     foundUser.should.deepEqual({
       anonymizableId,
       settings: {
@@ -41,6 +42,7 @@ describe('users:by-anonymizable-ids', () => {
     const foundUser = res.users[anonymizableId]
     foundUser.anonymizableId.should.equal(anonymizableId)
     foundUser.username.should.equal(user.username)
+    should(foundUser.email).not.be.ok()
     should(foundUser.bio).equal(user.bio)
     foundUser.settings.should.deepEqual({
       contributions: {
