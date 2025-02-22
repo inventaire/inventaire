@@ -5,21 +5,22 @@ const ownerSafe = [
   'username',
   'stableUsername',
   'created',
-  'email',
-  'picture',
-  'language',
-  'validEmail',
+
+  'anonymizableId',
   'bio',
-  'settings',
+  'customProperties',
+  'email',
+  'fediversable',
+  'language',
+  'picture',
+  'poolActivities',
   'position',
-  'summaryPeriodicity',
   'readToken',
   'roles',
-  'fediversable',
-  'poolActivities',
-  'customProperties',
+  'settings',
   'snapshot',
-  'anonymizableId',
+  'summaryPeriodicity',
+  'validEmail',
 ] as const
 
 const userAttributes = {
@@ -30,18 +31,18 @@ const userAttributes = {
     '_id',
     'username',
     'stableUsername',
-    'picture',
     'bio',
-    'position',
-    'special',
     'created',
+    'fediversable',
+    'picture',
+    'position',
     'roles',
     // Non-authorized data should still be deleted
     // snapshot.private
     // snapshot.network (unless requested by someone of the user network)
     // cf server/controllers/user/lib/authorized_user_data_pickers omitPrivateData
     'snapshot',
-    'fediversable',
+    'special',
   ] as const,
 
   // Attributes that need availability check before update
@@ -52,15 +53,15 @@ const userAttributes = {
 
   // Attributes that can be changed with a simple validity check
   updatable: [
-    'picture',
-    'language',
     'bio',
-    'settings',
-    'position',
-    'fediversable',
-    'poolActivities',
-    'summaryPeriodicity',
     'customProperties',
+    'fediversable',
+    'language',
+    'picture',
+    'poolActivities',
+    'position',
+    'settings',
+    'summaryPeriodicity',
   ] as const,
 
   // Attributes that are kept after a user deleted her account
