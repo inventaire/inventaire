@@ -2,11 +2,11 @@ import 'should'
 import { authReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
-const endpoint = '/api/instances?action=event'
+const endpoint = '/api/instances?action=events'
 
 describe('instances:event', () => {
   it('should reject user requests', async () => {
-    await authReq('post', endpoint, { event: 'revert-merge', uri: 'wd:Q1' })
+    await authReq('post', endpoint, { event: 'revert-merge', uris: 'wd:Q1' })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(403)
