@@ -13,7 +13,7 @@ import type { EntityUri, MaybeExpandedSerializedEntity } from '#types/entity'
 
 const db = leveldbFactory('entity-rev', 'utf8')
 
-export async function updateEntitiesRevisionsCache (res: GetEntitiesByUrisResponse) {
+export async function updateEntitiesRevisionsCache (res: GetEntitiesByUrisResponse, emitter?: string) {
   try {
     const { entities, redirects } = res
     const uris = objectKeys(entities)
@@ -25,7 +25,7 @@ export async function updateEntitiesRevisionsCache (res: GetEntitiesByUrisRespon
       const oldRev = cachedRevsByUris[uri]
       if (oldRev !== newRev) {
         updateOps.push({ type: 'put', key: uri, value: newRev })
-        await emit('entity:changed', uri)
+        await emit('entity:changed', uri, emitter)
       }
     }
     if (updateOps.length > 0) {
