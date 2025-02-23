@@ -243,3 +243,5 @@ export type ExpandedSerializedRemovedPlaceholder = OverrideProperties<Serialized
 export type ExpandedSerializedEntitiesByUris = Record<WdEntityUri, ExpandedSerializedWdEntity> & Record<IsbnEntityUri, ExpandedSerializedIsbnEntity> & Record<InvEntityUri, ExpandedSerializedInvPrefixedInvEntity | ExpandedSerializedRemovedPlaceholder>
 
 export type ExpandedSerializedEntity = ExpandedSerializedWdEntity | ExpandedSerializedIsbnEntity | ExpandedSerializedInvPrefixedInvEntity | ExpandedSerializedRemovedPlaceholder
+
+export type MaybeExpandedSerializedEntity = SerializedEntity | ExpandedSerializedEntity

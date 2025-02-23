@@ -9,7 +9,7 @@ import { emit } from '#lib/radio'
 import { objectEntries } from '#lib/utils/base'
 import { info, logError } from '#lib/utils/logs'
 import { objectKeys } from '#lib/utils/types'
-import type { EntityUri, ExpandedSerializedEntity, SerializedEntity } from '#types/entity'
+import type { EntityUri, MaybeExpandedSerializedEntity } from '#types/entity'
 
 const db = leveldbFactory('entity-rev', 'utf8')
 
@@ -53,7 +53,7 @@ async function getCachedRevsByUris (uris: EntityUri[], redirects: Redirects) {
   return zipObject(allUris, cachedRevs)
 }
 
-function getEntityRevisionId (entity: SerializedEntity | ExpandedSerializedEntity) {
+function getEntityRevisionId (entity: MaybeExpandedSerializedEntity) {
   if ('lastrevid' in entity) {
     let rev = entity.lastrevid.toString()
     if ('invRev' in entity) rev += `+${entity.invRev}`

@@ -10,7 +10,7 @@ import { radio } from '#lib/radio'
 import { objectFromEntries } from '#lib/utils/base'
 import { info, logError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
-import type { EntityUri, SerializedEntitiesByUris, SerializedEntity } from '#types/entity'
+import type { EntityUri, MaybeExpandedSerializedEntity, SerializedEntitiesByUris, SerializedEntity } from '#types/entity'
 
 export async function getRemoteEntitiesByUris ({ uris, refresh }: Pick<GetEntitiesByUrisParams, 'uris' | 'refresh'>) {
   uris = compact(uris)
@@ -38,12 +38,20 @@ export async function getRemoteEntitiesByUris ({ uris, refresh }: Pick<GetEntiti
     const remoteUrl = buildUrl('/api/entities', { action: 'by-uris', uris: notCachedUris.join('|') })
     const res = await federatedRequest<GetEntitiesByUrisResponse>('get', remoteUrl)
 
-    const cacheBatch = values(res.entities).map(entity => ({ type: 'put', key: getCacheKey(entity.uri), value: JSON.stringify(entity) }))
+    const cacheBatch = values(res.entities).map(buildPutOperation)
     await cache_.batch(cacheBatch)
     Object.assign(res.entities, cachedEntities)
     return res
   } else {
     return { entities: cachedEntities, redirects: {} } satisfies GetEntitiesByUrisResponse
+  }
+}
+
+function buildPutOperation (entity: MaybeExpandedSerializedEntity) {
+  return {
+    type: 'put',
+    key: getCacheKey(entity.uri),
+    value: JSON.stringify(entity),
   }
 }
 
