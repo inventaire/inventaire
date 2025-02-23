@@ -15,9 +15,14 @@ export const entitiesAttributes = [
   'popularity',
 ] as const
 
-const infoAttributes = [
-  '_id',
+// Required by getEntityRevisionId (server/lib/federation/entities_revisions_cache.ts) for requests in federated mode
+const mandatoryAttributes = [
   '_rev',
+  'lastrevid',
+  'invRev',
+] as const
+
+const infoAttributes = [
   'type',
   'created',
   'updated',
@@ -25,11 +30,13 @@ const infoAttributes = [
   'originalLang',
 ] as const
 
-type Attribute = typeof entitiesAttributes[number] | typeof infoAttributes[number]
+type Attribute = typeof entitiesAttributes[number] | typeof mandatoryAttributes[number] | typeof infoAttributes[number]
 
 export function pickAttributes (entities: SerializedEntitiesByUris, attributes: Attribute[]) {
   if (attributes.includes('info')) {
-    attributes = [ ...infoAttributes, ...attributes ]
+    attributes = [ ...mandatoryAttributes, ...infoAttributes, ...attributes ]
+  } else {
+    attributes = [ ...mandatoryAttributes, ...attributes ]
   }
   const formattedEntities = {}
   for (const [ uri, entity ] of objectEntries(entities)) {
