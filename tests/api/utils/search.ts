@@ -33,6 +33,7 @@ export async function getIndexedDoc (index: string, id: string, options: GetInde
   if (options) assertObject(options)
   const { retry = true, attempt = 0 } = options
   const url = getIndexedDocUrl(index, id)
+  await waitForIndexationQueue(index)
   try {
     const { body } = await rawRequest('get', url, elasticReqOptions)
     return JSON.parse(body)
@@ -40,7 +41,6 @@ export async function getIndexedDoc (index: string, id: string, options: GetInde
     if (err.statusCode === 404) {
       if (retry) {
         if (attempt < 5) {
-          await warnOnLongIndexationQueueLength(index)
           await wait(1000)
           return getIndexedDoc(index, id, { attempt: attempt + 1 })
         } else {
@@ -55,10 +55,15 @@ export async function getIndexedDoc (index: string, id: string, options: GetInde
   }
 }
 
-async function warnOnLongIndexationQueueLength (index: string) {
+async function waitForIndexationQueue (index: string) {
   if (index === 'wikidata') {
     const queueLength = await getWikidataIndexationQueueLength()
-    if (queueLength > 0) warn(`wd indexation job queue length: ${queueLength}`)
+    if (queueLength > 0) {
+      warn(`waiting for wd indexation job queue: ${queueLength} job(s)`)
+      const delay = Math.min(500 * queueLength, 5000)
+      await wait(delay)
+      return waitForIndexationQueue(index)
+    }
   }
 }
 
