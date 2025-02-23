@@ -143,11 +143,11 @@ describe('entities:merge:as:dataadmin', () => {
       createWork(),
       createWork(),
     ])
-    await addClaim({ uri: workA.uri, property: 'wdt:P50', value: 'wd:Q535' })
+    await addClaim({ uri: workA.uri, property: 'wdt:P50', value: 'wd:Q1345582' })
     await merge(workA.uri, workB.uri)
     const { entities } = await getByUris(workB.uri)
     const authorsUris = entities[workB.uri].claims['wdt:P50']
-    authorsUris.should.deepEqual([ 'wd:Q535' ])
+    authorsUris.should.deepEqual([ 'wd:Q1345582' ])
   })
 
   it('should transfer labels', async function () {
@@ -168,7 +168,7 @@ describe('entities:merge:as:dataadmin', () => {
       createWork(),
       createWork(),
     ])
-    await addClaim({ uri: workA.uri, property: 'wdt:P50', value: 'wd:Q535' })
+    await addClaim({ uri: workA.uri, property: 'wdt:P50', value: 'wd:Q1345582' })
     await merge(workA.uri, workB.uri)
     const patches = await getHistory(workB._id)
     patches[1].context.mergeFrom.should.equal(workA.uri)

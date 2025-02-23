@@ -110,7 +110,7 @@ describe('items:snapshot', () => {
     const item = await authReq('post', '/api/items', { entity: edition.uri })
     item.snapshot['entity:image'].should.equal(edition.image.url)
     const workUri = edition.claims['wdt:P629'][0]
-    await updateClaim({ uri: workUri, property: 'wdt:P50', newValue: 'wd:Q535' })
+    await updateClaim({ uri: workUri, property: 'wdt:P50', newValue: 'wd:Q1345582' })
     const updatedItem = await getItem(item)
     updatedItem.snapshot['entity:image'].should.equal(edition.image.url)
   })

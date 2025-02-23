@@ -14,7 +14,7 @@ export async function getUsersNearPosition (position, user) {
   return users
 }
 
-export async function updateUser ({ user, attribute, value, origin = localOrigin }: { user: UserWithCookie, attribute: string, value, origin: Origin }) {
+export async function updateUser ({ user, attribute, value, origin = localOrigin }: { user: UserWithCookie, attribute: string, value, origin?: Origin }) {
   user = await (user || getUser())
   assertObject(user)
   assertString(attribute)

@@ -14,7 +14,8 @@ describe('tasks:hooks', () => {
     before(async () => {
       // Tests dependency: having a populated ElasticSearch wikidata index
       const wikidataUris: EntityUri[] = [
-        'wd:Q535', 'wd:Q15339037', // some Victor Hugos
+        'wd:Q29169693', // Mai Thi Nguyen-Kim
+        'wd:Q106730482', // Mai Thi Nguyen
         'wd:Q237087', // Fred Vargas
       ]
       await findOrIndexEntities(wikidataUris)
@@ -22,16 +23,16 @@ describe('tasks:hooks', () => {
 
     it('should update same suspect tasks to processed state ', async function () {
       if (federatedMode) this.skip()
-      const { uri: suspectUri } = await createHuman({ labels: { en: 'Victor Hugo' } })
+      const { uri: suspectUri } = await createHuman({ labels: { en: 'Mai Thi Nguyen' } })
       await createTask({
         suspectUri,
-        suggestionUri: 'wd:Q535',
+        suggestionUri: 'wd:Q29169693',
       })
       const otherTask = await createTask({
         suspectUri,
-        suggestionUri: 'wd:Q15339037',
+        suggestionUri: 'wd:Q106730482',
       })
-      await merge(suspectUri, 'wd:Q535')
+      await merge(suspectUri, 'wd:Q29169693')
       await wait(hookDelay)
       const [ updatedTask ] = await getByIds(otherTask._id)
       updatedTask.state.should.equal('processed')
@@ -56,14 +57,14 @@ describe('tasks:hooks', () => {
     it('should update relationScore of tasks with same suspect', async function () {
       // Disabled in federated mode as this test directly mutates the local tasks database
       if (federatedMode) this.skip()
-      const { uri: suspectUri } = await createHuman({ labels: { en: 'Victor Hugo' } })
+      const { uri: suspectUri } = await createHuman({ labels: { en: 'Mai Thi Nguyen' } })
       const taskToUpdate = await createTask({
         suspectUri,
-        suggestionUri: 'wd:Q535',
+        suggestionUri: 'wd:Q29169693',
       })
       const { _id: otherTaskId } = await createTask({
         suspectUri,
-        suggestionUri: 'wd:Q15339037',
+        suggestionUri: 'wd:Q106730482',
       })
       const [ otherTask ] = await getByIds(otherTaskId)
       const { relationScore: otherTaskRelationScore } = otherTask
@@ -81,7 +82,7 @@ describe('tasks:hooks', () => {
       const { uri } = await createHuman({ labels: { en: 'Fred Vargas' } })
       const { _id: otherTaskId } = await createTask({
         suspectUri: uri,
-        suggestionUri: 'wd:Q15339037',
+        suggestionUri: 'wd:Q106730482',
       })
       const [ task ] = await getByIds(otherTaskId)
       await merge(task.suspectUri, task.suggestionUri)

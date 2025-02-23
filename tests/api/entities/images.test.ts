@@ -20,7 +20,7 @@ const encodedCommonsUrlChunk = fixedEncodeURIComponent('https://commons.wikimedi
 
 describe('entities:images', () => {
   it('should return an array of images associated with the passed uri', async () => {
-    const uri = 'wd:Q535'
+    const uri = 'wd:Q29169693'
     const res = await publicReq('get', `/api/entities?action=images&uris=${uri}`)
     res.images.should.be.an.Object()
     const imagesRes = res.images[uri]
@@ -31,7 +31,7 @@ describe('entities:images', () => {
 
   it('should reject redirect requests with multiple URIs', async function () {
     if (federatedMode) this.skip()
-    await publicReq('get', '/api/entities?action=images&uris=wd:Q535|wd:Q42&redirect=true')
+    await publicReq('get', '/api/entities?action=images&uris=wd:Q29169693|wd:Q42&redirect=true')
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -40,7 +40,7 @@ describe('entities:images', () => {
 
   it('should redirect to the image if requested in options', async function () {
     if (federatedMode) this.skip()
-    const url = '/api/entities?action=images&uris=wd:Q535&redirect=true&width=32'
+    const url = '/api/entities?action=images&uris=wd:Q29169693&redirect=true&width=32'
     const { statusCode, headers } = await rawRequest('get', url)
     statusCode.should.equal(302)
     headers.location.should.startWith(`${publicOrigin}/img/remote/32x1600/`)
@@ -49,7 +49,7 @@ describe('entities:images', () => {
 
   it('should redirect to the image if requested in options [federated mode]', async function () {
     if (!federatedMode) this.skip()
-    const url = '/api/entities?action=images&uris=wd:Q535&redirect=true&width=32'
+    const url = '/api/entities?action=images&uris=wd:Q29169693&redirect=true&width=32'
     const { statusCode, headers } = await rawRequest('get', url)
     statusCode.should.equal(302)
     headers.location.should.equal(`${remoteEntitiesOrigin}${url}`)

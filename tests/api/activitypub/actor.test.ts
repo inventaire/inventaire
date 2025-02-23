@@ -135,14 +135,14 @@ describe('activitypub:actor', () => {
     })
 
     it('should set URLs as attachment', async () => {
-      const actorUrl = makeUrl({ params: { action: 'actor', name: 'wd-Q535' } })
+      const actorUrl = makeUrl({ params: { action: 'actor', name: 'wd-Q1345582' } })
       const { attachment } = await publicReq('get', actorUrl)
       attachment[0].type.should.equal('PropertyValue')
       attachment[0].name.should.equal(publicHost)
-      attachment[0].value.should.containEql(`${publicOrigin}/entity/wd:Q535`)
+      attachment[0].value.should.containEql(`${publicOrigin}/entity/wd:Q1345582`)
       attachment[1].type.should.equal('PropertyValue')
       attachment[1].name.should.equal('wikidata.org')
-      attachment[1].value.should.containEql('https://www.wikidata.org/wiki/Q535')
+      attachment[1].value.should.containEql('https://www.wikidata.org/wiki/Q1345582')
     })
 
     it('should set an ordered list of claims as attachment', async () => {
