@@ -22,6 +22,7 @@
     "db-actions:update-user-role": "./scripts/db_actions/update_user_role.ts",
     "debug": "DEBUG=express:* node server/server.ts",
     "delete-tests-databases": "./scripts/tests/api/delete_tests_databases.sh",
+    "generate-local-config-from-env": "./scripts/generate_local_config_from_env.ts",
     "indexation:load": "./scripts/indexation/load.ts",
     "indexation:load-from-couchdb": "./scripts/indexation/load_from_couchdb.sh",
     "indexation:wikidata:load-from-dump": "./scripts/indexation/wikidata/load_from_dump.sh",
