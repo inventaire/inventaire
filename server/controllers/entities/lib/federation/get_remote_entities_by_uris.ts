@@ -1,4 +1,4 @@
-import { compact, partition, values, zip } from 'lodash-es'
+import { compact, map, partition, values, zip } from 'lodash-es'
 import type { GetEntitiesByUrisResponse } from '#controllers/entities/by_uris_get'
 import type { GetEntitiesByUrisParams } from '#controllers/entities/lib/get_entities_by_uris'
 import type { GetEntityByUriArgs } from '#controllers/entities/lib/get_entity_by_uri'
@@ -28,7 +28,10 @@ export async function getRemoteEntitiesByUris ({ uris, refresh }: Pick<GetEntiti
     const uriAndEntityEntries = zip(uris, parsedCachedValues)
     const [ cached, notCached ] = partition(uriAndEntityEntries, ([ , cachedValue ]) => cachedValue != null)
     cachedEntities = objectFromEntries(cached) as SerializedEntitiesByUris
-    notCachedUris = notCached.map(entry => entry[0])
+    const cachedUris = map(cached, '0')
+    notCachedUris = map(notCached, '0')
+    if (cachedUris.length > 0) info(`remote entities found in cache: ${cachedUris.join('|')}`)
+    if (notCachedUris.length > 0) info(`remote entities fetched: ${notCachedUris.join('|')}`)
   }
 
   if (notCachedUris.length > 0) {
