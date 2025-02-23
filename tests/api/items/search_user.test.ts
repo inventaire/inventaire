@@ -9,15 +9,22 @@ import {
   createItemWithAuthorAndSerie,
   createItems,
 } from '#fixtures/items'
-import { createUser, getTwoFriends } from '#fixtures/users'
+import { createUser, getTwoFriends, type AwaitableUserWithCookie } from '#fixtures/users'
 import { buildUrl } from '#lib/utils/url'
 import { makeFriends } from '#tests/api/utils/relations'
 import { customAuthReq } from '#tests/api/utils/request'
 import { waitForIndexation, firstNWords } from '#tests/api/utils/search'
 import { getUser, publicReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
+import type { UserId } from '#types/user'
 
-const search = (reqUser, { user, search, limit, offset }) => {
+interface SearchParams {
+  user?: UserId
+  search?: string
+  limit?: number
+  offset?: number
+}
+function search (reqUser: AwaitableUserWithCookie, { user, search, limit, offset }: SearchParams) {
   const url = buildUrl('/api/items', {
     action: 'search',
     user,
