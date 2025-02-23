@@ -1,18 +1,42 @@
-import { compact } from 'lodash-es'
+import { compact, partition, values, zip } from 'lodash-es'
 import type { GetEntitiesByUrisResponse } from '#controllers/entities/by_uris_get'
 import type { GetEntitiesByUrisParams } from '#controllers/entities/lib/get_entities_by_uris'
 import type { ReverseClaimsParams } from '#controllers/entities/lib/reverse_claims'
 import type { GetReverseClaimsResponse } from '#controllers/entities/reverse_claims'
+import { cache_ } from '#lib/cache'
 import { federatedRequest } from '#lib/federation/federated_requests'
+import { radio } from '#lib/radio'
+import { objectFromEntries } from '#lib/utils/base'
+import { info, logError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
-import type { EntityUri, SerializedEntity } from '#types/entity'
+import type { EntityUri, SerializedEntitiesByUris, SerializedEntity } from '#types/entity'
 
 export async function getRemoteEntitiesByUris ({ uris }: Pick<GetEntitiesByUrisParams, 'uris'>) {
   uris = compact(uris)
   if (uris.length === 0) return { entities: {}, redirects: {} } satisfies GetEntitiesByUrisResponse
-  const remoteUrl = buildUrl('/api/entities', { action: 'by-uris', uris: uris.join('|') })
-  return federatedRequest<GetEntitiesByUrisResponse>('get', remoteUrl)
+
+  const cacheKeys = uris.map(getCacheKey)
+  const cachedValues = await cache_.dryGetMany(cacheKeys)
+  const parsedCachedValues = cachedValues.map(stringifiedValue => stringifiedValue != null ? JSON.parse(stringifiedValue) : null)
+  const uriAndEntityEntries = zip(uris, parsedCachedValues)
+  const [ cached, notCached ] = partition(uriAndEntityEntries, ([ , cachedValue ]) => cachedValue != null)
+  const cachedEntities = objectFromEntries(cached) as SerializedEntitiesByUris
+  const notCachedUris = notCached.map(entry => entry[0])
+
+  if (notCachedUris.length > 0) {
+    const remoteUrl = buildUrl('/api/entities', { action: 'by-uris', uris: notCachedUris.join('|') })
+    const res = await federatedRequest<GetEntitiesByUrisResponse>('get', remoteUrl)
+
+    const cacheBatch = values(res.entities).map(entity => ({ type: 'put', key: getCacheKey(entity.uri), value: JSON.stringify(entity) }))
+    await cache_.batch(cacheBatch)
+    Object.assign(res.entities, cachedEntities)
+    return res
+  } else {
+    return { entities: cachedEntities, redirects: {} } satisfies GetEntitiesByUrisResponse
+  }
 }
+
+const getCacheKey = (uri: EntityUri) => `remote:entity:${uri}`
 
 export async function getRemoteEntitiesList (uris: EntityUri[]) {
   uris = compact(uris)
@@ -31,3 +55,12 @@ export async function getRemoteReverseClaims (params: ReverseClaimsParams) {
   const { uris } = await federatedRequest<GetReverseClaimsResponse>('get', remoteUrl)
   return uris
 }
+
+radio.on('entity:changed', async uri => {
+  try {
+    await cache_.delete(getCacheKey(uri))
+    info(`remote entity cache invalidation: ${uri}`)
+  } catch (err) {
+    logError(err, 'remote entity cache invalidation error')
+  }
+})

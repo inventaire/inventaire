@@ -60,10 +60,12 @@ describe('items:snapshot', () => {
       addSerie(workEntity),
     ])
     await updateClaim({ uri: workEntity.uri, property: 'wdt:P1545', newValue: '5' })
+    if (federatedMode) await getByUri(workEntity.uri, true)
     await wait(debounceDelay)
     const updatedItem = await getItem(item)
     updatedItem.snapshot['entity:ordinal'].should.equal('5')
     await updateClaim({ uri: workEntity.uri, property: 'wdt:P1545', oldValue: '5', newValue: '6' })
+    if (federatedMode) await getByUri(workEntity.uri, true)
     await wait(debounceDelay)
     const reupdatedItem = await getItem(item)
     reupdatedItem.snapshot['entity:ordinal'].should.equal('6')
@@ -118,22 +120,24 @@ describe('items:snapshot', () => {
   describe('update', () => {
     it('should be updated when its local edition entity title changes', async () => {
       const work = await createWork()
-      const { _id: entityId, uri } = await createEditionFromWorks(work)
+      const { uri } = await createEditionFromWorks(work)
       const item = await authReq('post', '/api/items', { entity: uri })
       const currentTitle = item.snapshot['entity:title']
       const updatedTitle = `${currentTitle.split('$$')[0]}$$${new Date().toISOString()}`
-      await updateClaim({ uri: entityId, property: 'wdt:P1476', oldValue: currentTitle, newValue: updatedTitle })
+      await updateClaim({ uri, property: 'wdt:P1476', oldValue: currentTitle, newValue: updatedTitle })
+      if (federatedMode) await getByUri(uri, true)
       await wait(debounceDelay)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:title'].should.equal(updatedTitle)
     })
 
     it('should be updated when its local work entity title changes', async () => {
-      const { _id: entityId, uri } = await createWork()
+      const { uri } = await createWork()
       const item = await authReq('post', '/api/items', { entity: uri })
       const currentTitle = item.snapshot['entity:title']
       const updatedTitle = `${currentTitle} ${new Date().toISOString()}`
-      await updateLabel({ uri: entityId, lang: 'en', value: updatedTitle })
+      await updateLabel({ uri, lang: 'en', value: updatedTitle })
+      if (federatedMode) await getByUri(uri, true)
       await wait(debounceDelay)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:title'].should.equal(updatedTitle)
@@ -143,12 +147,14 @@ describe('items:snapshot', () => {
       const workEntity = await createWork()
       const item = await authReq('post', '/api/items', { entity: workEntity.uri })
       const serieEntity = await addSerie(workEntity)
+      if (federatedMode) await getByUri(workEntity.uri, true)
       await wait(debounceDelay)
       const title = Object.values(serieEntity.labels)[0]
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:series'].should.equal(title)
       const updatedTitle = `${title}-updated`
-      await updateLabel({ uri: serieEntity._id, lang: 'en', value: updatedTitle })
+      await updateLabel({ uri: serieEntity.uri, lang: 'en', value: updatedTitle })
+      if (federatedMode) await getByUri(serieEntity.uri, true)
       await wait(debounceDelay)
       const reupdatedItem = await getItem(item)
       reupdatedItem.snapshot['entity:series'].should.equal(updatedTitle)
@@ -163,6 +169,7 @@ describe('items:snapshot', () => {
       const item = await authReq('post', '/api/items', { entity: edition.uri })
       const updateAuthorName = humanName()
       await updateLabel({ uri: authorUri, lang: 'en', value: updateAuthorName })
+      if (federatedMode) await getByUri(authorUri, true)
       await wait(debounceDelay)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:authors'].should.equal(updateAuthorName)
@@ -174,6 +181,7 @@ describe('items:snapshot', () => {
       const updateAuthorName = humanName()
       const uri = workEntity.claims['wdt:P50'][0]
       await updateLabel({ uri, lang: 'en', value: updateAuthorName })
+      if (federatedMode) await getByUri(uri, true)
       await wait(debounceDelay)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:authors'].should.equal(updateAuthorName)
@@ -259,6 +267,7 @@ describe('items:snapshot', () => {
       const item = await authReq('post', '/api/items', { entity: edition.uri })
       item.snapshot['entity:authors'].should.equal('foo')
       await restoreVersion({ patchId: `${human._id}:2` })
+      if (federatedMode) await getByUri(human.uri, true)
       await wait(debounceDelay)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:authors'].should.equal(originalLabel)
@@ -274,6 +283,7 @@ describe('items:snapshot', () => {
       const item = await authReq('post', '/api/items', { entity: edition.uri })
       item.snapshot['entity:authors'].should.equal('foo')
       await revertEdit({ patchId: `${human._id}:3` })
+      if (federatedMode) await getByUri(human.uri, true)
       await wait(debounceDelay)
       const updatedItem = await getItem(item)
       updatedItem.snapshot['entity:authors'].should.equal(originalLabel)

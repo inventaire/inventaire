@@ -126,6 +126,9 @@ export const cache_ = {
     const batch = forceArray(keys).map(key => ({ type: 'del', key }))
     return dbBatch(batch)
   },
+
+  batch: dbBatch,
+  delete: db.del,
 }
 
 async function checkCache (key) {
