@@ -41,10 +41,10 @@ describe('entities:delete', () => {
     // so running this test in federatedMode is just duplicating tests
     // Same goes for following skipped tests
     if (federatedMode) this.skip()
-    await deleteByUris([ 'wd:Q535' ])
+    await deleteByUris([ 'wd:Q1345582' ])
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.body.status_verbose.should.equal('invalid uri: wd:Q535')
+      err.body.status_verbose.should.equal('invalid uri: wd:Q1345582')
       err.statusCode.should.equal(400)
     })
   })

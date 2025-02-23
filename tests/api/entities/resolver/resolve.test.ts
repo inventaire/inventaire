@@ -249,7 +249,7 @@ describe('entities:resolve:external-id', () => {
   it('should resolve wikidata author from external ids claim', async () => {
     const author = {
       claims: {
-        'wdt:P648': [ 'OL28127A' ],
+        'wdt:P648': [ 'OL9161033A' ],
       },
     }
     const { entries } = await resolve({
@@ -258,7 +258,7 @@ describe('entities:resolve:external-id', () => {
     })
     entries[0].authors.should.be.an.Array()
     entries[0].authors[0].should.be.an.Object()
-    entries[0].authors[0].uri.should.equal('wd:Q16867')
+    entries[0].authors[0].uri.should.equal('wd:Q103477865')
   })
 
   it('should resolve inventaire author from external ids claim', async () => {

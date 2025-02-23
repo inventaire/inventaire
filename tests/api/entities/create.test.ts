@@ -196,7 +196,7 @@ describe('entities:create', () => {
       labels: { fr: randomLabel() },
       claims: {
         'wdt:P31': [ 'wd:Q47461344' ],
-        'wdt:P50': 'wd:Q535',
+        'wdt:P50': 'wd:Q1345582',
       },
     })
     .then(shouldNotBeCalled)
@@ -211,7 +211,7 @@ describe('entities:create', () => {
       labels: { fr: randomLabel() },
       claims: {
         'wdt:P31': [ 'wd:Q47461344' ],
-        'wd:P50': [ 'wd:Q535' ],
+        'wd:P50': [ 'wd:Q1345582' ],
       },
     })
     .then(shouldNotBeCalled)
@@ -226,7 +226,7 @@ describe('entities:create', () => {
       labels: { fr: randomLabel() },
       claims: {
         'wdt:P31': [ 'wd:Q47461344' ],
-        'wdt:P50': [ 'wd####Q535' ],
+        'wdt:P50': [ 'wd####Q1345582' ],
       },
     })
     .then(shouldNotBeCalled)

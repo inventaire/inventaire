@@ -138,7 +138,7 @@ describe('entities:update-claims:inv', () => {
 
   it('should reject an update on an unexisting claim (property with no claim)', async () => {
     const edition = await createEdition()
-    await updateClaim({ uri: edition.uri, property: 'wdt:P655', oldValue: 'wd:Q23', newValue: 'wd:Q42' })
+    await updateClaim({ uri: edition.uri, property: 'wdt:P655', oldValue: 'wd:Q106730482', newValue: 'wd:Q29169693' })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -148,8 +148,8 @@ describe('entities:update-claims:inv', () => {
 
   it('should reject an update on an unexisting claim (property with claims)', async () => {
     const edition = await createEdition()
-    await addClaim({ uri: edition.uri, property: 'wdt:P655', value: 'wd:Q535' })
-    await updateClaim({ uri: edition.uri, property: 'wdt:P655', oldValue: 'wd:Q23', newValue: 'wd:Q42' })
+    await addClaim({ uri: edition.uri, property: 'wdt:P655', value: 'wd:Q1345582' })
+    await updateClaim({ uri: edition.uri, property: 'wdt:P655', oldValue: 'wd:Q106730482', newValue: 'wd:Q29169693' })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
@@ -164,7 +164,7 @@ describe('entities:update-claims:inv', () => {
       createWork(),
     ])
     await merge(workA.uri, workB.uri)
-    await addClaim({ uri: workA.uri, property: 'wdt:P50', value: 'wd:Q535' })
+    await addClaim({ uri: workA.uri, property: 'wdt:P50', value: 'wd:Q1345582' })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)

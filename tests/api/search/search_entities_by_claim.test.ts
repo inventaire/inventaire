@@ -26,7 +26,7 @@ describe('search:entities:by-claim', async () => {
   })
 
   it('should reject unknown properties', async () => {
-    await search({ types: 'works', claim: 'wdt:P6=wd:Q535' })
+    await search({ types: 'works', claim: 'wdt:P6=wd:Q1345582' })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)

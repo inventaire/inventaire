@@ -144,7 +144,7 @@ describe('activitypub:webfinger', () => {
     })
 
     it('should accept lower case wikidata uri', async () => {
-      const wdUri = 'wd:Q535'
+      const wdUri = 'wd:Q1345582'
       const actorName = getEntityActorName(wdUri.toLowerCase())
       const resource = `acct:${actorName}@${publicHost}`
       const res = await publicReq('get', `${endpoint}${resource}`)
