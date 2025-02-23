@@ -18,6 +18,8 @@ async function getDeleteTaskBySuspectUri (uri) {
 }
 
 describe('entities:delete:as:user', () => {
+  before(function () { if (federatedMode) this.skip() })
+
   it('should reject not logged requests', async () => {
     await publicReq('post', '/api/entities?action=delete')
     .then(shouldNotBeCalled)

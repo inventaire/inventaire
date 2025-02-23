@@ -31,6 +31,8 @@ async function getMergeTaskBySuspectUri (uri) {
 }
 
 describe('entities:merge:as:user', () => {
+  before(function () { if (federatedMode) this.skip() })
+
   it('should reject not logged requests', async () => {
     await publicReq('put', '/api/entities?action=merge')
     .then(shouldNotBeCalled)
