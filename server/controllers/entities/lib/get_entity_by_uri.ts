@@ -2,7 +2,7 @@ import { assertString } from '#lib/utils/assert_types'
 import type { EntityUri } from '#types/entity'
 import { getEntitiesByUris, getExpandedEntitiesByUris, type EntitiesGetterParams } from './get_entities_by_uris.js'
 
-type GetEntityByUriArgs = Omit<EntitiesGetterParams, 'uris' | 'includeReferences'> & { uri: EntityUri }
+export type GetEntityByUriArgs = Omit<EntitiesGetterParams, 'uris' | 'includeReferences'> & { uri: EntityUri }
 
 // Get only the entity formatted doc you needs instead of an object
 // with entities and redirects
