@@ -16,6 +16,7 @@ export type HttpHeaderKey =
   'date' |
   'digest' |
   'host' |
+  'if-none-match' |
   'signature' |
   'user-agent' |
   `x-${string}`

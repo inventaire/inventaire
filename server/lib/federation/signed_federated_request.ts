@@ -13,8 +13,8 @@ import type { SpecialUser } from '#types/user'
 
 type FedReq = AuthentifiedReq | { user: SpecialUser }
 
-export async function signedFederatedRequest (req: FedReq, method: HttpMethod, url: Url, body: unknown) {
-  const headers = await getSignedFederatedRequestHeaders(req, method, url, body)
+export async function signedFederatedRequest (req: FedReq, method: HttpMethod, url: Url, body: unknown, extraHeaders?: HttpHeaders) {
+  const headers = await getSignedFederatedRequestHeaders(req, method, url, body, extraHeaders)
   return federatedRequest(method, url, { headers, body })
 }
 

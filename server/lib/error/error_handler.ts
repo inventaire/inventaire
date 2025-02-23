@@ -1,7 +1,7 @@
 import { pick } from 'lodash-es'
 import { isAuthentifiedReq } from '#lib/boolean_validations'
 import type { ContextualizedError } from '#lib/error/format_error'
-import { responses_ } from '#lib/responses'
+import { send } from '#lib/responses'
 import { objLength } from '#lib/utils/base'
 import { warn, logError } from '#lib/utils/logs'
 import { typeOf } from '#lib/utils/types'
@@ -26,6 +26,12 @@ export function errorHandler (req: Req, res: Res, err: ErrorResponse) {
 
   // if a status code was attached to the error, use it
   const statusCode = err.statusCode || 500
+
+  if (statusCode === 304) {
+    res.status(statusCode)
+    res.send()
+    return
+  }
 
   if (isAuthentifiedReq(req)) {
     err.user = pick(req.user, loggedUserAttributes)
@@ -58,7 +64,7 @@ export function errorHandler (req: Req, res: Res, err: ErrorResponse) {
   }
 
   res.status(statusCode)
-  responses_.send(res, {
+  send(res, {
     status: statusCode,
     status_verbose: err.message,
     error_type: err.error_type,
