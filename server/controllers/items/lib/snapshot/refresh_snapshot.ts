@@ -1,4 +1,4 @@
-import { uniq } from 'lodash-es'
+import { map, uniq } from 'lodash-es'
 import { getEntitiesByUris, getEntityByUri, getReverseClaims } from '#controllers/entities/lib/federation/instance_agnostic_entities'
 import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import { saveSnapshotsInBatch } from '#controllers/items/lib/snapshot/snapshot'
@@ -16,9 +16,9 @@ async function refreshSnapshotFromEntity (changedEntityDoc: InvEntityDoc | Seria
   const { uri, type } = getEntityUriAndType(changedEntityDoc)
   if (!refreshTypes.includes(type)) return
 
-  info(`items snapshot refresh: start  ${uri}`)
+  info(`items snapshot refresh: start from ${uri}`)
   const ops = await getSnapshotsByType[type](uri)
-  info(`items snapshot refresh: saving ${uri}`)
+  info(`items snapshot refresh: started from ${uri}, saving: ${map(ops, 'key').join('|')}`)
   return saveSnapshotsInBatch(ops)
 }
 
