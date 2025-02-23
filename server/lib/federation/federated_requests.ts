@@ -8,8 +8,13 @@ import type { AbsoluteUrl, HttpMethod, Url } from '#types/common'
 export async function federatedRequest <Response = unknown> (method: HttpMethod, url: Url, options: RequestOptions = {}) {
   const remoteUrl = isRelativeUrl(url) ? `${remoteEntitiesOrigin}${url}` as AbsoluteUrl : url
   try {
-    const res = await request(method, remoteUrl, options)
-    return res as Response
+    const { statusCode, body } = await request(method, remoteUrl, { parseJson: false, returnBodyOnly: false, ...options })
+    if (statusCode === 304) {
+      // Will be handled by server/lib/error/error_handler.ts
+      throw newError('not modified', 304)
+    } else {
+      return JSON.parse(body) as Response
+    }
   } catch (err) {
     throw forwardRemoteError(err, remoteUrl)
   }
@@ -19,7 +24,7 @@ export function forwardRemoteError (err: ContextualizedError, remoteUrl: Absolut
   if (!('body' in err)) throw err
   const { statusCode } = err
   // @ts-expect-error
-  const { status_verbose: message, context } = err.body
+  const { status_verbose: message, context } = JSON.parse(err.body)
   const repackedError = newError(message, statusCode, context)
   repackedError.forwardedFrom = remoteUrl
   return repackedError
