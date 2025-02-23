@@ -5,12 +5,15 @@ import type { GetEntityByUriArgs } from '#controllers/entities/lib/get_entity_by
 import type { ReverseClaimsParams } from '#controllers/entities/lib/reverse_claims'
 import type { GetReverseClaimsResponse } from '#controllers/entities/reverse_claims'
 import { cache_ } from '#lib/cache'
+import { updateEntitiesRevisionsCache } from '#lib/federation/entities_revisions_cache'
 import { federatedRequest } from '#lib/federation/federated_requests'
 import { radio } from '#lib/radio'
 import { objectFromEntries } from '#lib/utils/base'
 import { info, logError } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
 import type { EntityUri, MaybeExpandedSerializedEntity, SerializedEntitiesByUris, SerializedEntity } from '#types/entity'
+
+const emitterName = 'remote:entity'
 
 export async function getRemoteEntitiesByUris ({ uris, refresh }: Pick<GetEntitiesByUrisParams, 'uris' | 'refresh'>) {
   uris = compact(uris)
@@ -37,6 +40,7 @@ export async function getRemoteEntitiesByUris ({ uris, refresh }: Pick<GetEntiti
   if (notCachedUris.length > 0) {
     const remoteUrl = buildUrl('/api/entities', { action: 'by-uris', uris: notCachedUris.join('|') })
     const res = await federatedRequest<GetEntitiesByUrisResponse>('get', remoteUrl)
+    await updateEntitiesRevisionsCache(res, emitterName)
 
     const cacheBatch = values(res.entities).map(buildPutOperation)
     await cache_.batch(cacheBatch)
@@ -75,10 +79,14 @@ export async function getRemoteReverseClaims (params: ReverseClaimsParams) {
   return uris
 }
 
-radio.on('entity:changed', async uri => {
+radio.on('entity:changed', async (uri: EntityUri, emitter?: string) => {
   try {
-    await cache_.delete(getCacheKey(uri))
-    info(`remote entity cache invalidation: ${uri}`)
+    // Check the emitter to not bust the cache when the emitter is getRemoteEntitiesByUris itself
+    // as the cache would then already be up-to-date
+    if (emitter !== emitterName) {
+      await cache_.delete(getCacheKey(uri))
+      info(`remote entity cache invalidation: ${uri}`)
+    }
   } catch (err) {
     logError(err, 'remote entity cache invalidation error')
   }
