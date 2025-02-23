@@ -4,7 +4,7 @@ import { workAuthorRelationsProperties } from '#controllers/entities/lib/propert
 import { saveSnapshotsInBatch } from '#controllers/items/lib/snapshot/snapshot'
 import { debounceByKey } from '#lib/debounce_by_key'
 import { info, warn } from '#lib/utils/logs'
-import config, { federatedMode } from '#server/config'
+import config from '#server/config'
 import type { EntityUri, InvEntityDoc, PropertyUri, SerializedEntity } from '#types/entity'
 import buildSnapshot from './build_snapshot.js'
 import { getWorkAuthorsAndSeries, getEditionGraphEntities } from './get_entities.js'
@@ -12,31 +12,20 @@ import { getEntityUriAndType } from './helpers.js'
 
 const { snapshotsDebounceTime } = config
 
-async function refreshSnapshotFromEntity (changedEntityDoc: InvEntityDoc | SerializedEntity, redirect?: { from: EntityUri, to: EntityUri }) {
+async function refreshSnapshotFromEntity (changedEntityDoc: InvEntityDoc | SerializedEntity) {
   const { uri, type } = getEntityUriAndType(changedEntityDoc)
   if (!refreshTypes.includes(type)) return
 
-  const redirectionLog = (federatedMode && redirect) ? ` (redirected from ${redirect.from})` : ''
-  info(`items snapshot refresh: start  ${uri}${redirectionLog}`)
+  info(`items snapshot refresh: start  ${uri}`)
   const ops = await getSnapshotsByType[type](uri)
-
-  // In federated mode, items keep a reference to redirected entity uris,
-  // in order to not have to handle the case of merge/revert merge
-  if (federatedMode && redirect) {
-    const redirectedOp = ops.find(op => op.key === redirect.to)
-    // Overriding the key: the redirect.to snapshot will be updated on its own if needed
-    redirectedOp.key = redirect.from
-  }
-
-  info(`items snapshot refresh: saving ${uri}${redirectionLog}`)
+  info(`items snapshot refresh: saving ${uri}`)
   return saveSnapshotsInBatch(ops)
 }
 
 export async function refreshSnapshotFromUri (changedEntityUri: EntityUri) {
   const entity = await getEntityByUri({ uri: changedEntityUri })
   if (entity) {
-    const redirect = entity.uri !== changedEntityUri ? { from: changedEntityUri, to: entity.uri } : null
-    return refreshSnapshotFromEntity(entity, redirect)
+    return refreshSnapshotFromEntity(entity)
   } else {
     warn({ changedEntityUri }, 'cannot refresh snapshot: entity not found')
   }
@@ -63,8 +52,7 @@ const getSnapshotsByType = {
     // Get all the entities docs required to build the snapshot
     const [ edition, works, authors, series ] = await getEditionGraphEntities(uri)
     // Build common updated snapshot
-    const snapshot = buildSnapshot.edition(edition, works, authors, series)
-    return [ snapshot ]
+    return buildSnapshot.edition(edition, works, authors, series)
   },
 
   work: async (uri: EntityUri) => {
