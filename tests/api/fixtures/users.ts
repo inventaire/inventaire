@@ -9,7 +9,7 @@ import { assertString } from '#lib/utils/assert_types'
 import { logError, success } from '#lib/utils/logs'
 import { getRandomString } from '#lib/utils/random_string'
 import { shellExec } from '#scripts/scripts_utils'
-import { federatedMode, localOrigin } from '#server/config'
+import { federatedMode, localOrigin, remoteEntitiesOrigin } from '#server/config'
 import { makeFriends } from '#tests/api/utils/relations'
 import { request, rawRequest } from '#tests/api/utils/request'
 import type { Awaitable } from '#tests/api/utils/types'
@@ -69,13 +69,13 @@ async function _getOrCreateUser ({ customData = {}, mayReuseExistingUser, role, 
   const user = await getUserWithCookie(cookie, origin)
   await setCustomData(user, customData, origin)
   if (role) {
-    await addTestUserRole(user._id, role)
+    await addTestUserRole(user._id, role, origin)
   }
   return getUserWithCookie(cookie, origin)
 }
 
-async function addTestUserRole (userId: UserId, role: UserRole) {
-  if (federatedMode) {
+async function addTestUserRole (userId: UserId, role: UserRole, origin: Origin) {
+  if (federatedMode && origin === remoteEntitiesOrigin) {
     // Use a sub-process to use be able to override NODE_ENV and NODE_APP_INSTANCE to access the associated config
     try {
       const { stderr } = await shellExec(`export NODE_ENV=tests-api NODE_APP_INSTANCE=server; npm run db-actions:update-user-role ${userId} add ${role}`)
