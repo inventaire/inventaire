@@ -9,27 +9,28 @@ import type { EntityUri } from '#types/entity'
 
 if (federatedMode) info(config.federation, 'federated entities mode')
 
-export async function getEntitiesByUris ({ uris }: Pick<GetEntitiesByUrisParams, 'uris'>) {
+// TODO: pass down refresh/dry flags
+export async function getEntitiesByUris ({ uris, refresh }: Pick<GetEntitiesByUrisParams, 'uris' | 'refresh'>) {
   if (federatedMode) {
-    return getRemoteEntitiesByUris({ uris })
+    return getRemoteEntitiesByUris({ uris, refresh })
   } else {
-    return getLocalEntitiesByUris({ uris })
+    return getLocalEntitiesByUris({ uris, refresh })
   }
 }
 
-export async function getEntityByUri ({ uri }: { uri: EntityUri }) {
+export async function getEntityByUri ({ uri, refresh }: { uri: EntityUri, refresh?: boolean }) {
   if (federatedMode) {
-    return getRemoteEntityByUri({ uri })
+    return getRemoteEntityByUri({ uri, refresh })
   } else {
-    return getLocalEntityByUri({ uri })
+    return getLocalEntityByUri({ uri, refresh })
   }
 }
 
-export async function getEntitiesList (uris: EntityUri[]) {
+export async function getEntitiesList (uris: EntityUri[], params?: Pick<GetEntitiesByUrisParams, 'refresh'>) {
   if (federatedMode) {
-    return getRemoteEntitiesList(uris)
+    return getRemoteEntitiesList(uris, params)
   } else {
-    return getLocalEntitiesList(uris)
+    return getLocalEntitiesList(uris, params)
   }
 }
 
