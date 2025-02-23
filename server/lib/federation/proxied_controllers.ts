@@ -59,7 +59,8 @@ async function proxyPublicJsonRequest (req: Req, res: Res, method: HttpMethod, a
   const { url } = req
   if (!isRelativeUrl(url)) throw newError('invalid relative url', 500, { method, action })
   const body = httpMethodHasBody(method) ? req.body : undefined
-  const remoteRes = await federatedRequest(method, url, { body })
+  const headers = getProxiedHeaders(req)
+  const remoteRes = await federatedRequest(method, url, { body, headers })
   // Commenting out as current use-cases don't need runPostProxiedRequestHooks
   // and passing req.query triggers a type error
   // runPostProxiedRequestHooks(method, url, action, req.query)
@@ -76,11 +77,12 @@ async function proxyWrappedController (req: Req | AuthentifiedReq, accessLevel: 
   const { url } = req
   if (!isRelativeUrl(url)) throw newError('invalid relative url', 500, { method, action, params })
   const body = httpMethodHasBody(method) ? req.body : undefined
+  const headers = getProxiedHeaders(req)
   let res
   if (isAuthentifiedReq(req)) {
-    res = await signedFederatedRequest(req, method, url, body)
+    res = await signedFederatedRequest(req, method, url, body, headers)
   } else if (accessLevel === 'public') {
-    res = await federatedRequest(method, url, { body })
+    res = await federatedRequest(method, url, { body, headers })
   } else {
     throw newUnauthorizedApiAccessError(401)
   }
@@ -101,4 +103,11 @@ function closedEndpointFactory (method: HttpMethod, pathname: RelativeUrl, actio
   return function closedEndpointController () {
     throw newError('This endpoint is closed in federated mode', 400, { endpoint: `${method.toUpperCase()} ${pathname}?action=${action}` })
   }
+}
+
+function getProxiedHeaders (req: Req) {
+  // If an etag is sent, pass it to the federated request, so that if the response was not modified,
+  // we can save the body transfer from the remote entities origin to the federated server
+  const etag = req.get('if-none-match')
+  if (etag) return { 'if-none-match': etag }
 }
