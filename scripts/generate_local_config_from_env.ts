@@ -8,7 +8,7 @@ import { success, warn } from '#lib/utils/logs'
 const {
   COUCHDB_USER,
   COUCHDB_PASSWORD,
-  DOMAIN_NAME,
+  PUBLIC_HOSTNAME,
 } = process.env
 
 const localConfigPath = absolutePath('root', 'config/local.cjs')
@@ -25,7 +25,7 @@ module.exports = {
     username: "${COUCHDB_USER || 'yourCouchdbUsername'}",
     password: "${COUCHDB_PASSWORD || 'yourCouchdbPassword'}",
   },
-  publicHostname: "${DOMAIN_NAME || 'yourDomainName'}",
+  publicHostname: "${PUBLIC_HOSTNAME || 'yourDomainName'}",
 }`
   await writeFile(localConfigPath, localConfig)
   success(`${localConfigPath} initialized from env variables`)
