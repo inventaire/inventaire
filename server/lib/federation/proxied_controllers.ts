@@ -106,8 +106,9 @@ function closedEndpointFactory (method: HttpMethod, pathname: RelativeUrl, actio
 }
 
 function getProxiedHeaders (req: Req) {
-  // If an etag is sent, pass it to the federated request, so that if the response was not modified,
+  // If an etag is sent by the user browser, pass it to the federated request, so that if the response was not modified,
   // we can save the body transfer from the remote entities origin to the federated server
+  // ETags are set by the express server via the etag package, see https://expressjs.com/fr/api.html#etag.options.table
   const etag = req.get('if-none-match')
   if (etag) return { 'if-none-match': etag }
 }
