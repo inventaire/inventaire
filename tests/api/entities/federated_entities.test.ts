@@ -19,7 +19,8 @@ describe('entities:federated mode', () => {
 
   describe('proxied requests', () => {
     // xitted, as it's not actually testing if the request between
-    // the remote entities origin and the federated server was also a 304
+    // the remote entities origin and the federated server was also a 304:
+    // testing that would require some kind of spy on either end of the server-to-server request
     xit("should return a 304 if the response didn't change", async () => {
       const work = await createWork()
       const res1 = await rawRequest('get', `${remoteEntitiesOrigin}/api/entities?action=by-uris&uris=${work.uri}`)
