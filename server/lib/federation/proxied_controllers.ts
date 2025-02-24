@@ -100,6 +100,7 @@ async function proxyWrappedController (req: Req | AuthentifiedReq, accessLevel: 
 }
 
 function closedEndpointFactory (method: HttpMethod, pathname: RelativeUrl, action: string) {
+  console.log('🚀 ~ file: proxied_controllers.ts ~ line', 103, 'closedEndpointFactory ~ ', { method, pathname, action })
   return function closedEndpointController () {
     throw newError('This endpoint is closed in federated mode', 400, { endpoint: `${method.toUpperCase()} ${pathname}?action=${action}` })
   }

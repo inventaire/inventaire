@@ -70,6 +70,8 @@ addRoute('api/activitypub', activitypub)
 addRoute('img/*', resizeImages)
 addRoute('.well-known/webfinger', webfinger)
 
+console.log('🚀 ~ file: routes.ts ~ line', 74, { federatedMode })
+
 if (federatedMode) {
   addRoute('api/data', federatedDataControllers)
   addRoute('api/entities', federatedEntitiesControllers)
