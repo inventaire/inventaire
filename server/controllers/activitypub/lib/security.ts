@@ -7,6 +7,7 @@ import { newError } from '#lib/error/error'
 import { requests_, sanitizeUrl } from '#lib/requests'
 import { expired, oneMonth } from '#lib/time'
 import { assertObject } from '#lib/utils/assert_types'
+import { arrayIncludes } from '#lib/utils/base'
 import { logError, warn } from '#lib/utils/logs'
 import config from '#server/config'
 import type { ActorKeyId } from '#types/activity'
@@ -18,6 +19,7 @@ interface Signature {
   keyId: string
   signature: string
   headers: string
+  algorithm: string
 }
 
 const { sanitizeUrls } = config.activitypub
@@ -29,10 +31,14 @@ interface SignParams {
   pathname: RelativeUrl
   reqHeaders: HttpHeaders
 }
+
+const supportedAlgorithms = [ 'rsa-sha256' ] as const
+const defaultAlgorithm = supportedAlgorithms[0]
+
 export function sign (params: SignParams) {
   const { keyId, privateKey, method, pathname, reqHeaders } = params
   const signedHeadersNames = `(request-target) ${Object.keys(reqHeaders).join(' ')}`
-  const signer = createSign('rsa-sha256')
+  const signer = createSign(defaultAlgorithm)
   const stringToSign = buildSignatureString({
     reqHeaders,
     signedHeadersNames,
@@ -46,7 +52,7 @@ export function sign (params: SignParams) {
   // headers must respect signature string keys order
   // ie. (request-target) host date
   // see Section 2.3 of https://tools.ietf.org/html/draft-cavage-http-signatures-08
-  return `keyId="${keyId}",headers="${signedHeadersNames}",signature="${signatureB64}"`
+  return `keyId="${keyId}",algorithm="${defaultAlgorithm}",headers="${signedHeadersNames}",signature="${signatureB64}"`
 }
 
 export async function verifySignature (req: MaybeSignedReq) {
@@ -72,7 +78,7 @@ export async function verifySignature (req: MaybeSignedReq) {
 
 async function attemptToVerifySignature (req: MaybeSignedReq, signature: Signature, refresh = false) {
   // "headers" below specify the list of HTTP headers included when generating the signature for the message
-  const { keyId: actorKeyUrl, signature: signatureString, headers: signedHeadersNames } = signature
+  const { keyId: actorKeyUrl, signature: signatureString, headers: signedHeadersNames, algorithm = defaultAlgorithm } = signature
   const { method, path: pathname, headers: reqHeaders } = req
   let publicKeyPem
   try {
@@ -81,7 +87,10 @@ async function attemptToVerifySignature (req: MaybeSignedReq, signature: Signatu
     warn({ method, pathname, body: req.body }, 'could not fetch public key')
     throw err
   }
-  const verifier = createVerify('rsa-sha256')
+  if (!arrayIncludes(supportedAlgorithms, algorithm)) {
+    throw newError('unsupported signature algorithm', 400, { signature })
+  }
+  const verifier = createVerify(algorithm)
   const signedString = buildSignatureString({
     reqHeaders: reqHeaders as HttpHeaders,
     signedHeadersNames,
