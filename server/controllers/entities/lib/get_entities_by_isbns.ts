@@ -7,14 +7,14 @@ import { enrichAndGetEditionEntityFromIsbn } from '#data/dataseed/enrich_and_get
 import { getWdEntitiesByIsbns } from '#data/wikidata/get_wd_entities_by_isbns'
 import { parseIsbn } from '#lib/isbn/parse'
 import type { IsbnData } from '#types/common'
-import type { EntityUri, InvEntity, Isbn, IsbnEntityUri, RedirectFromTo, SerializedEntity, ExpandedSerializedEntity } from '#types/entity'
+import type { EntityUri, InvEntity, Isbn, IsbnEntityUri, RedirectFromTo, MaybeExpandedSerializedEntity } from '#types/entity'
 import { formatEditionEntity } from './format_edition_entity.js'
 
 export type Redirect = Record<EntityUri, EntityUri>
 
 export interface EntitiesResults {
   // This should ideally be corrected to `SerializedEntity[] | ExpandedSerializedEntity[]` but that causes a type error
-  entities: (SerializedEntity | ExpandedSerializedEntity)[]
+  entities: MaybeExpandedSerializedEntity[]
   notFound?: IsbnEntityUri[]
 }
 
