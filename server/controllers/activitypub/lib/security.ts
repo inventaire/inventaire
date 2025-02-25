@@ -136,20 +136,19 @@ function buildSignatureString (params: BuildSignatureStringParams) {
   let { method } = params
   // 'method' must be lowercased
   method = method.toLowerCase() as LowerCasedHttpMethod
-  let signatureString = `(request-target): ${method} ${pathname}`
-  const orderedSignedHeadersKeys = signedHeadersNames
-    .replace('(request-target)', '')
-    .trim()
-    .split(' ')
+  let signatureString = ''
+  const orderedSignedHeadersKeys = signedHeadersNames.trim().split(' ')
   // Keys order matters, so we can't just loop over reqHeaders keys
   for (const key of orderedSignedHeadersKeys) {
-    if (reqHeaders[key] != null) {
+    if (key === '(request-target)') {
+      signatureString += `\n(request-target): ${method} ${pathname}`
+    } else if (reqHeaders[key] != null) {
       signatureString += `\n${key}: ${reqHeaders[key]}`
     } else {
       throw newError('missing header', 400, { key, params })
     }
   }
-  return signatureString
+  return signatureString.trim()
 }
 
 async function getActorPublicKeyPem (actorUrl: string, refresh = false) {
