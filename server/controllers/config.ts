@@ -1,4 +1,4 @@
-import { softwareName, version } from '#lib/package'
+import { gitHeadRev, softwareName, version } from '#lib/package'
 import { sendStaticJson } from '#lib/responses'
 import config, { publicHost } from '#server/config'
 
@@ -8,6 +8,7 @@ const { remoteEntitiesOrigin } = config.federation
 const clientConfig = {
   version,
   softwareName,
+  serverGitHeadRev: gitHeadRev,
   env,
   instanceName,
   orgName,
