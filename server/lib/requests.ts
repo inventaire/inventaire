@@ -1,13 +1,12 @@
 import { URL } from 'node:url'
 import fetch from 'node-fetch'
 import { magenta, green, cyan, yellow, red, grey } from 'tiny-chalk'
-import { absolutePath } from '#lib/absolute_path'
 import { newError, addContextToStack } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
+import { version } from '#lib/package'
 import { wait } from '#lib/promises'
 import { assertObject, assertString } from '#lib/utils/assert_types'
 import { arrayIncludes } from '#lib/utils/base'
-import { requireJson } from '#lib/utils/json'
 import { warn } from '#lib/utils/logs'
 import config, { publicOrigin } from '#server/config'
 import type { AbsoluteUrl, HighResolutionTime, HttpHeaders, HttpMethod } from '#types/common'
@@ -20,7 +19,6 @@ import type { Agent } from 'node:http'
 import type { Stream } from 'node:stream'
 import type OAuth from 'oauth-1.0a'
 
-const { version } = requireJson(absolutePath('root', 'package.json'))
 const { logStart, logEnd, logOngoingAtInterval, ongoingRequestLogInterval, bodyLogLimit } = config.outgoingRequests
 
 const { NODE_APP_INSTANCE: nodeAppInstance = 'default' } = process.env
