@@ -7,6 +7,7 @@ import { newError } from '#lib/error/error'
 import { requests_, sanitizeUrl } from '#lib/requests'
 import { expired, oneMonth } from '#lib/time'
 import { assertObject } from '#lib/utils/assert_types'
+import { arrayIncludes } from '#lib/utils/base'
 import { logError, warn } from '#lib/utils/logs'
 import config from '#server/config'
 import type { ActorKeyId } from '#types/activity'
@@ -18,6 +19,7 @@ interface Signature {
   keyId: string
   signature: string
   headers: string
+  algorithm: string
 }
 
 const { sanitizeUrls } = config.activitypub
@@ -70,9 +72,11 @@ export async function verifySignature (req: MaybeSignedReq) {
   return req as SignedReq
 }
 
+const supportedAlgorithms = [ 'rsa-sha256' ] as const
+
 async function attemptToVerifySignature (req: MaybeSignedReq, signature: Signature, refresh = false) {
   // "headers" below specify the list of HTTP headers included when generating the signature for the message
-  const { keyId: actorKeyUrl, signature: signatureString, headers: signedHeadersNames } = signature
+  const { keyId: actorKeyUrl, signature: signatureString, headers: signedHeadersNames, algorithm } = signature
   const { method, path: pathname, headers: reqHeaders } = req
   let publicKeyPem
   try {
@@ -81,7 +85,10 @@ async function attemptToVerifySignature (req: MaybeSignedReq, signature: Signatu
     warn({ method, pathname, body: req.body }, 'could not fetch public key')
     throw err
   }
-  const verifier = createVerify('rsa-sha256')
+  if (!arrayIncludes(supportedAlgorithms, algorithm)) {
+    throw newError('unsupported signature algorithm', 400, { signature })
+  }
+  const verifier = createVerify(algorithm)
   const signedString = buildSignatureString({
     reqHeaders: reqHeaders as HttpHeaders,
     signedHeadersNames,
