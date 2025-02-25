@@ -38,9 +38,6 @@ const config = {
   // Users receiving emails from the instance can reply to this
   contactAddress: 'contact@inventaire.example.org',
 
-  // Displayed in userAgent and in local logs
-  softwareName: 'inventaire',
-
   // ~~~~~~~
   // Instance specifics
   // ~~~~~~~

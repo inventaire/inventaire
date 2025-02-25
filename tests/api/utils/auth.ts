@@ -1,6 +1,7 @@
+import { softwareName } from '#lib/package'
 import config from '#server/config'
 
-export const sessionCookieName = `${config.softwareName}:${config.env}:session`
+export const sessionCookieName = `${softwareName}:${config.env}:session`
 export const sessionSignatureCookieName = `${sessionCookieName}.sig`
 const sessionCookiePattern = new RegExp(`${sessionCookieName}=([^;]+);`)
 const sessionSignatureCookiePattern = new RegExp(`${sessionCookieName}\\.sig=([^;]+);`)

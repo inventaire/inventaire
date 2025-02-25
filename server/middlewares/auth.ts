@@ -4,11 +4,12 @@ import Keygrip from 'keygrip'
 import passport from 'passport'
 import oauthServer from '#controllers/auth/oauth_server'
 import autoRotatedKeys from '#lib/auto_rotated_keys'
+import { softwareName } from '#lib/package'
 import passport_ from '#lib/passport/passport'
 import { expired } from '#lib/utils/base'
 import config from '#server/config'
 
-const { softwareName, cookieMaxAge, publicHostname, publicProtocol, env } = config
+const { cookieMaxAge, publicHostname, publicProtocol, env } = config
 // Use a different cookie session name per env when working from localhost,
 // to avoid having cookies overriden from one env to the other and needing to re-sign-in
 const suffix = publicHostname === 'localhost' ? `:${env}` : ''

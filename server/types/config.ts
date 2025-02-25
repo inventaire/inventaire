@@ -8,7 +8,6 @@ import type { ReadonlyDeep } from 'type-fest'
 export type Config = ReadonlyDeep<{
   env: 'default' | 'dev' | 'production' | 'tests' | 'tests-api' | 'tests-integration' | 'tests-unit'
 
-  softwareName: string
   instanceName: string
   orgName: string
   orgUrl: AbsoluteUrl

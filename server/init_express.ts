@@ -1,12 +1,13 @@
 import express from 'express'
 import { isArray } from '#lib/boolean_validations'
+import { softwareName } from '#lib/package'
 import { info } from '#lib/utils/logs'
 import config from '#server/config'
 import { middlewareErrorHandler } from '#server/middlewares/middleware_error_handler'
 import { routes } from './controllers/routes.js'
 import { middlewares } from './middlewares/middlewares.js'
 
-const { port, hostname, softwareName, publicProtocol, trustProxy } = config
+const { port, hostname, publicProtocol, trustProxy } = config
 
 export function initExpress () {
   const app = express()

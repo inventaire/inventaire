@@ -3,7 +3,7 @@ import fetch from 'node-fetch'
 import { magenta, green, cyan, yellow, red, grey } from 'tiny-chalk'
 import { newError, addContextToStack } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
-import { version } from '#lib/package'
+import { softwareName, version } from '#lib/package'
 import { wait } from '#lib/promises'
 import { assertObject, assertString } from '#lib/utils/assert_types'
 import { arrayIncludes } from '#lib/utils/base'
@@ -22,7 +22,7 @@ import type OAuth from 'oauth-1.0a'
 const { logStart, logEnd, logOngoingAtInterval, ongoingRequestLogInterval, bodyLogLimit } = config.outgoingRequests
 
 const { NODE_APP_INSTANCE: nodeAppInstance = 'default' } = process.env
-const { env, softwareName } = config
+const { env } = config
 export const userAgent = env.includes('tests')
   ? `${env}-${nodeAppInstance}`
   : `${softwareName}/${version}; +${publicOrigin}`
