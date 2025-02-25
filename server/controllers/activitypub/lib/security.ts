@@ -31,7 +31,7 @@ interface SignParams {
 }
 export function sign (params: SignParams) {
   const { keyId, privateKey, method, pathname, reqHeaders } = params
-  const signedHeadersNames = Object.keys(reqHeaders).join(' ')
+  const signedHeadersNames = `(request-target) ${Object.keys(reqHeaders).join(' ')}`
   const signer = createSign('rsa-sha256')
   const stringToSign = buildSignatureString({
     reqHeaders,
@@ -46,7 +46,7 @@ export function sign (params: SignParams) {
   // headers must respect signature string keys order
   // ie. (request-target) host date
   // see Section 2.3 of https://tools.ietf.org/html/draft-cavage-http-signatures-08
-  return `keyId="${keyId}",headers="(request-target) ${signedHeadersNames}",signature="${signatureB64}"`
+  return `keyId="${keyId}",headers="${signedHeadersNames}",signature="${signatureB64}"`
 }
 
 export async function verifySignature (req: MaybeSignedReq) {
@@ -136,20 +136,19 @@ function buildSignatureString (params: BuildSignatureStringParams) {
   let { method } = params
   // 'method' must be lowercased
   method = method.toLowerCase() as LowerCasedHttpMethod
-  let signatureString = `(request-target): ${method} ${pathname}`
-  const orderedSignedHeadersKeys = signedHeadersNames
-    .replace('(request-target)', '')
-    .trim()
-    .split(' ')
+  let signatureString = ''
+  const orderedSignedHeadersKeys = signedHeadersNames.trim().split(' ')
   // Keys order matters, so we can't just loop over reqHeaders keys
   for (const key of orderedSignedHeadersKeys) {
-    if (reqHeaders[key] != null) {
+    if (key === '(request-target)') {
+      signatureString += `\n(request-target): ${method} ${pathname}`
+    } else if (reqHeaders[key] != null) {
       signatureString += `\n${key}: ${reqHeaders[key]}`
     } else {
       throw newError('missing header', 400, { key, params })
     }
   }
-  return signatureString
+  return signatureString.trim()
 }
 
 async function getActorPublicKeyPem (actorUrl: string, refresh = false) {
