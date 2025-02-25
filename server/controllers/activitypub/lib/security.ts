@@ -28,7 +28,7 @@ interface SignParams {
   keyId: ActorKeyId
   privateKey: string
   method: LowerCasedHttpMethod
-  pathname: RelativeUrl
+  path: RelativeUrl
   reqHeaders: HttpHeaders
 }
 
@@ -36,14 +36,14 @@ const supportedAlgorithms = [ 'rsa-sha256' ] as const
 const defaultAlgorithm = supportedAlgorithms[0]
 
 export function sign (params: SignParams) {
-  const { keyId, privateKey, method, pathname, reqHeaders } = params
+  const { keyId, privateKey, method, path, reqHeaders } = params
   const signedHeadersNames = Object.keys(reqHeaders).join(' ')
   const signer = createSign(defaultAlgorithm)
   const stringToSign = buildSignatureString({
     reqHeaders,
     signedHeadersNames,
     method,
-    pathname,
+    path,
   })
   signer.update(stringToSign)
   signer.end()
@@ -79,12 +79,12 @@ export async function verifySignature (req: MaybeSignedReq) {
 async function attemptToVerifySignature (req: MaybeSignedReq, signature: Signature, refresh = false) {
   // "headers" below specify the list of HTTP headers included when generating the signature for the message
   const { keyId: actorKeyUrl, signature: signatureString, headers: signedHeadersNames, algorithm = defaultAlgorithm } = signature
-  const { method, path: pathname, headers: reqHeaders } = req
+  const { method, url: path, headers: reqHeaders } = req
   let publicKeyPem
   try {
     publicKeyPem = await getActorPublicKeyPem(actorKeyUrl, refresh)
   } catch (err) {
-    warn({ method, pathname, body: req.body }, 'could not fetch public key')
+    warn({ method, path, body: req.body }, 'could not fetch public key')
     throw err
   }
   if (!arrayIncludes(supportedAlgorithms, algorithm)) {
@@ -95,11 +95,11 @@ async function attemptToVerifySignature (req: MaybeSignedReq, signature: Signatu
     reqHeaders: reqHeaders as HttpHeaders,
     signedHeadersNames,
     method: method.toLowerCase() as LowerCasedHttpMethod,
-    pathname: pathname as RelativeUrl,
+    path: path as RelativeUrl,
   })
   verifier.update(signedString)
   if (!verifier.verify(publicKeyPem, signatureString, 'base64')) {
-    throw newError('signature verification failed', 400, { actorKeyUrl, publicKeyPem, signedString, signatureString, reqHeaders, signedHeadersNames, method, pathname })
+    throw newError('signature verification failed', 400, { actorKeyUrl, publicKeyPem, signedString, signatureString, reqHeaders, signedHeadersNames, method, path })
   }
 }
 
@@ -113,7 +113,8 @@ interface SignRequestParams {
 }
 export function signRequest ({ url, method, keyId, privateKey, body, headers = {} }: SignRequestParams) {
   const date = new Date().toUTCString()
-  const { host, pathname } = new URL(url)
+  const { host, pathname, search } = new URL(url)
+  const path = search ? `${pathname}${search}` : pathname
   // The minimum recommended data to sign is the (request-target), host, and date.
   // Source: https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-10#appendix-C.2
   // The digest is additionnal required by Mastodon
@@ -128,7 +129,7 @@ export function signRequest ({ url, method, keyId, privateKey, body, headers = {
     privateKey,
     reqHeaders,
     method,
-    pathname: pathname as RelativeUrl,
+    path: path as RelativeUrl,
   })
   return reqHeaders
 }
@@ -137,11 +138,11 @@ export function signRequest ({ url, method, keyId, privateKey, body, headers = {
 interface BuildSignatureStringParams {
   reqHeaders: HttpHeaders
   signedHeadersNames: string
-  pathname: RelativeUrl
+  path: RelativeUrl
   method: LowerCasedHttpMethod
 }
 function buildSignatureString (params: BuildSignatureStringParams) {
-  const { reqHeaders, signedHeadersNames, pathname } = params
+  const { reqHeaders, signedHeadersNames, path } = params
   let { method } = params
   // 'method' must be lowercased
   method = method.toLowerCase() as LowerCasedHttpMethod
@@ -150,7 +151,7 @@ function buildSignatureString (params: BuildSignatureStringParams) {
   // Keys order matters, so we can't just loop over reqHeaders keys
   for (const key of orderedSignedHeadersKeys) {
     if (key === '(request-target)') {
-      signatureString += `\n(request-target): ${method} ${pathname}`
+      signatureString += `\n(request-target): ${method} ${path}`
     } else if (reqHeaders[key] != null) {
       signatureString += `\n${key}: ${reqHeaders[key]}`
     } else {
