@@ -1,6 +1,6 @@
 {
   "name": "inventaire",
-  "version": "3.0.0-alpha",
+  "version": "3.0.0-beta",
   "type": "module",
   "homepage": "https://inventaire.io",
   "description": "a libre collaborative resources mapper powered by open-knowledge (server-side)",
