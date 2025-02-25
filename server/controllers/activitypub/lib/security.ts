@@ -31,10 +31,14 @@ interface SignParams {
   pathname: RelativeUrl
   reqHeaders: HttpHeaders
 }
+
+const supportedAlgorithms = [ 'rsa-sha256' ] as const
+const defaultAlgorithm = supportedAlgorithms[0]
+
 export function sign (params: SignParams) {
   const { keyId, privateKey, method, pathname, reqHeaders } = params
   const signedHeadersNames = Object.keys(reqHeaders).join(' ')
-  const signer = createSign('rsa-sha256')
+  const signer = createSign(defaultAlgorithm)
   const stringToSign = buildSignatureString({
     reqHeaders,
     signedHeadersNames,
@@ -48,7 +52,7 @@ export function sign (params: SignParams) {
   // headers must respect signature string keys order
   // ie. (request-target) host date
   // see Section 2.3 of https://tools.ietf.org/html/draft-cavage-http-signatures-08
-  return `keyId="${keyId}",headers="(request-target) ${signedHeadersNames}",signature="${signatureB64}"`
+  return `keyId="${keyId}",algorithm="${defaultAlgorithm}",headers="(request-target) ${signedHeadersNames}",signature="${signatureB64}"`
 }
 
 export async function verifySignature (req: MaybeSignedReq) {
@@ -72,11 +76,9 @@ export async function verifySignature (req: MaybeSignedReq) {
   return req as SignedReq
 }
 
-const supportedAlgorithms = [ 'rsa-sha256' ] as const
-
 async function attemptToVerifySignature (req: MaybeSignedReq, signature: Signature, refresh = false) {
   // "headers" below specify the list of HTTP headers included when generating the signature for the message
-  const { keyId: actorKeyUrl, signature: signatureString, headers: signedHeadersNames, algorithm } = signature
+  const { keyId: actorKeyUrl, signature: signatureString, headers: signedHeadersNames, algorithm = defaultAlgorithm } = signature
   const { method, path: pathname, headers: reqHeaders } = req
   let publicKeyPem
   try {
