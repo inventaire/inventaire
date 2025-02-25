@@ -90,7 +90,7 @@ async function attemptToVerifySignature (req: MaybeSignedReq, signature: Signatu
   })
   verifier.update(signedString)
   if (!verifier.verify(publicKeyPem, signatureString, 'base64')) {
-    throw newError('signature verification failed', 400, { actorKeyUrl, publicKeyPem })
+    throw newError('signature verification failed', 400, { actorKeyUrl, publicKeyPem, signedString, signatureString, reqHeaders, signedHeadersNames, method, pathname })
   }
 }
 
