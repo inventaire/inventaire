@@ -135,7 +135,7 @@ The repository tracking strings used in the server (for emails, activitypub) and
 - [**main**](https://github.com/inventaire/inventaire-i18n/tree/main): tracking translations fetched from [Weblate](https://weblate.framasoft.org/engage/inventaire/) and build scripts
 
 #### [deploy](https://github.com/inventaire/inventaire-deploy)
-tracking installation scripts and documentation to run inventaire in production
+tracking installation scripts to run inventaire in production (for production documentation, see [docs](https://git.inventaire.io/inventaire/tree/main/docs))
 - [**main**](https://github.com/inventaire/inventaire-deploy/tree/main): the main implementation for Debian/Ubuntu systems. Additional branches can be started to document installation on other environments
 
 #### [docker](https://github.com/inventaire/docker-inventaire)
