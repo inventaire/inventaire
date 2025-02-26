@@ -168,7 +168,7 @@ export type Config = ReadonlyDeep<{
     // As resized remote images are not cached in development, each request reaches remote services,
     // typically Wikimedia Commons. By setting this flag to true, the images are taken from the inventaire.io
     // which should be much faster as it likely already have those resized images in Nginx cache
-    useProdCachedImages: boolean
+    useEntitiesHostCachedImages: boolean
   }
 
   // Analytics service
