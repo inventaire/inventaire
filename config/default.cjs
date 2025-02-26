@@ -298,9 +298,9 @@ const config = {
 
   remoteImages: {
     // As resized remote images are not cached in development, each request reaches remote services,
-    // typically Wikimedia Commons. By setting this flag to true, the images are taken from the inventaire.io
+    // typically Wikimedia Commons. By setting this flag to true, the images are taken from the entities host (inventaire.io)
     // which should be much faster as it likely already have those resized images in Nginx cache
-    useProdCachedImages: true,
+    useEntitiesHostCachedImages: true,
   },
 
   // ~~~~~~~
