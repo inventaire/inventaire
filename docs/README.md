@@ -39,9 +39,7 @@ Federating users and groups between instances is not possible yet. As focusing o
 
 ## Install
 
-See [installation]https://github.com/inventaire/inventaire/tree/main/docs/installation) folder.
-
-See [deploy](https://git.inventaire.io/inventaire-deploy) repository for installation scripts to run inventaire in production.
+See [installation](https://github.com/inventaire/inventaire/tree/main/docs/installation) folder.
 
 See [docker](https://git.inventaire.io/docker-inventaire) repository for a Docker packaging.
 
