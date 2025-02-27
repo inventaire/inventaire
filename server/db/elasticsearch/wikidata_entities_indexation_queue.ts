@@ -9,7 +9,7 @@ import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import { assertNumber } from '#lib/utils/assert_types'
 import { info, logError, warn } from '#lib/utils/logs'
-import config from '#server/config'
+import config, { federatedMode } from '#server/config'
 import type { WdEntityId } from '#types/entity'
 
 const { env, nice } = config
@@ -76,7 +76,10 @@ async function getIndexedEntity (wdId: WdEntityId) {
   }
 }
 
-const wdEntitiesIndexationJobQueue = initJobQueue('wd:entity:indexation', entitiesIndexationWorker, 1)
+let wdEntitiesIndexationJobQueue
+if (!federatedMode) {
+  wdEntitiesIndexationJobQueue = initJobQueue('wd:entity:indexation', entitiesIndexationWorker, 1)
+}
 
 export function addWdEntityToIndexationQueue (wdId: WdEntityId) {
   if (isWdEntityId(wdId)) {
@@ -87,4 +90,4 @@ export function addWdEntityToIndexationQueue (wdId: WdEntityId) {
   }
 }
 
-export const getWikidataIndexationQueueLength = wdEntitiesIndexationJobQueue.getQueueLength
+export const getWikidataIndexationQueueLength = wdEntitiesIndexationJobQueue?.getQueueLength

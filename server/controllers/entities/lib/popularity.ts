@@ -7,7 +7,7 @@ import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { objectPromise } from '#lib/promises'
 import { oneMonth } from '#lib/time'
 import { info, logError } from '#lib/utils/logs'
-import config from '#server/config'
+import config, { federatedMode } from '#server/config'
 import type { EntityUri } from '#types/entity'
 import { buildPopularityByUri } from './build_popularity_by_uri.js'
 
@@ -86,7 +86,10 @@ async function popularityWorker (jobId, uri) {
   }
 }
 
-const popularityJobQueue = initJobQueue('entity:popularity', popularityWorker, 1)
+let popularityJobQueue
+if (!federatedMode) {
+  popularityJobQueue = initJobQueue('entity:popularity', popularityWorker, 1)
+}
 
 export async function addEntitiesPopularities ({ entities, refresh }) {
   const uris = map(entities, 'uri')

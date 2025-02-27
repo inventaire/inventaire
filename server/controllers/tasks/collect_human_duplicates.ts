@@ -5,7 +5,7 @@ import { dbFactory } from '#db/couchdb/base'
 import { initJobQueue } from '#db/level/jobs'
 import { waitForCPUsLoadToBeBelow } from '#lib/os'
 import { success, info, logError, LogError } from '#lib/utils/logs'
-import config from '#server/config'
+import config, { federatedMode } from '#server/config'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import checkHumanDuplicate from './lib/check_human_duplicate.js'
 
@@ -88,4 +88,7 @@ async function filterNotAlreadySuspectEntities (uris) {
 
 export default { sanitization, controller }
 
-const invTasksEntitiesQueue = initJobQueue('inv:deduplicate', deduplicateWorker, 1)
+let invTasksEntitiesQueue
+if (!federatedMode) {
+  invTasksEntitiesQueue = initJobQueue('inv:deduplicate', deduplicateWorker, 1)
+}
