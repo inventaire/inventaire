@@ -1,7 +1,6 @@
 // This config file contains the default values for all environments.
-// Override by creating per-environment files following the same structure
-// in this same folder
-// See the config module doc: https://github.com/lorenwest/node-config/wiki/Configuration-Files
+// Override by creating per-environment files following the same structure in this same folder
+// The file priority order can be found here https://github.com/node-config/node-config/wiki/Configuration-Files#file-load-order
 
 /** @typedef { import('../types/types.ts').Config } Config */
 
