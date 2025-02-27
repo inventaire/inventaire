@@ -32,10 +32,6 @@ Once node is installed (check with command `node -v`), install global dependenci
 npm install -g --production lev2 couchdb-bulk2
 ```
 
-## Reverse proxy
-
-See https://git.inventaire.io/inventaire-deploy/nginx/setup
-
 ## Couchdb
 
 See https://git.inventaire.io/inventaire/docs/installation/install_couchdb.md
@@ -51,6 +47,18 @@ git clone http://github.com/inventaire/inventaire
 cd inventaire
 npm install --production
 ```
+
+You also may setup the root folder variable:
+
+```sh
+PROJECT_ROOT=$PWD
+```
+
+## Reverse proxy
+
+See https://git.inventaire.io/inventaire/docs/installation/install_reverse_proxy.md
+
+## Usage
 
 Run the app:
 
