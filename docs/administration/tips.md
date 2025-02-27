@@ -13,6 +13,14 @@ Possible roles: `admin`, `dataadmin`
 
 See: [Roles and access levels](https://wiki.inventaire.io/wiki/Roles_and_access_levels)
 
+#### Alternative with username
+
+Make a user an admin:
+
+```sh
+npm run db-actions:update-user-role-from-username your_username add admin
+```
+
 ### Prevent sending further emails to an email address
 
 People invited by Inventaire users might not want those emails, or some users might not know where to find email settings. To prevent sending further emails to a given address, run:
