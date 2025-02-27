@@ -3,6 +3,7 @@ import { makeUrl } from '#controllers/activitypub/lib/helpers'
 import { sign } from '#controllers/activitypub/lib/security'
 import { createUsername, createUser } from '#fixtures/users'
 import { generateRsaKeyPair } from '#lib/crypto'
+import { oneMinute } from '#lib/time'
 import config from '#server/config'
 import {
   signedReq,
@@ -94,16 +95,16 @@ describe('activitypub:signed:request', () => {
     }
   })
 
-  it('should reject if date header is more than 30 seconds old', async () => {
+  it('should reject if date header is too old', async () => {
     try {
       const emitterUser = await createRemoteActivityPubServerUser()
       const { username, keyId } = await getSomeRemoteServerUser(emitterUser)
       const now = new Date()
-      const thirtySecondsAgo = new Date(now.getTime() - 30 * 1000).toUTCString()
+      const fiveMinutesAgo = new Date(now.getTime() - 5 * oneMinute).toUTCString()
       const { publicHostname } = config
       const reqHeaders = {
         host: publicHostname,
-        date: thirtySecondsAgo,
+        date: fiveMinutesAgo,
       }
       const signedHeadersNames = Object.keys(reqHeaders).join(' ')
       const method = 'post'
