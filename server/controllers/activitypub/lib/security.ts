@@ -5,7 +5,7 @@ import { cache_ } from '#lib/cache'
 import { getSha256Base64Digest } from '#lib/crypto'
 import { newError } from '#lib/error/error'
 import { requests_, sanitizeUrl } from '#lib/requests'
-import { expired, oneMonth } from '#lib/time'
+import { expired, oneMinute, oneMonth } from '#lib/time'
 import { assertObject } from '#lib/utils/assert_types'
 import { arrayIncludes } from '#lib/utils/base'
 import { logError, warn } from '#lib/utils/logs'
@@ -59,8 +59,7 @@ export async function verifySignature (req: MaybeSignedReq) {
   const { headers: reqHeaders } = req
   const { date } = reqHeaders
   let { signature } = reqHeaders
-  // 30 seconds time window for that signature to be considered valid
-  if (thirtySecondsTimeWindow(date)) throw newError('outdated request', 400, reqHeaders)
+  if (requestExpired(date)) throw newError('outdated request', 400, reqHeaders)
   if (signature === undefined) throw newError('no signature header', 400, reqHeaders)
   if (signature instanceof Array) signature = signature[0]
   const parsedSignature = parseSignature(signature)
@@ -209,4 +208,5 @@ function parseSignature (signature: string) {
 
 const removeTrailingQuote = line => line.replace(/"$/, '')
 
-const thirtySecondsTimeWindow = date => expired(Date.parse(date), 30000)
+// Keep the time window above a minute to be more tolerant to slow requests
+const requestExpired = date => expired(Date.parse(date), 2 * oneMinute)
