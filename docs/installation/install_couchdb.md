@@ -1,6 +1,6 @@
 # Install couchdb on Debian based systems
 
-Couchdb is the canonical database for Inventaire, other databases (elasticsearch, leveldb) stores data that are derived from Couchdb or secondary.
+CouchDB is the canonical database for Inventaire, other databases (Elasticsearch, LevelDB) stores data that are derived from CouchDB or secondary.
 
 You may also install databases with [Docker](https://github.com/inventaire/docker-inventaire).
 
