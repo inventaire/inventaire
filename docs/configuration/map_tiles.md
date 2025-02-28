@@ -14,18 +14,12 @@ Generate a public access token at: https://docs.mapbox.com/help/getting-started/
 
 ## Add it to the inventaire config
 
-Copy the following code in the server configuration file:
-
-`config/local.cjs`
+Add your Mapbox public access token in your local configuration file (`config/local.cjs`) :
 
 ```js
 module.exports = {
-	// This 'db' key should already appear in the file, do not copy/paste it
-	db: {
-	  username: "yourCouchdbUsername",
-	  password: "yourCouchdbPassword",
-	},
-	// Copy/paste this key
-	mapTilesAccessToken: "yourToken"
+  ...
+  mapTilesAccessToken: "yourToken"
+  ...
 }
 ```
