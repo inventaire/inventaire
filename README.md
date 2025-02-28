@@ -2,7 +2,7 @@
 
 # Inventaire
 
-**[Visit inventaire.io](https://inventaire.io) | [Create an instance](https://git.inventaire.io/inventaire/tree/main/docs) | [Wiki](https://wiki.inventaire.io) | [Contact us](https://wiki.inventaire.io/wiki/Communication_channels) | [Donate](https://liberapay.com/Association_Inventaire)**
+**[Visit inventaire.io](https://inventaire.io) | [Create an instance](https://git.inventaire.io/inventaire/tree/main/docs) | [Wiki](https://wiki.inventaire.io) | [Contact us](https://wiki.inventaire.io/wiki/Communication_channels) | [Donate](https://wiki.inventaire.io/wiki/Funding#Donations)**
 
 [![License](https://img.shields.io/badge/license-AGPL3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0.html)
 [![Node](https://img.shields.io/badge/node->=v4-brightgreen.svg)](https://nodejs.org)
