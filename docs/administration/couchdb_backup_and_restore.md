@@ -1,6 +1,12 @@
 # CouchDB backup and restore
 
-## Backup CouchDB databases
+## Automatic backup
+[CouchDB has fantastic replication capabilities](https://docs.couchdb.org/en/stable/replication/intro.html), which makes it rather easy to keep a copy in sync.
+
+## Manual backup
+Additionally, it can be useful to make an archive from time-to-time, in case you might want to restore a previous database state.
+
+### Backup CouchDB databases
 
 Assuming that CouchDB is running on `localhost:5984`, and that we want to backup `prod`-suffixed databases
 
@@ -23,7 +29,7 @@ module.exports = {
 ```
 
 
-## Restore CouchDB databases
+### Restore CouchDB databases
 
 Dependencies:
 * `jq` (see https://stedolan.github.io/jq/)
