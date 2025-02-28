@@ -1,6 +1,6 @@
 # External email provider
 
-Inventaire must send email to confirm account creation. A mailer service is also optional to send the automatic newsletter.
+Inventaire must send email to confirm account creation, and may send email notifications and activity summaries, dependending on users preferences. A mailer service is also optional to send the automatic newsletter.
 
 ## In production
 
@@ -42,4 +42,23 @@ npm run send-test-email your@email.org
 
 ## In development
 
-In case one would like to test a setup, check out [ethereal](https://ethereal.email/create).
+To test the rendering of your email in development, you can create an account on [ethereal](https://ethereal.email/create), and update your local config (`config/local.cjs`) accordingly:
+
+```js
+module.exports = {
+	...
+	mailer: {
+		disabled: false,
+		nodemailer: {
+      host: 'smtp.ethereal.email',
+      port: 587,
+      // Input the username and password you got at https://ethereal.email/create
+      auth: {
+        user: 'someusername@ethereal.email',
+        pass: 'somepassword',
+      },
+		},
+	}
+	...
+}
+```
