@@ -133,7 +133,7 @@ const config = {
       freeze: false,
       delay: 5000,
     },
-    // logs Couchdb requests parameters
+    // logs CouchDB requests parameters
     debug: false,
     backupFolder: 'backups/couchdb',
   },
@@ -360,7 +360,7 @@ const config = {
     'entity:popularity': {
       run: true,
     },
-    // Synchronises wikidata databases of both Couchdb and Elasticsearch
+    // Synchronises wikidata databases of both CouchDB and Elasticsearch
     'wd:entity:indexation': {
       run: true,
     },

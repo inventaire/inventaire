@@ -6,7 +6,7 @@
 apt-get install curl git nginx graphicsmagick openssl inotify-tools software-properties-common -y
 ```
 
-and optionnaly:
+and optionally:
 
 ```sh
 apt-get install fail2ban build-essential zsh
@@ -32,7 +32,7 @@ Once node is installed (check with command `node -v`), install global dependenci
 npm install -g --production lev2 couchdb-bulk2
 ```
 
-## Couchdb
+## CouchDB
 
 See https://git.inventaire.io/inventaire/docs/installation/install_couchdb.md
 

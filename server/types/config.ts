@@ -60,7 +60,7 @@ export type Config = ReadonlyDeep<{
       freeze: boolean
       delay: number
     }
-    /** logs Couchdb requests parameters */
+    /** logs CouchDB requests parameters */
     debug: boolean
     backupFolder: Path
   }
