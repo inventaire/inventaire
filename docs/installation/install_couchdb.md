@@ -1,10 +1,13 @@
-# Install couchdb on Debian based systems
+# Install CouchDB
 
-CouchDB is the canonical database for Inventaire, other databases (Elasticsearch, LevelDB) stores data that are derived from CouchDB or secondary.
+CouchDB is Inventaire primary database. Other databases are used as secondary indexes (Elasticsearch), or data cache (LevelDB). Consequently, only CouchDB needs to be [backed up](../administration/couchdb_backup_and_restore.md).
 
-You may also install databases with [Docker](https://github.com/inventaire/docker-inventaire).
+## in Docker
+See [docker-inventaire](https://github.com/inventaire/docker-inventaire).
 
-## Enabling package repository
+## on Debian-based systems
+
+### Enabling package repository
 
 Following https://docs.couchdb.org/en/stable/install/unix.html for Debian or Ubuntu
 
@@ -18,15 +21,15 @@ sudo apt update
 ```
 
 You will be prompted for some setups:
-  - cluster or standalone: standalone should be fine
-  - set an 'admin' user password
-  - host ip: set to 0.0.0.0 if you want to setup [replication]() from a remote server
+* cluster or standalone: standalone should be fine
+* set an 'admin' user password
+* host ip: set to 0.0.0.0 if you want to setup [replication](../administration/couchdb_backup_and_restore.md#automatic-backup) from a remote server
 
 ```sh
 sudo apt install couchdb
 ```
 
-SSL setup based on https://docs.couchdb.org/en/stable/config/http.html?highlight=ssl#https-ssl-tls-options
+SSL/TLS setup based on https://docs.couchdb.org/en/stable/config/http.html?highlight=ssl#https-ssl-tls-options
 
 ```sh
 mkdir /opt/couchdb/etc/cert
@@ -37,7 +40,7 @@ chmod 600 privkey.pem couchdb.pem
 chown couchdb privkey.pem couchdb.pem
 ```
 
-## Add custom settings
+### Add custom settings
 ```
 sudo cp custom.ini /opt/couchdb/etc/local.d/custom.ini
 ```
@@ -45,7 +48,7 @@ sudo cp custom.ini /opt/couchdb/etc/local.d/custom.ini
 Increase Query Servers max memory
 See https://docs.couchdb.org/en/stable/config/query-servers.html
 
-```
+```sh
 sudo mkdir -p /etc/systemd/system/couchdb.service.d/
 echo '
 [Service]
@@ -57,4 +60,4 @@ sudo systemctl restart couchdb
 ```
 
 Databases will then be created by the nodejs server at first startup
-You still got to setup database replication on the remote server
+You still got to setup [database replication](https://docs.couchdb.org/en/stable/replication/intro.html) on your backup server
