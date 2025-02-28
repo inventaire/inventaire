@@ -6,8 +6,7 @@ Inventaire must send email to confirm account creation, and may send email notif
 
 ### About the email server provider
 
-Any service providing an SMTP server may fit (for information, inventaire.io is using Sendgrid).
-Make sure the appropriate ports are not blocked by the provider.
+Any service providing an SMTP server may fit. For your information, inventaire.io is using Sendgrid, but one you could also set up their own service for handling emails, with an open source tool like [Postal](https://docs.postalserver.io/), [like our friends at Karrot do](https://blog.karrot.world/2019/09/25/setting-up-email-service.html).
 
 ### Setup the inventaire config
 
