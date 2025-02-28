@@ -10,7 +10,7 @@
 
 </div>
 
-Inventaire is a libre collaborative book mapper, powered by open-knowledge.<br>
+Inventaire is a libre/open webapp to make inventories and lists of books, powered by open-knowledge.
 
 [![inventory screenshot](https://github.com/inventaire/inventaire/assets/1596934/844c04ff-a216-48dc-b3b9-c33a106b8fbe)](https://inventaire.io)
 
