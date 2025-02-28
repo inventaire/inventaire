@@ -45,7 +45,8 @@ See https://git.inventaire.io/inventaire/docs/installation/install_elasticsearch
 ```sh
 git clone http://github.com/inventaire/inventaire
 cd inventaire
-npm install --production
+# In production, you can pass the option --omit=dev
+npm install
 ```
 
 You also may setup the root folder variable:
