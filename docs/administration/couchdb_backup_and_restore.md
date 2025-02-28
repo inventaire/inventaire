@@ -14,11 +14,11 @@ You can customize this target folder in `config/local.cjs`:
 
 ```js
 module.exports = {
-	...
-	db: {
-		backupFolder: 'backups/couchdb'
-	}
-	...
+  ...
+  db: {
+    backupFolder: 'backups/couchdb'
+  }
+  ...
 }
 ```
 

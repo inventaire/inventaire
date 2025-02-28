@@ -13,12 +13,12 @@ In `config/local.cjs`:
 
 ```js
 module.exports = {
-	...
-	matomo: {
-	  enabled: true,
-	  endpoint: 'https://a-matomo-instance/matomo.php',
-	  idsite: 1,
-	  rec: 1
-	},
+  ...
+  matomo: {
+    enabled: true,
+    endpoint: 'https://a-matomo-instance/matomo.php',
+    idsite: 1,
+    rec: 1
+  },
 ```
 

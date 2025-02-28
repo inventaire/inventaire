@@ -10,12 +10,12 @@ To override this folder, you may add to `config/local.cjs`:
 
 ```js
 module.exports = {
-	mediaStorage: {
-		local: {
-			// Storage path relative to the project root
-			folder: './wherever'
-		}
-	},
+  mediaStorage: {
+    local: {
+      // Storage path relative to the project root
+      folder: './wherever'
+    }
+  },
 }
 ```
 
