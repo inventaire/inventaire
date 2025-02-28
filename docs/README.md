@@ -1,26 +1,26 @@
 # Documentation
 
-This folder hosts the main technical documentation about Inventaire, including how to create your own production-ready instance, that allows you to self-host a knowledge graph similar to [inventaire.io](https://inventaire.io).
+This folder hosts the main **technical documentation** about Inventaire, including how to setup a development or a production environment.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-- [With Docker](#with-docker)
-- [Build your own](#build-your-own)
-  - [Install](#install)
-  - [Configure](#configure)
-  - [Administrate](#administrate)
+- [Install](#install)
+- [Configure](#configure)
+- [Administrate](#administrate)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ### Install
 
-See [installation](https://git.inventaire.io/inventaire/tree/main/docs/installation) procedure for Debian based systems.
+What you need to install will depend on if you are trying to setup a development or a production environment:
+* In **development**, you will need the server and client repositories of course, and their dependencies: CouchDB, Elasticsearch, GraphicsMagick
+* In **production**, in addition to those dependencies, you will need a reverse proxy, typically Nginx, to handle TLS termination, image resizing and caching, etc
 
-See also [Docker Inventaire Suite](https://git.inventaire.io/docker-inventaire).
-
-For other other deployment you may check the [Deployment wiki page](https://wiki.inventaire.io/wiki/Deployment) (or add your own there).
-
+For details on how to install all of those:
+* See [installation](./installation) procedure for Debian based systems.
+* See [Docker Inventaire Suite](https://git.inventaire.io/docker-inventaire) for a fully packaged federated production-ready instance
+* For other other deployment you can check the [Deployment wiki page](https://wiki.inventaire.io/wiki/Deployment) (or add your own there).
 
 ### Configure
 
