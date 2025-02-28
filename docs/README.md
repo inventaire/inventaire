@@ -18,9 +18,9 @@ What you need to install will depend on if you are trying to setup a development
 * In **production**, in addition to those dependencies, you will need a reverse proxy, typically Nginx, to handle TLS termination, image resizing and caching, etc
 
 For details on how to install all of those:
-* See [installation](./installation) procedure for Debian based systems.
+* See [installation](./installation) procedure for Debian-based systems.
 * See [Docker Inventaire Suite](https://git.inventaire.io/docker-inventaire) for a fully packaged federated production-ready instance
-* For other other deployment you can check the [Deployment wiki page](https://wiki.inventaire.io/wiki/Deployment) (or add your own there).
+* For other operating systems and setups, see [install on another OS](./installation/install.md#install-on-other-operating-systems)
 
 ### Configure
 
