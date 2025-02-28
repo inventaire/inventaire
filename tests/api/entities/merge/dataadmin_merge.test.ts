@@ -67,8 +67,8 @@ describe('entities:merge:as:dataadmin', () => {
     await dataadminReq('put', '/api/entities?action=merge', { from: someFakeUri, to: 'wd:Q42' })
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.body.status_verbose.should.equal("'from' entity not found")
-      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('entity not found')
+      err.statusCode.should.equal(404)
     })
   })
 
@@ -362,8 +362,8 @@ describe('entities:merge:as:dataadmin', () => {
       await merge(human.uri, wdHumanUri)
       .then(shouldNotBeCalled)
       .catch(err => {
-        err.statusCode.should.equal(400)
-        err.body.status_verbose.should.equal("'to' entity not found")
+        err.statusCode.should.equal(404)
+        err.body.status_verbose.should.equal('entity not found')
       })
     })
 
