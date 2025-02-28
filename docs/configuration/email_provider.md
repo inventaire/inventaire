@@ -14,20 +14,20 @@ In `config/local.cjs`:
 
 ```js
 module.exports = {
-	...
-	mailer: {
-		disabled: false,
-		nodemailer: {
-		  host: 'smtp.provider-domain.org',
-		  // Conventional port (587) may be customized
-		  port: 587,
-		  auth: {
-		    user: 'your-provider-username',
-		    pass: 'your-provider-password'
-		  },
-		},
-	}
-	...
+  ...
+  mailer: {
+    disabled: false,
+    nodemailer: {
+      host: 'smtp.provider-domain.org',
+      // Conventional port (587) may be customized
+      port: 587,
+      auth: {
+        user: 'your-provider-username',
+        pass: 'your-provider-password'
+      },
+    },
+  }
+  ...
 }
 ```
 
@@ -45,10 +45,10 @@ To test the rendering of your email in development, you can create an account on
 
 ```js
 module.exports = {
-	...
-	mailer: {
-		disabled: false,
-		nodemailer: {
+  ...
+  mailer: {
+    disabled: false,
+    nodemailer: {
       host: 'smtp.ethereal.email',
       port: 587,
       // Input the username and password you got at https://ethereal.email/create
@@ -56,8 +56,8 @@ module.exports = {
         user: 'someusername@ethereal.email',
         pass: 'somepassword',
       },
-		},
-	}
-	...
+    },
+  }
+  ...
 }
 ```
