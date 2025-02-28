@@ -1,4 +1,4 @@
-# Object storage
+# Mediam storage
 
 An inventaire instance is storing uploaded images (from users profile pictures and groups cover images).
 
@@ -13,7 +13,7 @@ module.exports = {
   mediaStorage: {
     local: {
       // Storage path relative to the project root
-      folder: './wherever'
+      folder: './storage'
     }
   },
 }
@@ -37,8 +37,8 @@ source ./openrc_ovh.sh
 swift list
 
 # Create a container with the content of the current folder
-swift upload testcontainer .
+swift upload users .
 
 # Make that new container public
-swift post --read-acl '.r:*,.rlistings' testcontainer
+swift post --read-acl '.r:*,.rlistings' users
 ```
