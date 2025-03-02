@@ -1,12 +1,4 @@
-// Entity data snapshots are an attributes of the snapshot object associated with item documents:
-// - entity:title
-// - entity:lang
-// - entity:authors
-// - entity:series
-// - entity:image
-// - entity:ordinal
-
-// Their role is to keep a copy at hand of data deduced from the item's entity
+// The role of ItemSnapshot is to keep a copy at hand of data deduced from the item's entity
 // and its graph: typically, the edition the item is an instance of, the edition work,
 // (or works in case of a multi-works edition), the work(s) authors, the serie(s)
 // the work(s) might be part of.
