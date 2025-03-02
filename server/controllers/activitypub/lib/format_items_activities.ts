@@ -1,6 +1,6 @@
 import { compact, map, max, min } from 'lodash-es'
 import { context } from '#controllers/activitypub/lib/helpers'
-import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
+import { addItemsSnapshots } from '#controllers/items/lib/snapshot/snapshot'
 import { i18n } from '#lib/emails/i18n/i18n'
 import { publicOrigin } from '#server/config'
 import type { ActivityDoc, ItemNote, NoteActivity, CreateActivity, ImageAttachment } from '#types/activity'
@@ -18,7 +18,7 @@ export function buildPooledCreateActivities ({ allActivitiesItems, lang = 'en', 
     if (publicRangeItems.length === 0) return
 
     const firstItems = publicRangeItems.slice(0, 3)
-    await Promise.all(firstItems.map(addSnapshotToItem))
+    await addItemsSnapshots(firstItems)
     const links = firstItems.map(buildLinkContentFromItem)
     // itemsLength as in OrderedItems (not user's item)
     const itemsLength = publicRangeItems.length
@@ -49,7 +49,7 @@ export function buildItemsCreateActivities ({ allActivitiesItems, lang = 'en', n
     const { since, until } = activityDoc.object.items
     // todo: pre-sorting the items per range
     const publicRangeItems = allActivitiesItems.filter(itemsWithinActivityRange(since, until))
-    await Promise.all(publicRangeItems.map(addSnapshotToItem))
+    await addItemsSnapshots(publicRangeItems)
 
     const noteActivities: NoteActivity[] = publicRangeItems.map(item => buildNoteActivity(item, name, lang, parentLink, until))
 

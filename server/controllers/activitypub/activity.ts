@@ -2,7 +2,7 @@ import { getActivityById } from '#controllers/activitypub/lib/activities'
 import { buildNoteActivity, buildCreateActivity } from '#controllers/activitypub/lib/format_items_activities'
 import { makeUrl } from '#controllers/activitypub/lib/helpers'
 import { getPatchById } from '#controllers/entities/lib/patches/patches'
-import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
+import { addItemSnapshot } from '#controllers/items/lib/snapshot/snapshot'
 import { isCouchUuid } from '#lib/boolean_validations'
 import { newError, notFoundError } from '#lib/error/error'
 import type { RelativeUrl } from '#types/common'
@@ -71,7 +71,7 @@ async function getItemActivity (id) {
   const itemId = id.split('-')[1]
   if (!isCouchUuid(itemId)) throw newError('invalid item id', 400, { itemId })
   const { item: rawItem, owner }: { item: Item, owner: User } = await validateItem(itemId)
-  const item: SerializedItem = await addSnapshotToItem(rawItem)
+  const item: SerializedItem = await addItemSnapshot(rawItem)
   const name = item.snapshot['entity:title']
   const parentLink: RelativeUrl = `/users/${owner._id}`
   const { language } = owner

@@ -11,37 +11,12 @@
 
 import { keyBy, map, partition, uniq } from 'lodash-es'
 import { getEntitiesAggregatedPropertiesValues } from '#controllers/entities/lib/entities'
-import { getEntityByUri, getEntitiesList } from '#controllers/entities/lib/federation/instance_agnostic_entities'
+import { getEntitiesList } from '#controllers/entities/lib/federation/instance_agnostic_entities'
 import { editionAuthorRelationsProperties, workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
-import { buildSnapshotFromEntitiesByType, getSnapshotByType } from '#controllers/items/lib/snapshot/refresh_snapshot'
-import { assertString } from '#lib/utils/assert_types'
+import { buildSnapshotFromEntitiesByType } from '#controllers/items/lib/snapshot/refresh_snapshot'
 import { logError, warn } from '#lib/utils/logs'
 import type { EntityUri, SerializedEntitiesByUris, SerializedEntity } from '#types/entity'
 import type { ItemSnapshot, SerializedItem } from '#types/item'
-
-export async function addSnapshotToItem (item: SerializedItem) {
-  if (item.snapshot) return item
-
-  try {
-    assertString(item.entity)
-    item.snapshot = await getSnapshot(item.entity)
-  } catch (err) {
-    err.context ??= {}
-    err.context.item = item
-    logError(err, 'addSnapshotToItem error')
-    item.snapshot ??= {}
-  }
-
-  return item
-}
-
-async function getSnapshot (uri: EntityUri) {
-  const entity = await getEntityByUri({ uri })
-  const { type } = entity
-  if (getSnapshotByType[type] == null) return {}
-  const { value: snapshot } = await getSnapshotByType[type](uri)
-  return snapshot as ItemSnapshot
-}
 
 export async function addItemsSnapshots (items: SerializedItem[]) {
   const itemsEntitiesUris = uniq(map(items, 'entity'))
@@ -74,7 +49,7 @@ function addSnapshotFromEntities (item: SerializedItem, entitiesByUris: Serializ
     return {}
   }
   const { type } = entity
-  if (getSnapshotByType[type] == null) {
+  if (buildSnapshotFromEntitiesByType[type] == null) {
     warn(`invalid item entity type: ${type} (uri: ${item.entity})`)
     return {}
   }
@@ -88,4 +63,9 @@ function addSnapshotFromEntities (item: SerializedItem, entitiesByUris: Serializ
     logError(err, 'failed to build item snapshot')
     return {}
   }
+}
+
+export async function addItemSnapshot (item: SerializedItem) {
+  const items = await addItemsSnapshots([ item ])
+  return items[0]
 }
