@@ -33,6 +33,10 @@ const localEntitiesControllersParams = {
       'publisher-publications': publisherPublications,
       images,
       popularity,
+    },
+    semipublic: {
+      // Those endpoints will respect anonymization preference for non-admin users
+      // and are thus considered semipublic
       history,
       contributions,
     },

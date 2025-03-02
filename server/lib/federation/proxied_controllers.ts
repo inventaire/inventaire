@@ -79,10 +79,10 @@ async function proxyWrappedController (req: Req | AuthentifiedReq, accessLevel: 
   const body = httpMethodHasBody(method) ? req.body : undefined
   const headers = getProxiedHeaders(req)
   let res
-  if (isAuthentifiedReq(req)) {
-    res = await signedFederatedRequest(req, method, url, body, headers)
-  } else if (accessLevel === 'public') {
+  if (accessLevel === 'public' || (accessLevel === 'semipublic' && !isAuthentifiedReq(req))) {
     res = await federatedRequest(method, url, { body, headers })
+  } else if (isAuthentifiedReq(req)) {
+    res = await signedFederatedRequest(req, method, url, body, headers)
   } else {
     throw newUnauthorizedApiAccessError(401)
   }

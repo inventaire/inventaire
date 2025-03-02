@@ -6,6 +6,8 @@ import type { SpecialUser, User } from '#types/user'
 
 export const rolesByAccess = {
   public: [ 'public', 'authentified', 'dataadmin', 'admin' ] as const,
+  // Semipublic endpoints can be requested by all, but the response might be different depending on the user role
+  semipublic: [ 'public', 'authentified', 'dataadmin', 'admin' ] as const,
   authentified: [ 'authentified', 'dataadmin', 'admin' ] as const,
   dataadmin: [ 'dataadmin', 'admin' ] as const,
   admin: [ 'admin' ] as const,

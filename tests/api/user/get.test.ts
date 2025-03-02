@@ -42,11 +42,9 @@ describe('user:get', () => {
     userData.accessLevels.should.deepEqual([])
   })
 
-  it('should get admin access levels', async function () {
-    // Disabled in federated mode yet as this test relies on a special role
-    if (federatedMode) this.skip()
+  it('should get admin access levels', async () => {
     const userData = await adminReq('get', endpoint)
-    const adminAccessLevels = [ 'public', 'authentified', 'dataadmin', 'admin' ]
+    const adminAccessLevels = [ 'public', 'semipublic', 'authentified', 'dataadmin', 'admin' ]
     userData.accessLevels.should.deepEqual(adminAccessLevels)
   })
 
@@ -54,7 +52,7 @@ describe('user:get', () => {
     // Disabled in federated mode yet as this test relies on a special role
     if (federatedMode) this.skip()
     const userData = await dataadminReq('get', endpoint)
-    const dataadminAccessLevels = [ 'public', 'authentified', 'dataadmin' ]
+    const dataadminAccessLevels = [ 'public', 'semipublic', 'authentified', 'dataadmin' ]
     userData.accessLevels.should.deepEqual(dataadminAccessLevels)
   })
 
