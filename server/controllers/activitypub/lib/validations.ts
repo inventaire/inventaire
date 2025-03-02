@@ -35,7 +35,7 @@ export async function validateItem (itemId) {
 
 export async function validateEntity (name) {
   const uri = getEntityUriFromActorName(name)
-  const entity: SerializedEntity = await getEntityByUri({ uri })
+  const entity = (await getEntityByUri({ uri })) as SerializedEntity
   if (!entity) throw notFoundError({ uri })
   return { entity }
 }
