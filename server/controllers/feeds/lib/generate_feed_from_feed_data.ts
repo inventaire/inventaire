@@ -2,7 +2,7 @@ import { map } from 'lodash-es'
 import { filterPrivateAttributes } from '#controllers/items/lib/filter_private_attributes'
 import { getAuthorizedItemsByShelves, getAuthorizedItemsByUsers } from '#controllers/items/lib/get_authorized_items'
 import { paginateItems } from '#controllers/items/lib/queries_commons'
-import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
+import { addItemsSnapshots } from '#controllers/items/lib/snapshot/snapshot'
 import { serializeUserData } from '#controllers/user/lib/user'
 import config from '#server/config'
 import serializeFeed from './serialize_feed.js'
@@ -22,7 +22,7 @@ export default lang => async ({ reqUserId, feedOptions, users, shelves, context 
     context,
     limit: feedConfig.limitLength,
   })
-  items = await Promise.all(page.items.map(addSnapshotToItem))
+  items = await addItemsSnapshots(page.items)
   items = items.map(filterPrivateAttributes(reqUserId))
   return serializeFeed(feedOptions, users, items, lang)
 }

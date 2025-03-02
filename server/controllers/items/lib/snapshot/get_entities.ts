@@ -1,5 +1,5 @@
 import { getAggregatedPropertiesValues } from '#controllers/entities/lib/entities'
-import { getEntitiesByUris, getEntityByUri } from '#controllers/entities/lib/federation/instance_agnostic_entities'
+import { getEntitiesByUris } from '#controllers/entities/lib/federation/instance_agnostic_entities'
 import { workAuthorRelationsProperties } from '#controllers/entities/lib/properties/properties'
 import { assertArray } from '#lib/utils/assert_types'
 import type { EntityUri, PropertyUri } from '#types/entity'
@@ -43,11 +43,6 @@ function mergeWorksClaims (works) {
   return Object.fromEntries(workRelationsProperties.map(property => {
     return [ property, aggregateClaims(works, property) ]
   }))
-}
-
-export async function getEditionGraphEntities (uri) {
-  const edition = await getEntityByUri({ uri })
-  return getEditionGraphFromEdition(edition)
 }
 
 export async function getWorkGraphFromWork (lang, work) {

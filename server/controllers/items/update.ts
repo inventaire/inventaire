@@ -5,7 +5,7 @@ import { newMissingBodyError, newInvalidError } from '#lib/error/pre_filled'
 import { responses_ } from '#lib/responses'
 import { track } from '#lib/track'
 import { log } from '#lib/utils/logs'
-import { addSnapshotToItem } from './lib/snapshot/snapshot.js'
+import { addItemSnapshot } from './lib/snapshot/snapshot.js'
 
 // This controller doesn't use sanitization
 // as the item doc is passed unwrapped in the body
@@ -34,7 +34,7 @@ export default async function (req, res) {
   const reqUserId = req.user._id
 
   await updateItems(reqUserId, item)
-    .then(addSnapshotToItem)
+    .then(addItemSnapshot)
     .then(responses_.Send(res))
 
   track(req, [ 'item', 'update' ])
