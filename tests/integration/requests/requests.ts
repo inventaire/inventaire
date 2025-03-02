@@ -14,6 +14,9 @@ const startMockServer = async () => {
       res.status(429)
       res.end()
     })
+    app.all('/hangup', (req, res) => {
+      res.destroy(new Error('ECONNRESET'))
+    })
   })
   return {
     port,
@@ -21,11 +24,12 @@ const startMockServer = async () => {
     origin,
     endpoint: `${origin}/test` as AbsoluteUrl,
     busyEndpoint: `${origin}/busy` as AbsoluteUrl,
+    hangupEndpoint: `${origin}/hangup` as AbsoluteUrl,
   }
 }
 
 describe('requests', async () => {
-  const { endpoint, busyEndpoint } = await startMockServer()
+  const { endpoint, busyEndpoint, hangupEndpoint } = await startMockServer()
 
   describe('methods', () => {
     it('should make a GET request', async () => {
@@ -71,6 +75,34 @@ describe('requests', async () => {
       .catch(err => {
         err.statusCode.should.equal(429)
         err.retryAfter.should.equal(5)
+      })
+    })
+
+    it('should include the url in error context when hitting ECONNREFUSED', async () => {
+      const someOfflineOrigin = 'http://localhost:48765'
+      await requests_.post(someOfflineOrigin)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.code.should.equal('ECONNREFUSED')
+        err.context.url.should.equal(someOfflineOrigin)
+      })
+    })
+
+    it('should include the url in error context when hitting ECONNRESET', async () => {
+      await requests_.post(hangupEndpoint, { noRetry: true })
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.code.should.equal('ECONNRESET')
+        err.context.url.should.equal(hangupEndpoint)
+      })
+    })
+
+    it('should include the url in error context when hitting ECONNRESET and retrying', async () => {
+      await requests_.post(hangupEndpoint)
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.code.should.equal('ECONNRESET')
+        err.context.url.should.equal(hangupEndpoint)
       })
     })
   })

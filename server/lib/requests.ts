@@ -2,6 +2,7 @@ import { URL } from 'node:url'
 import fetch from 'node-fetch'
 import { magenta, green, cyan, yellow, red, grey } from 'tiny-chalk'
 import { newError, addContextToStack } from '#lib/error/error'
+import type { ContextualizedError } from '#lib/error/format_error'
 import { newInvalidError } from '#lib/error/pre_filled'
 import { softwareName, version } from '#lib/package'
 import { wait } from '#lib/promises'
@@ -9,7 +10,7 @@ import { assertObject, assertString } from '#lib/utils/assert_types'
 import { arrayIncludes } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
 import config, { publicOrigin } from '#server/config'
-import type { AbsoluteUrl, HighResolutionTime, HttpHeaders, HttpMethod } from '#types/common'
+import type { AbsoluteUrl, HighResolutionTime, Host, HttpHeaders, HttpMethod } from '#types/common'
 import { isUrl, isPositiveIntegerString } from './boolean_validations.js'
 import { isPrivateUrl } from './network/is_private_url.js'
 import { getAgent, insecureHttpsAgent } from './requests_agent.js'
@@ -66,11 +67,13 @@ export async function request (method: HttpMethod, url: AbsoluteUrl, options: Re
       // Retry after a short delay when socket hang up
       await wait(100)
       warn(err, `retrying request ${timer.requestId}`)
-      res = await fetch(url, fetchOptions)
+      try {
+        res = await fetch(url, fetchOptions)
+      } catch (err) {
+        throw handleFetchError(err, method, url, host, noHostBanOnTimeout)
+      }
     } else {
-      conditionallyDeclareHostError(host, err, { noHostBanOnTimeout })
-      err.context = { method, url }
-      throw err
+      throw handleFetchError(err, method, url, host, noHostBanOnTimeout)
     }
   } finally {
     statusCode = res?.status
@@ -130,6 +133,12 @@ export async function request (method: HttpMethod, url: AbsoluteUrl, options: Re
     const headers = formatHeaders(res.headers.raw())
     return { statusCode, headers, body }
   }
+}
+
+function handleFetchError (err: ContextualizedError, method: HttpMethod, url: AbsoluteUrl, host: Host, noHostBanOnTimeout: boolean) {
+  conditionallyDeclareHostError(host, err, { noHostBanOnTimeout })
+  err.context = { method, url }
+  return err
 }
 
 const looksLikeHtml = body => typeof body === 'string' && (body.trim().startsWith('<') || body.includes('<head>'))
