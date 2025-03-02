@@ -116,7 +116,7 @@ export function signRequest ({ url, method, keyId, privateKey, body, headers = {
   const path = search ? `${pathname}${search}` : pathname
   // The minimum recommended data to sign is the (request-target), host, and date.
   // Source: https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-10#appendix-C.2
-  // The digest is additionnal required by Mastodon
+  // The digest is additional required by Mastodon
   // Source: https://github.com/mastodon/mastodon/blob/main/app/controllers/concerns/signature_verification.rb
   const reqHeaders: HttpHeaders = { host, date, ...headers }
   if (body) {
