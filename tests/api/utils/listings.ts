@@ -11,7 +11,7 @@ interface GetListingByIdParams {
 }
 
 export async function getListingById ({ user, id }: GetListingByIdParams) {
-  user = user || getUser()
+  user ??= getUser()
   const path: RelativeUrl = `/api/lists?action=by-id&id=${id}`
   const { list: listing } = await customAuthReq(user, 'get', path)
   return listing

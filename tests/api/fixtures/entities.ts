@@ -94,13 +94,13 @@ interface CreateEditionParams {
 export async function createEdition (params: CreateEditionParams = {}) {
   const { work } = params
   let { works, title, claims, publisher, publicationDate, image } = params
-  publisher = publisher || 'wd:Q1799264'
-  publicationDate = publicationDate || '2020'
+  publisher ??= 'wd:Q1799264'
+  publicationDate ??= '2020'
   const lang = params.lang || 'en'
   if (work != null && works == null) works = [ work ]
   works = await (works || createWork())
   works = forceArray(works)
-  title = title || Object.values(works[0].labels)[0]
+  title ??= Object.values(works[0].labels)[0]
   const worksUris = map(works, 'uri')
   const editionClaims = Object.assign({
     'wdt:P31': [ 'wd:Q3331189' ],
@@ -151,7 +151,7 @@ export async function createWorkWithAuthor (human?: { uri: EntityUri }, label?: 
 }
 
 export async function createWorkWithSpecificRoleAuthor ({ human, label, roleProperty }: { human?: { uri: EntityUri }, label?: string, roleProperty: PropertyUri }) {
-  label = label || randomLabel()
+  label ??= randomLabel()
   human = await (human || createHuman())
   const work = await authReq('post', '/api/entities?action=create', {
     labels: { en: label },
@@ -201,7 +201,7 @@ export async function createEditionWithWorkAuthorAndSerie () {
 }
 
 export function createItemFromEntityUri ({ user, uri, item = {} }: { user?: AwaitableUserWithCookie, uri: EntityUri, item?: Partial<Item> }) {
-  user = user || getUser()
+  user ??= getUser()
   return customAuthReq(user, 'post', '/api/items', { ...item, entity: uri })
 }
 

@@ -12,7 +12,7 @@ export async function createTransaction (params = {}) {
   ])
   let { item, itemData } = params
   if (!item) {
-    itemData = itemData || { visibility: [ 'public' ], transaction: 'giving' }
+    itemData ??= { visibility: [ 'public' ], transaction: 'giving' }
     item = await createItem(owner, itemData)
   }
   await wait(100)
@@ -27,7 +27,7 @@ export async function createTransaction (params = {}) {
 
 let someTransactionData
 export const getSomeTransaction = async () => {
-  someTransactionData = someTransactionData || (await createTransaction())
+  someTransactionData ??= await createTransaction()
   return someTransactionData
 }
 

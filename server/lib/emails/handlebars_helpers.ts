@@ -14,7 +14,7 @@ export function imgSrc (path, width: number, height?: number) {
   if (isDataUrl(path)) return path
 
   width = bestImageWidth(width)
-  height = height || width
+  height ??= width
   path = onePictureOnly(path)
 
   if (path == null) return ''

@@ -16,7 +16,7 @@ export async function getShelfById (user, shelfId) {
 export async function addItemsToShelf (user, shelfId, itemsIds) {
   shelfId = shelfId._id || shelfId
   if (typeof itemsIds[0] === 'object') itemsIds = map(itemsIds, '_id')
-  user = user || getUser()
+  user ??= getUser()
   const { shelves } = await customAuthReq(user, 'post', '/api/shelves?action=add-items', {
     id: shelfId,
     items: itemsIds,
@@ -27,7 +27,7 @@ export async function addItemsToShelf (user, shelfId, itemsIds) {
 export const getActorName = shelf => `shelf-${shelf._id}`
 
 export async function updateShelf ({ id, attribute, value, user }) {
-  user = user || getUser()
+  user ??= getUser()
   return customAuthReq(user, 'post', '/api/shelves?action=update', {
     shelf: id,
     [attribute]: value,
@@ -35,7 +35,7 @@ export async function updateShelf ({ id, attribute, value, user }) {
 }
 
 export async function deleteShelves ({ user, ids }) {
-  user = user || getUser()
+  user ??= getUser()
   ids = forceArray(ids)
   return customAuthReq(user, 'post', '/api/shelves?action=delete', {
     ids,

@@ -41,7 +41,7 @@ export function createPatchDoc (params: CreatePatchDocParams) {
 
   // If for some reason the entity document is malformed and lacks a version number,
   // fallback on using the timestamp, rather than crashing
-  entityVersion = entityVersion || now
+  entityVersion ??= now
 
   const patch: Partial<Patch> = {
     _id: `${entityId}:${entityVersion}`,

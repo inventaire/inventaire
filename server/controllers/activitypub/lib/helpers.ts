@@ -19,8 +19,8 @@ interface MakeUrlArgs {
 }
 
 export function makeUrl ({ origin, endpoint, params }: MakeUrlArgs) {
-  origin = origin || publicOrigin
-  endpoint = endpoint || '/api/activitypub'
+  origin ??= publicOrigin
+  endpoint ??= '/api/activitypub'
   let url: AbsoluteUrl = `${origin}${endpoint}`
   if (params) url = `${url}?${stringifyQuery(params)}`
   return url

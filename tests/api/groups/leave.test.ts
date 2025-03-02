@@ -9,7 +9,7 @@ const endpoint = '/api/groups?action=leave'
 
 let someReservedGroupPromise
 const getGroupAndMember = () => {
-  someReservedGroupPromise = someReservedGroupPromise || createGroupAndMember()
+  someReservedGroupPromise ??= createGroupAndMember()
   return someReservedGroupPromise
 }
 

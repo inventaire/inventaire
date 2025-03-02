@@ -8,7 +8,7 @@ export async function getGroup (group) {
 }
 
 export async function updateGroup ({ group, user, attribute, value }) {
-  user = user || (await getUser())
+  user ??= await getUser()
   return customAuthReq(user, 'put', '/api/groups?action=update-settings', {
     group: group._id,
     attribute,

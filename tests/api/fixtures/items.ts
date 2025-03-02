@@ -20,14 +20,14 @@ const createItemWithEntities = createEntityFn => async (user?, itemData = {}) =>
 }
 
 export const createItems = async (user?, itemsData = []) => {
-  user = user || getUser()
+  user ??= getUser()
   const items = await Promise.all(itemsData.map(addDefaultEntity))
   return customAuthReq(user, 'post', '/api/items', items)
 }
 
 export async function createItem (user?, itemData?) {
-  user = user || getUser()
-  itemData = itemData || {}
+  user ??= getUser()
+  itemData ??= {}
   itemData.visibility = itemData.visibility || [ 'public' ]
   await addDefaultEntity(itemData)
   const [ item ] = await customAuthReq(user, 'post', '/api/items', [ itemData ])

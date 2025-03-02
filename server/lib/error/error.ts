@@ -13,7 +13,7 @@ export function newError (message: string, filter: number | string, context?: Er
 }
 
 export function addErrorContext (err: ContextualizedError, additionalContext: ErrorContext) {
-  err.context = err.context || {}
+  err.context ??= {}
   Object.assign(err.context, additionalContext)
   return err
 }

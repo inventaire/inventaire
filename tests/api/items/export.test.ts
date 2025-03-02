@@ -25,7 +25,7 @@ const generateEntitiesUrls = uris => uris.map(generateEntityUrl)
 const userPromise = createUser()
 
 async function reqAndParse (itemId: ItemId, user?: AwaitableUserWithCookie) {
-  user = user || userPromise
+  user ??= userPromise
   const { body } = await rawCustomAuthReq({ user, method: 'get', url: endpoint })
   const { data, errors } = parse(body, { header: true })
   // Checking that we generate standard CSV as validated by the papaparse lib

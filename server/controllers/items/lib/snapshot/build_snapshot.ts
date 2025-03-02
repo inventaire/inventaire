@@ -17,7 +17,7 @@ export default {
     const { claims } = edition
     let title = getFirstClaimValue(claims, 'wdt:P1476')
     // Wikidata editions might not have a wdt:P1476 value
-    title = title || getBestLangValue(lang, null, edition.labels).value
+    title ??= getBestLangValue(lang, null, edition.labels).value
     return buildOperation({
       entity: edition,
       works,

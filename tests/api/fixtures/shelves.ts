@@ -12,7 +12,7 @@ export const shelfDescription = () => {
 }
 
 export const createShelf = async (userPromise?, shelfData: Partial<Shelf> = {}) => {
-  userPromise = userPromise || getUser()
+  userPromise ??= getUser()
   shelfData.name = shelfData.name || shelfName()
   shelfData.visibility = shelfData.visibility || [ 'public' ]
   shelfData.color = shelfData.color || '#222222'
@@ -24,7 +24,7 @@ export const createShelf = async (userPromise?, shelfData: Partial<Shelf> = {}) 
 }
 
 export const createShelfWithItem = async (shelfData: Partial<Shelf> = {}, itemData?, userPromise?) => {
-  userPromise = userPromise || getUser()
+  userPromise ??= getUser()
   const { shelf, user } = await createShelf(userPromise, shelfData)
   let item
   if (itemData?._id) {

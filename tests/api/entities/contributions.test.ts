@@ -206,7 +206,7 @@ describe('entities:contributions', () => {
 
 let worksAndUserPromise
 const get2WorksAndUser = () => {
-  worksAndUserPromise = worksAndUserPromise || create2WorksAndGetUser()
+  worksAndUserPromise ??= create2WorksAndGetUser()
   return worksAndUserPromise
 }
 

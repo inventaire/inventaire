@@ -15,7 +15,7 @@ export function listingDescription () {
 }
 
 export async function createListing (userPromise?: AwaitableUserWithCookie, listingData: Partial<Listing> = {}) {
-  userPromise = userPromise || getUser()
+  userPromise ??= getUser()
   listingData.name ??= listingName()
   listingData.type ??= 'work'
   listingData.visibility ??= [ 'public' ]
@@ -39,7 +39,7 @@ export async function updateListing (user: AwaitableUserWithCookie, listing: Lis
 }
 
 export async function createListingWithElements (userPromise?: AwaitableUserWithCookie, numberOfElements = 3) {
-  userPromise = userPromise || getUser()
+  userPromise ??= getUser()
   const { listing, user } = await createListing(userPromise)
   const uris = []
   let i = 0
@@ -56,7 +56,7 @@ type CreateElementParams = Partial<Listing & ListingElement & { listing: Listing
 export async function createElement (params: CreateElementParams = {}, userPromise?: AwaitableUserWithCookie) {
   const { visibility = [ 'public' ] } = params
   let { uri, type, listing } = params
-  userPromise = userPromise || getUser()
+  userPromise ??= getUser()
   if (!listing) {
     const fixtureListing = await createListing(userPromise, { visibility, type })
     listing = fixtureListing.listing
@@ -77,7 +77,7 @@ export async function createElement (params: CreateElementParams = {}, userPromi
 }
 
 export async function removeElement ({ uri, listing }, user: AwaitableUserWithCookie) {
-  user = user || getUser()
+  user ??= getUser()
   user = await (user || getUser())
   const removeElements = '/api/lists?action=remove-elements'
 

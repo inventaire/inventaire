@@ -7,7 +7,7 @@ import type { Origin, RelativeUrl } from '#types/common'
 import { getUser } from './utils.js'
 
 export async function getUsersNearPosition (position, user) {
-  user = user || (await getUser())
+  user ??= await getUser()
   const bbox = getBboxFromPosition(position)
   const url = `/api/users?action=search-by-position&bbox=${JSON.stringify(bbox)}` as RelativeUrl
   const { users } = await customAuthReq(user, 'get', url)

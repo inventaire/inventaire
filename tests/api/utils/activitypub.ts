@@ -94,7 +94,7 @@ interface CreateActivityParams {
 export const createActivity = (params: CreateActivityParams = {}) => {
   const { object, actor, origin, type = 'Follow' } = params
   let { externalId } = params
-  externalId = externalId || `${origin}/${getRandomBytes(20, 'hex')}`
+  externalId ??= `${origin}/${getRandomBytes(20, 'hex')}`
   const context: Context[] = [ 'https://www.w3.org/ns/activitystreams' ]
   return {
     '@context': context,
@@ -140,7 +140,7 @@ const actorEndpoint = '/some_actor_endpoint'
 
 export async function getSomeRemoteServerUser (emitterUser, withSharedInbox: boolean = true) {
   const { origin } = await getActivityPubServer()
-  emitterUser = emitterUser || (await createRemoteActivityPubServerUser(withSharedInbox))
+  emitterUser ??= await createRemoteActivityPubServerUser(withSharedInbox)
   const { id, name, privateKey } = emitterUser
   const query = { name }
   const keyId = makeUrl({ origin, params: query, endpoint: actorEndpoint })
@@ -156,7 +156,7 @@ const sharedInboxInspectionEndpoint = '/shared_inbox_inspection'
 
 let removeActivityPubServer
 const getActivityPubServer = async () => {
-  removeActivityPubServer = removeActivityPubServer || (await startActivityPubServer())
+  removeActivityPubServer ??= await startActivityPubServer()
   return removeActivityPubServer
 }
 
@@ -196,7 +196,7 @@ const startActivityPubServer = async () => {
     app.post(sharedInboxEndpoint, async (req, res) => {
       await verifySignature(req)
       const activity = req.body
-      sharedInbox = sharedInbox || []
+      sharedInbox ??= []
       sharedInbox.unshift(activity)
       res.json({ ok: true })
     })

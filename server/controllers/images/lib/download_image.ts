@@ -65,7 +65,7 @@ function validateResponse (response, controller, url, path, host) {
 
   if (errMessage != null) {
     controller.abort()
-    statusCode = statusCode || 400
+    statusCode ??= 400
     throw newError(errMessage, statusCode, { url, path })
   }
 }

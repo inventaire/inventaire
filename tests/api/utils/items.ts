@@ -24,11 +24,11 @@ export function deleteItemsByIds (ids: ItemId | ItemId[]) {
 
 export function updateItems ({ ids, attribute, value, user }: { ids: ItemId | ItemId[], attribute: string, value: unknown, user?: AwaitableUserWithCookie }) {
   ids = forceArray(ids)
-  user = user || getUser()
+  user ??= getUser()
   return customAuthReq(user, 'put', '/api/items?action=bulk-update', { ids, attribute, value })
 }
 
 export function updateItem (item: Item, user?: AwaitableUserWithCookie) {
-  user = user || getUser()
+  user ??= getUser()
   return customAuthReq(user, 'put', '/api/items', item)
 }

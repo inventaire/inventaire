@@ -47,7 +47,7 @@ export async function resolveUpdateAndCreate (params: ResolverBatchParams) {
 type EntryError = ContextualizedError & { entry: ResolverEntry }
 
 function handleError (strict: boolean, errors: EntryError[], err: EntryError, entry) {
-  err.context = err.context || {}
+  err.context ??= {}
   err.context.entry = entry
   if (strict) {
     throw err

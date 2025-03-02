@@ -152,7 +152,7 @@ function extractTimelineLastSequence (timeline: TimelineWithUsers) {
   let sameSequence = true
   while ((timeline.length > 0) && sameSequence) {
     const prevEvent = timeline.pop()
-    lastEvent = lastEvent || prevEvent
+    lastEvent ??= prevEvent
     if (prevEvent.user._id === lastEvent.user._id) {
       lastSequence.unshift(prevEvent)
     } else {

@@ -101,14 +101,14 @@ export async function createGroupWithAMember (params?: CreateGroupParams) {
 
 let groupWithAMemberPromise
 export const getSomeGroupWithAMember = () => {
-  groupWithAMemberPromise = groupWithAMemberPromise || createGroupWithAMember()
+  groupWithAMemberPromise ??= createGroupWithAMember()
   return groupWithAMemberPromise
 }
 
 let groupPromise
 export async function getSomeGroup () {
   // Resolves to a group with userA as admin and userB as member
-  groupPromise = groupPromise || getSomeGroupWithAMember().then(({ group }) => group)
+  groupPromise ??= getSomeGroupWithAMember().then(({ group }) => group)
   const group = await groupPromise
   // Get fresh data
   return getGroupById(group._id)

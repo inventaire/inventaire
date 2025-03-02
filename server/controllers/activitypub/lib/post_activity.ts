@@ -97,7 +97,7 @@ async function postActivityWorker (jobId, requestData: { actorName: ActorName, i
     })
     info(`activity: ${body.id} sent`)
   } catch (err) {
-    err.context = err.context || {}
+    err.context ??= {}
     Object.assign(err.context, { inboxUri, body })
     logError(err, 'Posting activity to inbox failed')
   }

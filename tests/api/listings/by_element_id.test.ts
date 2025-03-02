@@ -17,7 +17,7 @@ interface GetListingByIdParams {
 }
 
 export async function getElementById ({ user, id }: GetListingByIdParams) {
-  user = user || getUser()
+  user ??= getUser()
   const path: RelativeUrl = `${endpoint}&id=${id}`
   const { element } = await customAuthReq(user, 'get', path)
   return element

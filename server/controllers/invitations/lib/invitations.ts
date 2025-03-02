@@ -38,7 +38,7 @@ export async function convertInvitations (userDoc) {
 
   if (inviters == null && invitersGroups == null) return
 
-  invitersGroups = invitersGroups || {}
+  invitersGroups ??= {}
   const groupInvitersIds = Object.values(invitersGroups)
   log(groupInvitersIds, 'groupInvitersIds')
 

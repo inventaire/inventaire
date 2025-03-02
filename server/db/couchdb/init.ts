@@ -42,7 +42,7 @@ let _waitForCouchInit
 
 export async function waitForCouchInit (options = { preload: false }) {
   // Return the same promises to all consumers
-  _waitForCouchInit = _waitForCouchInit || init(options)
+  _waitForCouchInit ??= init(options)
   return _waitForCouchInit
 }
 

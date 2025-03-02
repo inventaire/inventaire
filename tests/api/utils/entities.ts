@@ -122,13 +122,13 @@ export async function getHistory (entityId: InvEntityId) {
 }
 
 export function updateLabel ({ uri, lang, value, user }: { uri: EntityUri, lang: WikimediaLanguageCode, value: string, user?: AwaitableUserWithCookie }) {
-  user = user || getUser()
+  user ??= getUser()
   uri = normalizeUri(uri)
   return customAuthReq(user, 'put', '/api/entities?action=update-label', { uri, lang, value })
 }
 
 export function removeLabel ({ uri, lang, user }: { uri: EntityUri, lang: WikimediaLanguageCode, user?: AwaitableUserWithCookie }) {
-  user = user || getUser()
+  user ??= getUser()
   uri = normalizeUri(uri)
   return customAuthReq(user, 'put', '/api/entities?action=remove-label', { uri, lang })
 }
@@ -174,7 +174,7 @@ export async function getRefreshedPopularityByUri (uri: EntityUri) {
 
 export async function revertEdit ({ patchId, user }: { patchId: PatchId, user?: AwaitableUserWithCookie }) {
   assertString(patchId)
-  user = user || getUser()
+  user ??= getUser()
   return customAuthReq(user, 'put', '/api/entities?action=revert-edit', {
     patch: patchId,
   })
@@ -182,7 +182,7 @@ export async function revertEdit ({ patchId, user }: { patchId: PatchId, user?: 
 
 export async function restoreVersion ({ patchId, user }: { patchId: PatchId, user?: AwaitableUserWithCookie }) {
   assertString(patchId)
-  user = user || getUser()
+  user ??= getUser()
   return customAuthReq(user, 'put', '/api/entities?action=restore-version', {
     patch: patchId,
   })

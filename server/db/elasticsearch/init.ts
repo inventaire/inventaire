@@ -20,7 +20,7 @@ async function _waitForElasticsearchInit () {
 
 let promise
 export async function waitForElasticsearchInit () {
-  promise = promise || _waitForElasticsearchInit()
+  promise ??= _waitForElasticsearchInit()
   return promise
 }
 

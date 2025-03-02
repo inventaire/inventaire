@@ -82,7 +82,7 @@ const loadFromStdin = () => {
     if (ongoing >= 3) this.pause()
     await addLine(line)
       .catch(err => {
-        err.context = err.context || {}
+        err.context ??= {}
         err.context.line = line
         logError(err, 'loadFromStdin addLine error')
       })
