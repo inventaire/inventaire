@@ -150,7 +150,7 @@ function buildSignatureString (params: BuildSignatureStringParams) {
   // Keys order matters, so we can't just loop over reqHeaders keys
   for (const key of orderedSignedHeadersKeys) {
     if (key === '(request-target)') {
-      signatureString += `\n(request-target): ${method} ${path}`
+      signatureString += `\n(request-target): ${method} ${decodeURIComponent(path)}`
     } else if (reqHeaders[key] != null) {
       signatureString += `\n${key}: ${reqHeaders[key]}`
     } else {
