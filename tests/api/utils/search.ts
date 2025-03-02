@@ -8,7 +8,7 @@ import { wait } from '#lib/promises'
 import { assertObject, assertString } from '#lib/utils/assert_types'
 import { warn, success } from '#lib/utils/logs'
 import { buildUrl } from '#lib/utils/url'
-import config from '#server/config'
+import config, { federatedMode } from '#server/config'
 import type { AbsoluteUrl } from '#types/common'
 import { customAuthReq, rawRequest } from './request.js'
 import { publicReq } from './utils.js'
@@ -57,6 +57,7 @@ export async function getIndexedDoc (index: string, id: string, options: GetInde
 
 async function waitForIndexationQueue (index: string) {
   if (index === 'wikidata') {
+    if (federatedMode) throw newError("can't wait for indexation queue in federated mode", 500)
     const queueLength = await getWikidataIndexationQueueLength()
     if (queueLength > 0) {
       warn(`waiting for wd indexation job queue: ${queueLength} job(s)`)

@@ -8,13 +8,13 @@ import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import type { EntityUri } from '#types/entity'
 
 describe('tasks:check-entities', () => {
-  before(async () => {
+  before(async function () {
+    if (federatedMode) this.skip()
     const wikidataUris: EntityUri[] = [ 'wd:Q237087' ]
     await findOrIndexEntities(wikidataUris)
   })
 
-  it('should refuse to check entities of non-allowlisted types', async function () {
-    if (federatedMode) this.skip()
+  it('should refuse to check entities of non-allowlisted types', async () => {
     // Currently, only humans can be checked for duplicates,
     // or at least are the entrypoint for duplicate checks
     const work = await createWork()
@@ -26,8 +26,7 @@ describe('tasks:check-entities', () => {
     })
   })
 
-  it('should create tasks for the requested URIs', async function () {
-    if (federatedMode) this.skip()
+  it('should create tasks for the requested URIs', async () => {
     const human = await createHuman({ labels: { en: 'Fred Vargas' } })
     // should not automerge if author name is in work title
     await createWorkWithAuthor(human, 'Fred Vargas')
@@ -43,8 +42,7 @@ describe('tasks:check-entities', () => {
     task.externalSourcesOccurrences.should.be.an.Array()
   })
 
-  it('should not re-create existing tasks', async function () {
-    if (federatedMode) this.skip()
+  it('should not re-create existing tasks', async () => {
     const human = await createHuman({ labels: { en: 'Fred Vargas' } })
     await checkEntities(human.uri)
     await checkEntities(human.uri)
@@ -53,8 +51,7 @@ describe('tasks:check-entities', () => {
     tasks.length.should.equal(uniqSuggestiontUris.length)
   })
 
-  it('should not create a task for a removed placeholders', async function () {
-    if (federatedMode) this.skip()
+  it('should not create a task for a removed placeholders', async () => {
     const human = await createHuman({ labels: { en: 'Fred Vargas' } })
     await deleteByUris([ human.uri ])
     await checkEntities(human.uri)

@@ -10,6 +10,8 @@ import type { EntityUri } from '#types/entity'
 const hookDelay = 300
 
 describe('tasks:hooks', () => {
+  before(function () { if (federatedMode) this.skip() })
+
   describe('entity merge', () => {
     before(async () => {
       // Tests dependency: having a populated ElasticSearch wikidata index
@@ -21,8 +23,7 @@ describe('tasks:hooks', () => {
       await findOrIndexEntities(wikidataUris)
     })
 
-    it('should update same suspect tasks to processed state ', async function () {
-      if (federatedMode) this.skip()
+    it('should update same suspect tasks to processed state ', async () => {
       const { uri: suspectUri } = await createHuman({ labels: { en: 'Mai Thi Nguyen' } })
       await createTask({
         suspectUri,
@@ -38,8 +39,7 @@ describe('tasks:hooks', () => {
       updatedTask.state.should.equal('processed')
     })
 
-    it('should update task state to processed', async function () {
-      if (federatedMode) this.skip()
+    it('should update task state to processed', async () => {
       const [ suspect, suggestion ] = await Promise.all([ createHuman(), createHuman() ])
       const taskParams = {
         suspectUri: suspect.uri,
@@ -54,9 +54,7 @@ describe('tasks:hooks', () => {
   })
 
   describe('task update', () => {
-    it('should update relationScore of tasks with same suspect', async function () {
-      // Disabled in federated mode as this test directly mutates the local tasks database
-      if (federatedMode) this.skip()
+    it('should update relationScore of tasks with same suspect', async () => {
       const { uri: suspectUri } = await createHuman({ labels: { en: 'Mai Thi Nguyen' } })
       const taskToUpdate = await createTask({
         suspectUri,
@@ -76,9 +74,7 @@ describe('tasks:hooks', () => {
   })
 
   describe('entity merge revert', () => {
-    it('should revert task state', async function () {
-      // Disabled in federated mode as this test directly mutates the local tasks database
-      if (federatedMode) this.skip()
+    it('should revert task state', async () => {
       const { uri } = await createHuman({ labels: { en: 'Fred Vargas' } })
       const { _id: otherTaskId } = await createTask({
         suspectUri: uri,
@@ -97,8 +93,7 @@ describe('tasks:hooks', () => {
   })
 
   describe('entity removed', () => {
-    it('should update tasks to processed state when the entity is deleted', async function () {
-      if (federatedMode) this.skip()
+    it('should update tasks to processed state when the entity is deleted', async () => {
       const suspect = await createHuman()
       await createTask({ suspectUri: suspect.uri })
       await deleteEntityByUris([ suspect.uri ])

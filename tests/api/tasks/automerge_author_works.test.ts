@@ -8,15 +8,14 @@ import { checkEntities } from '#tests/api/utils/tasks'
 import type { EntityUri } from '#types/entity'
 
 describe('automerge_author_works: only from inv works to wd works', () => {
-  before(async () => {
+  before(async function () {
+    if (federatedMode) this.skip()
     // Tests dependency: having a populated ElasticSearch wikidata index
     const wikidataUris: EntityUri[] = [ 'wd:Q205739', 'wd:Q1748845', 'wd:Q172140', 'wd:Q732060' ]
     await findOrIndexEntities(wikidataUris)
   })
 
-  it('should automerge inv works to a wd work', async function () {
-    // Test not available in federated mode due to dependency to automergeAuthorWorks
-    if (federatedMode) this.skip()
+  it('should automerge inv works to a wd work', async () => {
     const authorUri = 'wd:Q205739' // Alan Moore uri
     const workLabel = 'Voice of the Fire'
     const workWdUri = 'wd:Q3825051' // 'Voice of the Fire' uri
