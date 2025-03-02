@@ -7,7 +7,7 @@ import { track } from '#lib/track'
 import { forceArray } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import type { Item } from '#types/item'
-import { addSnapshotToItem } from './lib/snapshot/snapshot.js'
+import { addItemSnapshot, addItemsSnapshots } from './lib/snapshot/snapshot.js'
 
 export default async function (req, res) {
   let { body: items, user } = req
@@ -37,8 +37,8 @@ async function getItemsWithSnapshots (itemsDocs: Item[], singleItemMode: boolean
   // When only one item was sent, without being wrapped in an array
   // return the created item object, instead of an array
   if (singleItemMode) {
-    return addSnapshotToItem(itemsDocs[0])
+    return addItemSnapshot(itemsDocs[0])
   } else {
-    return Promise.all(itemsDocs.map(addSnapshotToItem))
+    return addItemsSnapshots(itemsDocs)
   }
 }

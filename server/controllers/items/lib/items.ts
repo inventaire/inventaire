@@ -1,5 +1,5 @@
 import { difference, map, union } from 'lodash-es'
-import { addItemsSnapshots } from '#controllers/items/lib/queries_commons'
+import { addItemsSnapshots } from '#controllers/items/lib/snapshot/snapshot'
 import { dbFactory } from '#db/couchdb/base'
 import { newError } from '#lib/error/error'
 import { emit } from '#lib/radio'
@@ -8,7 +8,7 @@ import { deepCompact, forceArray } from '#lib/utils/base'
 import { changeItemDocOwner, createItemDoc, updateItemDoc } from '#models/item'
 import type { Item } from '#types/item'
 import { filterPrivateAttributes } from './filter_private_attributes.js'
-import { addSnapshotToItem } from './snapshot/snapshot.js'
+import { addItemSnapshot } from './snapshot/snapshot.js'
 import { validateItemsAsync } from './validate_item_async.js'
 
 const db = await dbFactory('items')
@@ -95,7 +95,7 @@ export function changeItemOwner (transacDoc) {
 
 // Data serializa emails and rss feeds templates
 export async function serializeItemData (item) {
-  item = await addSnapshotToItem(item)
+  item = await addItemSnapshot(item)
   const { 'entity:title': title, 'entity:authors': authors, 'entity:image': image } = item.snapshot
   item.title = title
   item.authors = authors

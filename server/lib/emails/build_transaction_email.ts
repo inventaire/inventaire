@@ -1,7 +1,7 @@
 import { some, union } from 'lodash-es'
 import comments_ from '#controllers/comments/lib/comments'
 import { getItemById } from '#controllers/items/lib/items'
-import { addSnapshotToItem } from '#controllers/items/lib/snapshot/snapshot'
+import { addItemSnapshot } from '#controllers/items/lib/snapshot/snapshot'
 import { getTransactionById } from '#controllers/transactions/lib/transactions'
 import { getUserById, serializeUserData } from '#controllers/user/lib/user'
 import { transactionStates } from '#models/attributes/transaction'
@@ -42,7 +42,7 @@ export default async function (transactionId: TransactionId) {
   let [ owner, requester, item, messages ] = await Promise.all([
     getUserById(transaction.owner),
     getUserById(transaction.requester),
-    getItemById(transaction.item).then(addSnapshotToItem).catch(catchDeleteItems),
+    getItemById(transaction.item).then(addItemSnapshot).catch(catchDeleteItems),
     comments_.byTransactionId(transaction._id),
   ])
   owner = serializeUserData(owner)
