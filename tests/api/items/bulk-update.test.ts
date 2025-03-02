@@ -6,7 +6,6 @@ import { wait } from '#lib/promises'
 import { getItem } from '#tests/api/utils/items'
 import { getUser, authReq, authReqB, getUserB } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
-import { newItemBase } from './helpers.js'
 
 describe('items:bulk-update', () => {
   it('should update items attributes', async () => {
@@ -49,7 +48,7 @@ describe('items:bulk-update', () => {
   })
 
   it('should not update items from another owner', async () => {
-    const item = await authReq('post', '/api/items', newItemBase())
+    const item = await createItem()
     const ids = [ item._id ]
     try {
       await authReqB('put', '/api/items?action=bulk-update', {
