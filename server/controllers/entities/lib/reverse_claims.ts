@@ -1,11 +1,12 @@
-import { compact, flatten } from 'lodash-es'
+import { compact, flatten, map } from 'lodash-es'
 import { minimizeSimplifiedSparqlResults, simplifySparqlResults } from 'wikibase-sdk'
 import wdk from 'wikibase-sdk/wikidata.org'
 import { getInvEntitiesByClaim } from '#controllers/entities/lib/entities'
+import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
 import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
+import { properties } from '#controllers/entities/lib/properties/properties'
 import { getPropertyDatatype } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { getCachedRelations } from '#controllers/entities/lib/temporarily_cache_relations'
-import { runWdQuery } from '#data/wikidata/run_query'
 import { isEntityUri, isWdPropertyUri } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
 import { newError } from '#lib/error/error'
@@ -13,7 +14,7 @@ import { requests_ } from '#lib/requests'
 import { assertStrings } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import type { AbsoluteUrl } from '#types/common'
-import type { EntityUri, InvSnakValue, PropertyUri, WdEntityId, WdPropertyUri } from '#types/entity'
+import type { EntityUri, InvSnakValue, PropertyUri, WdPropertyUri } from '#types/entity'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
 import { getEntitiesPopularities } from './popularity.js'
 
@@ -72,14 +73,18 @@ async function requestWikidataReverseClaims (property: PropertyUri, value: InvSn
 }
 
 async function wikidataReverseClaims (property: WdPropertyUri, value: InvSnakValue, refresh?: boolean, dry?: boolean) {
-  if (property in typeTailoredQuery) {
-    // TODO: Find the proper way to get property type to be narrowed down to typeTailoredQuery keys without needing a type assertion
-    const type = typeTailoredQuery[property as keyof typeof typeTailoredQuery]
-    const pid = unprefixify(property)
-    const results = await runWdQuery({ query: `${type}_reverse_claims`, pid, qid: value as WdEntityId, refresh, dry })
-    return results.map(prefixifyWd)
+  const uris = await generalWikidataReverseClaims(property, value, refresh, dry)
+  const types = typeTailoredQuery[property] || properties[property]?.subjectTypes
+  if (types) {
+    const entities = await getEntitiesList(uris, { refresh })
+    // Filtering by entity type here as attempts to do it in SPARQL result in timeouts
+    // Getting the entities shouldn't be a too high cost, as it's either doing cache hits
+    // or warming up the cache for the client view that requested those reverse claims
+    // and will probably follow up by requesting those same entities
+    const filteredEntities = entities.filter(entity => types.includes(entity.type))
+    return map(filteredEntities, 'uri')
   } else {
-    return generalWikidataReverseClaims(property, value, refresh, dry)
+    return uris
   }
 }
 
@@ -116,37 +121,25 @@ async function invReverseClaims (property: PropertyUri, value: InvSnakValue) {
 // but only works or series
 const typeTailoredQuery = {
   // country of citizenship
-  'wdt:P27': 'humans',
+  'wdt:P27': [ 'human' ],
   // educated at
-  'wdt:P69': 'humans',
+  'wdt:P69': [ 'human' ],
   // native language
-  'wdt:P103': 'humans',
+  'wdt:P103': [ 'human' ],
   // occupation
-  'wdt:P106': 'humans',
-  // publisher
-  'wdt:P123': 'editions',
+  'wdt:P106': [ 'human' ],
   // award received
-  'wdt:P166': 'humans',
-  // genre
-  'wdt:P135': 'humans',
-  // movement
-  'wdt:P136': 'works',
-  // collection
-  'wdt:P195': 'editions',
+  'wdt:P166': [ 'human' ],
   // language of work
-  'wdt:P407': 'works',
-  // edition or translation of
-  'wdt:P629': 'editions',
-  // translator
-  'wdt:P655': 'editions',
+  'wdt:P407': [ 'work', 'serie' ],
   // characters
-  'wdt:P674': 'works',
+  'wdt:P674': [ 'work', 'serie' ],
   // narrative location
-  'wdt:P840': 'works',
+  'wdt:P840': [ 'work', 'serie' ],
   // main subject
-  'wdt:P921': 'works',
+  'wdt:P921': [ 'work', 'serie' ],
   // inspired by
-  'wdt:P941': 'works',
+  'wdt:P941': [ 'work', 'serie' ],
 } as const
 
 const sortByScore = scores => (a, b) => scores[b] - scores[a]
