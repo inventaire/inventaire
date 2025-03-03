@@ -14,7 +14,7 @@ import { type UserWithAcct } from '#lib/federation/remote_user'
 import { normalizeIsbn } from '#lib/isbn/isbn'
 import { logError } from '#lib/utils/logs'
 import wdEdit from '#lib/wikidata/edit'
-import { getLanguageEnglishLabel, getOriginalLang } from '#lib/wikidata/get_original_lang'
+import { getLanguageEnglishLabel } from '#lib/wikidata/get_original_lang'
 import type { Descriptions, EntityValue, ExpandedClaims, InvEntityUri, WdEntityUri } from '#types/entity'
 import { createWdEntity } from './create_wd_entity.js'
 import mergeEntities from './merge_entities.js'
@@ -63,10 +63,7 @@ export async function moveInvEntityToWikidata (user: UserWithAcct, invEntityUri:
 
   if (Object.keys(labels).length === 0) {
     const title = getFirstClaimValue(claims, 'wdt:P1476')
-    const lang = getOriginalLang(claims)
-    if (title && lang) {
-      labels[lang] = title
-    }
+    labels.mul = title
   }
   const descriptions = buildDescriptions(claims)
 
