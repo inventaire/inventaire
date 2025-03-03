@@ -1,4 +1,4 @@
-import { partition, map, zip } from 'lodash-es'
+import { partition, map, zip, chunk } from 'lodash-es'
 import type { ParsedIsbnData } from '#controllers/entities/lib/get_entities_by_isbns'
 import type { EntitiesGetterParams } from '#controllers/entities/lib/get_entities_by_uris'
 import { getWikidataEnrichedEntities } from '#controllers/entities/lib/get_wikidata_enriched_entities'
@@ -89,11 +89,15 @@ interface Row {
   isbn10hs: string
 }
 
-// TODO: handle case where too many isbns are requested at once for a single request
 async function requestWdIdByIsbns (isbnsData: ParsedIsbnData[]) {
-  const sparql = getQuery(isbnsData)
-  const rows = await makeSparqlRequest<Row>(sparql)
-  const entries = rows.map(getWdIdAndIsbn).filter(isNotEmpty)
+  const batches = chunk(isbnsData, 30)
+  const aggregatedRows = []
+  for (const batch of batches) {
+    const sparql = getQuery(batch)
+    const rows = await makeSparqlRequest<Row>(sparql)
+    aggregatedRows.push(...rows)
+  }
+  const entries = aggregatedRows.map(getWdIdAndIsbn).filter(isNotEmpty)
   return objectFromEntries(entries)
 }
 
