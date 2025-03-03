@@ -60,10 +60,6 @@ export async function geRemoteUserFromSignedReqHeader (req: MaybeSignedReq) {
   } as MinimalRemoteUser
 }
 
-export function isRemoteUser (user: User | SpecialUser | MinimalRemoteUser): user is MinimalRemoteUser {
-  return 'acct' in user
-}
-
 export function getLocalUserAcct (user: { anonymizableId: AnonymizableUserId }) {
   const { anonymizableId } = user
   return buildLocalUserAcct(anonymizableId)
