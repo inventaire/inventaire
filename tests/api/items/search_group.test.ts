@@ -51,7 +51,7 @@ describe('items:search:group', () => {
   })
 
   describe('visibility:groups', () => {
-    it('should find items visible by all user groups but not visible to friends', async () => {
+    it('should find items visible by all user groups but not visible to friends [flaky]', async () => {
       const { group, admin, member } = await getSomeGroupWithAMember()
       const { uri } = await createEdition()
       const [ privateItem, friendsOnlyItem, groupsOnlyItem ] = await Promise.all([
@@ -70,6 +70,7 @@ describe('items:search:group', () => {
       itemsIds.should.not.containEql(privateItem._id)
       itemsIds.should.not.containEql(friendsOnlyItem._id)
       itemsIds.should.containEql(groupsOnlyItem._id)
+      // Flaky: sometimes this throws `AssertionError: expected Array [ 'public' ] not to be truthy`
       items.forEach(item => should(item.visibility).not.be.ok())
     })
 
