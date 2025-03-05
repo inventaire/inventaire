@@ -295,7 +295,7 @@ export const propertiesValuesConstraints = {
   // Bluesky username
   'wdt:P12361': externalId(/^[\w-]+$/),
   // NooSFere publisher ID
-  'wdt:P12852': externalId(strictlyPositiveIntegerPattern),
+  'wdt:P12852': externalId(signedIntegerPattern),
   // NooSFere editorial collection ID
   'wdt:P13004': externalId(signedIntegerPattern),
   // ISFDB editorial collection ID
