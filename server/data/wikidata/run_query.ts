@@ -1,6 +1,7 @@
 import { isString } from 'lodash-es'
 import { isPropertyId } from 'wikibase-sdk'
 import { unprefixify } from '#controllers/entities/lib/prefix'
+import { getReverseClaimCacheKey } from '#controllers/entities/lib/reverse_claims'
 import { isWdEntityId } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
 import { newError } from '#lib/error/error'
@@ -98,9 +99,11 @@ radio.on('invalidate:wikidata:entities:relations', async invalidatedQueriesBatch
 
 function getQueriesKeys ({ property, valueUri }) {
   const queriesToInvalidate = (queriesPerProperty[property] || [])
-    // Add queries that should be invalidated for any property
-    .concat(queriesPerProperty['*'])
   const pid = unprefixify(property)
   const qid = unprefixify(valueUri)
-  return queriesToInvalidate.map(queryName => buildKey(queryName, { pid, qid }))
+  return queriesToInvalidate
+  .map(queryName => buildKey(queryName, { pid, qid }))
+  .concat([
+    getReverseClaimCacheKey(property, valueUri),
+  ])
 }

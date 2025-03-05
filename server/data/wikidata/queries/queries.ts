@@ -15,7 +15,7 @@ export interface SparqlQueryParams {
 
 export interface SparqlQueryBuilder {
   parameters: readonly (keyof SparqlQueryParams)[]
-  relationProperties?: readonly WdPropertyUri[] | readonly [ '*' ]
+  relationProperties?: readonly WdPropertyUri[]
   query: (params: SparqlQueryParams) => string
   minimizable: boolean
 }
@@ -33,7 +33,7 @@ for (const queryName in queries) {
   const { relationProperties } = queries[queryName]
   if (relationProperties) {
     relationProperties.forEach(property => {
-      queriesPerProperty[property] = queriesPerProperty[property] || []
+      queriesPerProperty[property] ??= []
       queriesPerProperty[property].push(queryName)
     })
   }

@@ -14,7 +14,7 @@ import { requests_ } from '#lib/requests'
 import { assertStrings } from '#lib/utils/assert_types'
 import { log } from '#lib/utils/logs'
 import type { AbsoluteUrl } from '#types/common'
-import type { EntityUri, InvSnakValue, PropertyUri, WdPropertyUri } from '#types/entity'
+import type { EntityUri, InvClaimValue, InvSnakValue, PropertyUri, WdPropertyUri } from '#types/entity'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
 import { getEntitiesPopularities } from './popularity.js'
 
@@ -88,8 +88,12 @@ async function wikidataReverseClaims (property: WdPropertyUri, value: InvSnakVal
   }
 }
 
+export function getReverseClaimCacheKey (property: PropertyUri, value: InvClaimValue) {
+  return `wd:reverse-claim:${property}:${value}`
+}
+
 function generalWikidataReverseClaims (property: WdPropertyUri, value: InvSnakValue, refresh?: boolean, dry?: boolean) {
-  const key = `wd:reverse-claim:${property}:${value}`
+  const key = getReverseClaimCacheKey(property, value)
   const fn = _wikidataReverseClaims.bind(null, property, value)
   return cache_.get({ key, fn, refresh, dry, dryFallbackValue: [] })
 }
