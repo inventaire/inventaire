@@ -12,7 +12,6 @@ import { cache_ } from '#lib/cache'
 import { newError } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { assertStrings } from '#lib/utils/assert_types'
-import { log } from '#lib/utils/logs'
 import type { AbsoluteUrl } from '#types/common'
 import type { EntityUri, InvClaimValue, InvSnakValue, PropertyUri, WdPropertyUri } from '#types/entity'
 import { getInvEntityCanonicalUri } from './get_inv_entity_canonical_uri.js'
@@ -101,7 +100,6 @@ function generalWikidataReverseClaims (property: WdPropertyUri, value: InvSnakVa
 async function _wikidataReverseClaims (property: WdPropertyUri, value: InvSnakValue) {
   const caseInsensitive = caseInsensitiveProperties.includes(property)
   const wdProp = unprefixify(property)
-  log([ property, value ], 'reverse claim')
   const url = buildGetReverseClaimsUrl({ properties: wdProp, values: value, caseInsensitive }) as AbsoluteUrl
   const results = await requests_.get(url)
   return minimizeSimplifiedSparqlResults(simplifySparqlResults(results))
