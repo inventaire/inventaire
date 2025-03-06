@@ -2,7 +2,8 @@ import 'should'
 import { createHuman } from '#fixtures/entities'
 import { createTask } from '#fixtures/tasks'
 import { federatedMode } from '#server/config'
-import { update } from '#tests/api/utils/tasks'
+import { update, endpoint } from '#tests/api/utils/tasks'
+import { dataadminReq } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
 describe('tasks:update', () => {
@@ -12,6 +13,20 @@ describe('tasks:update', () => {
     const suspect = await createHuman()
     const task = await createTask({ suspectUri: suspect.uri })
     const { ok } = await update(task._id, 'state', 'dismissed')
+    ok.should.be.true()
+  })
+
+  it('should update a task as dataadmin', async function () {
+    // Disabled in federated mode as this test directly mutates the local tasks database
+    if (federatedMode) this.skip()
+    const suspect = await createHuman()
+    const task = await createTask({ suspectUri: suspect.uri })
+
+    const { ok } = await dataadminReq('put', `${endpoint}update`, {
+      id: task._id,
+      attribute: 'state',
+      value: 'dismissed',
+    })
     ok.should.be.true()
   })
 

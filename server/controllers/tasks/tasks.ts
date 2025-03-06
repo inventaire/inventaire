@@ -38,7 +38,7 @@ const localTasksControllersParams = {
   },
 
   put: {
-    admin: {
+    dataadmin: {
       update,
     },
   },
