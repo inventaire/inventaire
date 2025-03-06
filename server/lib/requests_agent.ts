@@ -4,8 +4,19 @@ import config from '#server/config'
 
 const { ipFamily: family } = config.outgoingRequests
 
-const httpAgent = new HttpAgent({ keepAlive: true, family })
-export const httpsAgent = new HttpsAgent({ keepAlive: true, family })
+const maxSocketsPerHost = 10
+
+const httpAgent = new HttpAgent({
+  keepAlive: true,
+  family,
+  maxSockets: maxSocketsPerHost,
+})
+
+export const httpsAgent = new HttpsAgent({
+  keepAlive: true,
+  family,
+  maxSockets: maxSocketsPerHost,
+})
 
 export const insecureHttpsAgent = new HttpsAgent({
   keepAlive: true,
@@ -14,6 +25,7 @@ export const insecureHttpsAgent = new HttpsAgent({
   // - accept certificates that would otherwise generate a UNABLE_TO_VERIFY_LEAF_SIGNATURE error
   rejectUnauthorized: false,
   family,
+  maxSockets: maxSocketsPerHost,
 })
 
 // Using a custom agent to set keepAlive=true
