@@ -86,11 +86,17 @@ export async function request (method: HttpMethod, url: AbsoluteUrl, options: Re
     endReqTimer(timer, statusCode || errorCode)
   }
 
-  // Always parse as text, even if JSON, as in case of an error in the JSON response
-  // (such as HTML being retunred instead of JSON), it allows to include the actual response
-  // in the error message
-  // It shouldn't have any performance cost, as that's what node-fetch does in the background anyway
-  const responseText = await res.text()
+  let responseText
+  try {
+    // Always parse as text, even if JSON, as in case of an error in the JSON response
+    // (such as HTML being retunred instead of JSON), it allows to include the actual response
+    // in the error message
+    // It shouldn't have any performance cost, as that's what node-fetch does in the background anyway
+    responseText = await res.text()
+  } catch (err) {
+    if (err.code === 'ERR_STREAM_PREMATURE_CLOSE') return request(method, url, { ...options, attempts })
+    else throw err
+  }
 
   let body
   if (parseJson) {
