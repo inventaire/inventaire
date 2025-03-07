@@ -11,7 +11,7 @@ import { newInvalidError } from '#lib/error/pre_filled'
 import { softwareName, version } from '#lib/package'
 import { wait } from '#lib/promises'
 import { assertObject, assertString } from '#lib/utils/assert_types'
-import { arrayIncludes } from '#lib/utils/base'
+import { arrayIncludes, truncateString } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
 import config, { publicOrigin } from '#server/config'
 import type { AbsoluteUrl, HighResolutionTime, Host, HttpHeaders, HttpMethod } from '#types/common'
@@ -56,6 +56,7 @@ export async function request (method: HttpMethod, url: AbsoluteUrl, options: Re
 
   const { host } = new URL(url)
   assertHostIsNotTemporarilyBanned(host)
+  if (hostHadTooManyRequests[host] != null) await waitForHostToAcceptNewRequests(host, method, url)
 
   const { returnBodyOnly = true, parseJson = true, body: reqBody, noRetry = false, noHostBanOnTimeout = false } = options
   const attempts = (options.attempts || 0) + 1
@@ -125,7 +126,9 @@ export async function request (method: HttpMethod, url: AbsoluteUrl, options: Re
     if (statusCode === 429) {
       const retryAfter = parseRetryAfterHeader(res)
       warn(url, `retrying request ${timer.requestId} in ${retryAfter}s (attempts: ${attempts})`)
-      await wait(retryAfter * 1000)
+      const waiting = hostHadTooManyRequests[host] = wait(retryAfter * 1000)
+      await waiting
+      if (hostHadTooManyRequests[host] === waiting) delete hostHadTooManyRequests[host]
       return request(method, url, { ...options, attempts })
     }
     const resBody = looksLikeHtml(body) ? '[HTML response body]' : body
@@ -296,4 +299,13 @@ const methodWithBody = [ 'put', 'post' ] as const
 
 export function httpMethodHasBody (method: HttpMethod | Uppercase<HttpMethod>) {
   return arrayIncludes(methodWithBody, method.toLowerCase())
+}
+
+const hostHadTooManyRequests: Record<Host, Promise<void>> = {}
+
+async function waitForHostToAcceptNewRequests (host: Host, method: HttpMethod, url: AbsoluteUrl) {
+  warn(`waiting for hosts to accept new requests (${method} ${truncateString(url, 80)})`)
+  await hostHadTooManyRequests[host]
+  await wait(1000)
+  if (hostHadTooManyRequests[host] != null) return waitForHostToAcceptNewRequests(host, method, url)
 }

@@ -206,3 +206,8 @@ export function invert (obj: Record<string | number, string | number>) {
   }
   return invertedObj
 }
+
+export function truncateString (str: string, limit: number) {
+  if (str.length > limit) return `${str.slice(0, limit)}…`
+  else return str
+}
