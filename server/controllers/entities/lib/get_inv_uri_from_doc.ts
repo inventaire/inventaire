@@ -1,5 +1,5 @@
 import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
-import { normalizeIsbn } from '#lib/isbn/isbn'
+import { isValidIsbn, normalizeIsbn, toIsbn13 } from '#lib/isbn/isbn'
 import type { InvEntity, IsbnEntityUri, RemovedPlaceholderEntity, Claims } from '#types/entity'
 import { prefixifyInv } from './prefix.js'
 
@@ -28,6 +28,14 @@ export function getIsbnUriFromClaims (claims: Claims) {
   if (!getFirstClaimValue(claims, 'wdt:P629') || !getFirstClaimValue(claims, 'wdt:P1476')) return
 
   const isbn13h = getFirstClaimValue(claims, 'wdt:P212')
-  // By internal convention, ISBN URIs are without hyphen
-  if (isbn13h) return `isbn:${normalizeIsbn(isbn13h)}` as IsbnEntityUri
+  // Checking isbn validity, as some isbns on Wikidata aren't valid
+  if (isbn13h && isValidIsbn(isbn13h)) {
+    // By internal convention, ISBN URIs are without hyphen
+    return `isbn:${normalizeIsbn(isbn13h)}` as IsbnEntityUri
+  }
+  const isbn10h = getFirstClaimValue(claims, 'wdt:P957')
+  if (isbn10h && isValidIsbn(isbn10h)) {
+    // By internal convention, ISBN URIs are without hyphen
+    return `isbn:${toIsbn13(isbn10h)}` as IsbnEntityUri
+  }
 }
