@@ -140,7 +140,7 @@ const config = {
 
   leveldb: {
     inMemoryLRUCacheSize: 64 * 1024 ** 2,
-    defaultCacheTtl: 365 * 24 * 60 * 60 * 1000,
+    defaultCacheTtl: 30 * 24 * 60 * 60 * 1000,
     ttlCheckFrequency: 60000,
   },
 
