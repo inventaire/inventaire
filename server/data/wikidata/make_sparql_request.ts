@@ -1,10 +1,8 @@
 import { minimizeSimplifiedSparqlResults, simplifySparqlResults } from 'wikibase-sdk'
 import wdk from 'wikibase-sdk/wikidata.org'
 import { cache_ } from '#lib/cache'
-import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import { getHashCode } from '#lib/utils/base'
-import { warn } from '#lib/utils/logs'
 import type { AbsoluteUrl } from '#types/common'
 
 const { sparqlQuery } = wdk
@@ -17,26 +15,6 @@ interface SparqlRequestOptions {
 
 export async function makeSparqlRequest <Row> (sparql: string, options: SparqlRequestOptions = {}): Promise<Row[]> {
   const url = sparqlQuery(sparql) as AbsoluteUrl
-
-  async function persistentRequest () {
-    try {
-      return await makeRequest<Row>(url, options)
-    } catch (err) {
-      if (err.statusCode === 429) {
-        const { retryAfter = 2 } = err
-        warn(url, `${err.message}: retrying in ${retryAfter}s`)
-        await wait(retryAfter * 1000)
-        return persistentRequest()
-      } else {
-        throw err
-      }
-    }
-  }
-
-  return persistentRequest()
-}
-
-async function makeRequest <Row> (url: AbsoluteUrl, options: SparqlRequestOptions = {}) {
   const { timeout = 30000, noHostBanOnTimeout } = options
   // Don't let a query block the queue more than 30 seconds
   const results = await requests_.get(url, { timeout, noHostBanOnTimeout })

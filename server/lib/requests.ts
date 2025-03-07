@@ -122,10 +122,15 @@ export async function request (method: HttpMethod, url: AbsoluteUrl, options: Re
 
   if (statusCode >= 400) {
     if (statusCode >= 500) declareHostError(host)
+    if (statusCode === 429) {
+      const retryAfter = parseRetryAfterHeader(res)
+      warn(url, `retrying request ${timer.requestId} in ${retryAfter}s (attempts: ${attempts})`)
+      await wait(retryAfter * 1000)
+      return request(method, url, { ...options, attempts })
+    }
     const resBody = looksLikeHtml(body) ? '[HTML response body]' : body
     const err = newError('request error', statusCode, { method, url, reqBody, statusCode, resBody })
     err.body = resBody
-    if (statusCode === 429) err.retryAfter = parseRetryAfterHeader(res)
     addContextToStack(err)
     throw err
   }
