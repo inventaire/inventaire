@@ -11,6 +11,7 @@ const config = {
 
   outgoingRequests: {
     baseBanTime: 500,
+    retryDelayBase: 1,
   },
 
   entitiesRelationsTemporaryCache: {

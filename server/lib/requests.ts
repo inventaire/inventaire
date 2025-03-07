@@ -24,7 +24,7 @@ import type { Agent } from 'node:http'
 import type { Stream } from 'node:stream'
 import type OAuth from 'oauth-1.0a'
 
-const { logStart, logEnd, logOngoingAtInterval, ongoingRequestLogInterval, bodyLogLimit } = config.outgoingRequests
+const { logStart, logEnd, logOngoingAtInterval, ongoingRequestLogInterval, bodyLogLimit, retryDelayBase } = config.outgoingRequests
 
 const { NODE_APP_INSTANCE: nodeAppInstance = 'default' } = process.env
 const { env } = config
@@ -42,12 +42,12 @@ export interface RequestOptions {
   body?: unknown
   bodyStream?: Stream
   headers?: HttpHeaders | OAuth.Header
-  retryOnceOnError?: boolean
   noRetry?: boolean
   timeout?: number
   noHostBanOnTimeout?: boolean
   ignoreCertificateErrors?: boolean
   redirect?: 'follow' | 'error' | 'manual'
+  attempts?: number
 }
 
 export async function request (method: HttpMethod, url: AbsoluteUrl, options: RequestOptions = {}) {
@@ -57,7 +57,8 @@ export async function request (method: HttpMethod, url: AbsoluteUrl, options: Re
   const { host } = new URL(url)
   assertHostIsNotTemporarilyBanned(host)
 
-  const { returnBodyOnly = true, parseJson = true, body: reqBody, retryOnceOnError = false, noRetry = false, noHostBanOnTimeout = false } = options
+  const { returnBodyOnly = true, parseJson = true, body: reqBody, noRetry = false, noHostBanOnTimeout = false } = options
+  const attempts = (options.attempts || 0) + 1
   const fetchOptions = getFetchOptions(method, options)
 
   const timer = startReqTimer(method, url, fetchOptions)
@@ -67,17 +68,15 @@ export async function request (method: HttpMethod, url: AbsoluteUrl, options: Re
     res = await fetch(url, fetchOptions)
   } catch (err) {
     errorCode = err.code || err.type || err.name || err.message
-    // ERR_STREAM_PREMATURE_CLOSE can happen when the maxSockets limit is reached
-    // See https://github.com/node-fetch/node-fetch/issues/1576#issuecomment-1694418865
-    if (err.code === 'ERR_STREAM_PREMATURE_CLOSE' || (!noRetry && (err.code === 'ECONNRESET' || retryOnceOnError))) {
-      // Retry after a short delay when socket hang up
-      await wait(100)
-      warn(err, `retrying request ${timer.requestId}`)
-      try {
-        res = await fetch(url, fetchOptions)
-      } catch (err) {
-        throw handleFetchError(err, method, url, host, noHostBanOnTimeout)
-      }
+    // Known request errors:
+    // - ECONNRESET: thrown by node when re-using a socket that was closed by the other side
+    //   See https://medium.com/ssense-tech/reduce-networking-errors-in-nodejs-23b4eb9f2d83
+    // - ERR_STREAM_PREMATURE_CLOSE: thrown by node-fetch. It can happen when the maxSockets limit is reached.
+    //   See https://github.com/node-fetch/node-fetch/issues/1576#issuecomment-1694418865
+    if (!noRetry && attempts < 10) {
+      await wait(retryDelayBase * attempts ** 2)
+      warn(err, `retrying request ${timer.requestId} (attempts: ${attempts})`)
+      return request(method, url, { ...options, attempts })
     } else {
       throw handleFetchError(err, method, url, host, noHostBanOnTimeout)
     }

@@ -40,6 +40,7 @@ export type Config = ReadonlyDeep<{
     /** Set to 4 or 6 to force the use of IPv4 or IPv6 */
     ipFamily?: 4 | 6
     rejectPrivateUrls: boolean
+    retryDelayBase: number
   }
   db: {
     protocol: 'http' | 'https'
