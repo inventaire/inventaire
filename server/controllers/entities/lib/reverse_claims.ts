@@ -7,6 +7,7 @@ import { prefixifyWd, unprefixify } from '#controllers/entities/lib/prefix'
 import { properties } from '#controllers/entities/lib/properties/properties'
 import { getPropertyDatatype } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { getCachedRelations } from '#controllers/entities/lib/temporarily_cache_relations'
+import { isValidEntityUri } from '#controllers/entities/lib/uris'
 import { isEntityUri, isWdPropertyUri } from '#lib/boolean_validations'
 import { cache_ } from '#lib/cache'
 import { newError } from '#lib/error/error'
@@ -50,7 +51,9 @@ export async function getReverseClaims (params: ReverseClaimsParams) {
     getReverseClaimsFromCachedRelations(property, value),
     invReverseClaims(property, value),
   ])
-  const uris = compact(flatten(foundUris)) as EntityUri[]
+  let uris = compact(flatten(foundUris)) as EntityUri[]
+  // A filter is needed in case invalid uris have been cached
+  uris = uris.filter(isValidEntityUri)
 
   if (sort) {
     const scores = await getEntitiesPopularities({ uris })

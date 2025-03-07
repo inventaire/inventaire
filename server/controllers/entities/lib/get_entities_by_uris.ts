@@ -1,23 +1,13 @@
 import { keyBy } from 'lodash-es'
-import { isInvEntityId, isWdEntityId } from '#lib/boolean_validations'
+import { uriPrefixes, uriValidatorByPrefix } from '#controllers/entities/lib/uris'
 import { newError } from '#lib/error/error'
-import { isValidIsbn } from '#lib/isbn/isbn'
 import { assertStrings, assertArray } from '#lib/utils/assert_types'
 import { arrayIncludes, objectEntries } from '#lib/utils/base'
-import { objectKeys } from '#lib/utils/types'
 import type { EntityId, EntityUri, EntityUriPrefix, ExpandedSerializedEntitiesByUris, InvEntityId, Isbn, SerializedEntitiesByUris, WdEntityId } from '#types/entity'
 import { getEntitiesByIsbns } from './get_entities_by_isbns.js'
 import { getInvEntitiesByIds } from './get_inv_entities.js'
 import { getWikidataEnrichedEntities } from './get_wikidata_enriched_entities.js'
 import type { OverrideProperties, Split } from 'type-fest'
-
-const validators = {
-  inv: isInvEntityId,
-  wd: isWdEntityId,
-  isbn: isValidIsbn,
-} as const
-
-const prefixes = objectKeys(validators)
 
 export interface EntitiesGetterParams {
   refresh?: boolean
@@ -61,12 +51,12 @@ export async function getPossiblyExpandedEntitiesByUris (params: GetEntitiesByUr
     let errMessage
     const [ prefix, id ] = uri.split(':') as Split<typeof uri, ':'>
 
-    if (!arrayIncludes(prefixes, prefix)) {
+    if (!arrayIncludes(uriPrefixes, prefix)) {
       errMessage = `invalid uri prefix: ${prefix} (uri: ${uri})`
       throw newError(errMessage, 400, { uri })
     }
 
-    if (!validators[prefix](id)) {
+    if (!uriValidatorByPrefix[prefix](id)) {
       errMessage = `invalid uri id: ${id} (uri: ${uri})`
       throw newError(errMessage, 400, { uri })
     }
