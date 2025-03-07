@@ -50,6 +50,9 @@ export async function getReverseClaims (params: ReverseClaimsParams) {
     getReverseClaimsFromCachedRelations(property, value),
     invReverseClaims(property, value),
   ])
+  console.log('🚀 ~ file: reverse_claims.ts ~ line', 53, 'getReverseClaims ~ A', foundUris[0])
+  console.log('🚀 ~ file: reverse_claims.ts ~ line', 53, 'getReverseClaims ~ B', foundUris[1])
+  console.log('🚀 ~ file: reverse_claims.ts ~ line', 53, 'getReverseClaims ~ C', foundUris[2])
   const uris = compact(flatten(foundUris)) as EntityUri[]
 
   if (sort) {
