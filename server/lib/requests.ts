@@ -1,4 +1,8 @@
 import { URL } from 'node:url'
+// Reasons to use node-fetch rather than the native fetch:
+// - accepts a custom agent (see https://github.com/nodejs/undici/issues/1489)
+// Reasons to use node-fetch@2
+// - accepts a timeout parameter
 import fetch from 'node-fetch'
 import { magenta, green, cyan, yellow, red, grey } from 'tiny-chalk'
 import { newError, addContextToStack } from '#lib/error/error'
@@ -63,7 +67,9 @@ export async function request (method: HttpMethod, url: AbsoluteUrl, options: Re
     res = await fetch(url, fetchOptions)
   } catch (err) {
     errorCode = err.code || err.type || err.name || err.message
-    if (!noRetry && (err.code === 'ECONNRESET' || retryOnceOnError)) {
+    // ERR_STREAM_PREMATURE_CLOSE can happen when the maxSockets limit is reached
+    // See https://github.com/node-fetch/node-fetch/issues/1576#issuecomment-1694418865
+    if (err.code === 'ERR_STREAM_PREMATURE_CLOSE' || (!noRetry && (err.code === 'ECONNRESET' || retryOnceOnError))) {
       // Retry after a short delay when socket hang up
       await wait(100)
       warn(err, `retrying request ${timer.requestId}`)
