@@ -10,7 +10,7 @@ export async function getUsersByAnonymizedIds (anonymizableIds: AnonymizableUser
   return db.getDocsByViewKeys<DocWithAnonymizableId>('byAnonymizableId', anonymizableIds)
 }
 
-export const deanonymizedAttributes = [ 'username', 'bio', 'picture', 'created', 'roles' ] as const
+export const deanonymizedAttributes = [ '_id', 'username', 'bio', 'picture', 'created', 'roles' ] as const
 export type DeanonymizedAttribute = typeof deanonymizedAttributes[number]
 
 export interface AnonymizedUser {
