@@ -82,8 +82,8 @@ export function getUserAcct (user: User | SpecialUser | MinimalRemoteUser | User
 }
 
 export async function getUsersByAccts (usersAccts: UserAccountUri[], options: AnonymizeUserOptions = {}) {
-  const usersIdsByHosts = getUsersIdsByHostsFromUsersAccts(usersAccts)
-  const hostsUsers = await Promise.all(objectEntries(usersIdsByHosts)
+  const anonymizableUserIdsByHosts = getUsersAnonymizableIdsByHostsFromUsersAccts(usersAccts)
+  const hostsUsers = await Promise.all(objectEntries(anonymizableUserIdsByHosts)
     .map(([ host, anonymizableUsersIds ]) => getHostUsersByIds(host, anonymizableUsersIds, options)))
   const foundUsers = hostsUsers.flat().map(setAsFound)
   const notFoundUsers = difference(usersAccts, map(foundUsers, 'acct'))
@@ -96,14 +96,14 @@ function setAsFound (user) {
   return user
 }
 
-function getUsersIdsByHostsFromUsersAccts (usersAccts: UserAccountUri[]) {
-  const usersIdsByHosts: Record<Host, AnonymizableUserId[]> = {}
+function getUsersAnonymizableIdsByHostsFromUsersAccts (usersAccts: UserAccountUri[]) {
+  const anonymizableUserIdsByHosts: Record<Host, AnonymizableUserId[]> = {}
   for (const userAcct of usersAccts) {
     const [ userId, host ] = userAcct.split('@')
-    usersIdsByHosts[host] ??= []
-    usersIdsByHosts[host].push(userId)
+    anonymizableUserIdsByHosts[host] ??= []
+    anonymizableUserIdsByHosts[host].push(userId)
   }
-  return usersIdsByHosts
+  return anonymizableUserIdsByHosts
 }
 
 async function getHostUsersByIds (host: Host, anonymizableUsersIds: AnonymizableUserId[], options: AnonymizeUserOptions) {
