@@ -10,6 +10,7 @@ import { addErrorContext, newError } from '#lib/error/error'
 import { getUrlFromImageHash } from '#lib/images'
 import { toIsbn13h } from '#lib/isbn/isbn'
 import { emit } from '#lib/radio'
+import { requestGrouper } from '#lib/request_grouper'
 import { assertString } from '#lib/utils/assert_types'
 import { beforeEntityDocSave } from '#models/entity'
 import { federatedMode } from '#server/config'
@@ -220,13 +221,8 @@ export async function getWdEntitiesLocalLayers (wdIds: WdEntityId[]) {
   return docsByWdId
 }
 
-export async function getWdEntityLocalLayer (wdId: WdEntityId) {
-  const res = await db.view<InvEntity, ByClaimViewKey, EntityValue>('entities', 'byClaim', {
-    key: [ 'invp:P1', `wd:${wdId}` ],
-    include_docs: true,
-  })
-  return res.rows[0]?.doc
-}
+// Regrouping queries, as it seems to be responsible for many requests to CouchDB
+export const getWdEntityLocalLayer = requestGrouper<WdEntityId, InvEntity>({ requester: getWdEntitiesLocalLayers, delay: 10 })
 
 export async function wdEntityHasALocalLayer (wdUri: WdEntityUri) {
   const wdId = unprefixify(wdUri)
