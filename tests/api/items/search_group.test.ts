@@ -89,7 +89,7 @@ describe('items:search:group', () => {
   })
 
   describe('visibility:group-specific', () => {
-    it('should find items visible by a specific group', async () => {
+    it('should find items visible by a specific group [flaky]', async () => {
       const { group, admin, member } = await getSomeGroupWithAMember()
       const { uri } = await createEdition()
       const groupSpecificItem = await createItem(admin, { entity: uri, visibility: [ `group:${group._id}` ] })

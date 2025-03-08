@@ -310,7 +310,7 @@ describe('entities:merge:as:dataadmin', () => {
       invId.should.equal(edition._id)
     })
 
-    it('should turn a merged local entity into a redirection if there is already a local layer', async function () {
+    it('should turn a merged local entity into a redirection if there is already a local layer [flaky]', async function () {
       if (federatedMode) this.skip()
       const imageHashA = someRandomImageHash()
       const imageHashB = someRandomImageHash()
