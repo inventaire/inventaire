@@ -91,6 +91,7 @@ const config = {
     // Set to 4 or 6 to force the use of IPv4 or IPv6
     ipFamily: undefined,
     rejectPrivateUrls: true,
+    retryDelayBase: 100,
   },
 
   federation: {

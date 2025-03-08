@@ -1,4 +1,8 @@
 import { URL } from 'node:url'
+// Reasons to use node-fetch rather than the native fetch:
+// - accepts a custom agent (see https://github.com/nodejs/undici/issues/1489)
+// Reasons to use node-fetch@2
+// - accepts a timeout parameter
 import fetch from 'node-fetch'
 import { magenta, green, cyan, yellow, red, grey } from 'tiny-chalk'
 import { newError, addContextToStack } from '#lib/error/error'
@@ -7,7 +11,7 @@ import { newInvalidError } from '#lib/error/pre_filled'
 import { softwareName, version } from '#lib/package'
 import { wait } from '#lib/promises'
 import { assertObject, assertString } from '#lib/utils/assert_types'
-import { arrayIncludes } from '#lib/utils/base'
+import { arrayIncludes, truncateString } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
 import config, { publicOrigin } from '#server/config'
 import type { AbsoluteUrl, HighResolutionTime, Host, HttpHeaders, HttpMethod } from '#types/common'
@@ -20,7 +24,7 @@ import type { Agent } from 'node:http'
 import type { Stream } from 'node:stream'
 import type OAuth from 'oauth-1.0a'
 
-const { logStart, logEnd, logOngoingAtInterval, ongoingRequestLogInterval, bodyLogLimit } = config.outgoingRequests
+const { logStart, logEnd, logOngoingAtInterval, ongoingRequestLogInterval, bodyLogLimit, retryDelayBase } = config.outgoingRequests
 
 const { NODE_APP_INSTANCE: nodeAppInstance = 'default' } = process.env
 const { env } = config
@@ -32,18 +36,27 @@ const defaultTimeout = 30 * 1000
 
 let requestCount = 0
 
+const retryableErrors = [
+  // - thrown by node when re-using a socket that was closed by the other side
+  //   See https://medium.com/ssense-tech/reduce-networking-errors-in-nodejs-23b4eb9f2d83
+  'ECONNRESET',
+  // - ERR_STREAM_PREMATURE_CLOSE: thrown by node-fetch. It can happen when the maxSockets limit is reached.
+  //   See https://github.com/node-fetch/node-fetch/issues/1576#issuecomment-1694418865
+  'ERR_STREAM_PREMATURE_CLOSE',
+] as const
+
 export interface RequestOptions {
   returnBodyOnly?: boolean
   parseJson?: boolean
   body?: unknown
   bodyStream?: Stream
   headers?: HttpHeaders | OAuth.Header
-  retryOnceOnError?: boolean
   noRetry?: boolean
   timeout?: number
   noHostBanOnTimeout?: boolean
   ignoreCertificateErrors?: boolean
   redirect?: 'follow' | 'error' | 'manual'
+  attempts?: number
 }
 
 export async function request (method: HttpMethod, url: AbsoluteUrl, options: RequestOptions = {}) {
@@ -52,39 +65,42 @@ export async function request (method: HttpMethod, url: AbsoluteUrl, options: Re
 
   const { host } = new URL(url)
   assertHostIsNotTemporarilyBanned(host)
+  if (hostHadTooManyRequests[host] != null) await waitForHostToAcceptNewRequests(host, method, url)
 
-  const { returnBodyOnly = true, parseJson = true, body: reqBody, retryOnceOnError = false, noRetry = false, noHostBanOnTimeout = false } = options
+  const { returnBodyOnly = true, parseJson = true, body: reqBody, noRetry = false, noHostBanOnTimeout = false } = options
+  const attempts = (options.attempts || 0) + 1
   const fetchOptions = getFetchOptions(method, options)
 
   const timer = startReqTimer(method, url, fetchOptions)
 
-  let res, statusCode, errorCode
+  let res, statusCode, errorName
   try {
     res = await fetch(url, fetchOptions)
   } catch (err) {
-    errorCode = err.code || err.type || err.name || err.message
-    if (!noRetry && (err.code === 'ECONNRESET' || retryOnceOnError)) {
-      // Retry after a short delay when socket hang up
-      await wait(100)
-      warn(err, `retrying request ${timer.requestId}`)
-      try {
-        res = await fetch(url, fetchOptions)
-      } catch (err) {
-        throw handleFetchError(err, method, url, host, noHostBanOnTimeout)
-      }
+    errorName = err.code || err.type || err.name || err.message
+    if (!noRetry && retryableErrors.includes(err.code) && attempts < 10) {
+      await wait(retryDelayBase * attempts ** 2)
+      warn(err, `retrying request ${timer.requestId} (attempts: ${attempts})`)
+      return request(method, url, { ...options, attempts })
     } else {
       throw handleFetchError(err, method, url, host, noHostBanOnTimeout)
     }
   } finally {
     statusCode = res?.status
-    endReqTimer(timer, statusCode || errorCode)
+    endReqTimer(timer, statusCode || errorName)
   }
 
-  // Always parse as text, even if JSON, as in case of an error in the JSON response
-  // (such as HTML being retunred instead of JSON), it allows to include the actual response
-  // in the error message
-  // It shouldn't have any performance cost, as that's what node-fetch does in the background anyway
-  const responseText = await res.text()
+  let responseText
+  try {
+    // Always parse as text, even if JSON, as in case of an error in the JSON response
+    // (such as HTML being retunred instead of JSON), it allows to include the actual response
+    // in the error message
+    // It shouldn't have any performance cost, as that's what node-fetch does in the background anyway
+    responseText = await res.text()
+  } catch (err) {
+    if (err.code === 'ERR_STREAM_PREMATURE_CLOSE') return request(method, url, { ...options, attempts })
+    else throw err
+  }
 
   let body
   if (parseJson) {
@@ -117,10 +133,17 @@ export async function request (method: HttpMethod, url: AbsoluteUrl, options: Re
 
   if (statusCode >= 400) {
     if (statusCode >= 500) declareHostError(host)
+    if (statusCode === 429) {
+      const retryAfter = parseRetryAfterHeader(res)
+      warn(url, `retrying request ${timer.requestId} in ${retryAfter}s (attempts: ${attempts})`)
+      const waiting = hostHadTooManyRequests[host] = wait(retryAfter * 1000)
+      await waiting
+      if (hostHadTooManyRequests[host] === waiting) delete hostHadTooManyRequests[host]
+      return request(method, url, { ...options, attempts })
+    }
     const resBody = looksLikeHtml(body) ? '[HTML response body]' : body
     const err = newError('request error', statusCode, { method, url, reqBody, statusCode, resBody })
     err.body = resBody
-    if (statusCode === 429) err.retryAfter = parseRetryAfterHeader(res)
     addContextToStack(err)
     throw err
   }
@@ -286,4 +309,13 @@ const methodWithBody = [ 'put', 'post' ] as const
 
 export function httpMethodHasBody (method: HttpMethod | Uppercase<HttpMethod>) {
   return arrayIncludes(methodWithBody, method.toLowerCase())
+}
+
+const hostHadTooManyRequests: Record<Host, Promise<void>> = {}
+
+async function waitForHostToAcceptNewRequests (host: Host, method: HttpMethod, url: AbsoluteUrl) {
+  warn(`waiting for hosts to accept new requests (${method} ${truncateString(url, 80)})`)
+  await hostHadTooManyRequests[host]
+  await wait(1000)
+  if (hostHadTooManyRequests[host] != null) return waitForHostToAcceptNewRequests(host, method, url)
 }

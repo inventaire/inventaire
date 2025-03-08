@@ -1,5 +1,6 @@
 // A server-wide event bus
 import { EventEmitter } from 'node:events'
+import { truncateString } from '#lib/utils/base'
 import { warn, logError } from '#lib/utils/logs'
 import { waitForSideEffects } from '#server/config'
 
@@ -16,8 +17,7 @@ if (waitForSideEffects) {
     const listeners = radio.listeners(eventName)
     if (listeners.length === 0) {
       const context = JSON.stringify({ eventName, args })
-      const stringifiedContext = context.length > 100 ? context.slice(0, 100) + '…' : context
-      warn(`no event listner found: ${stringifiedContext}`)
+      warn(`no event listner found: ${truncateString(context, 100)}`)
     } else {
       await Promise.all(listeners.map(triggerAndWait(eventName, args)))
     }

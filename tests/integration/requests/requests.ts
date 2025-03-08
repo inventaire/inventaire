@@ -9,10 +9,16 @@ const startMockServer = async () => {
     app.all('/test', (req, res) => {
       res.json({ ok: true, data: req.body })
     })
+    let requestsCount = 0
     app.all('/busy', (req, res) => {
-      res.set('retry-after', '5')
-      res.status(429)
-      res.end()
+      requestsCount++
+      if (requestsCount % 3 === 0) {
+        res.json({ ok: true })
+      } else {
+        res.set('retry-after', '1')
+        res.status(429)
+        res.end()
+      }
     })
     app.all('/hangup', (req, res) => {
       res.destroy(new Error('ECONNRESET'))
@@ -69,13 +75,9 @@ describe('requests', async () => {
   })
 
   describe('errors', () => {
-    it('should return 429 errors with parsed retry-after header', async () => {
-      await requests_.get(busyEndpoint)
-      .then(shouldNotBeCalled)
-      .catch(err => {
-        err.statusCode.should.equal(429)
-        err.retryAfter.should.equal(5)
-      })
+    it('should retry on 429 errors', async () => {
+      const { ok } = await requests_.get(busyEndpoint)
+      ok.should.be.true()
     })
 
     it('should include the url in error context when hitting ECONNREFUSED', async () => {
