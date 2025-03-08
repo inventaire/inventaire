@@ -36,6 +36,15 @@ const defaultTimeout = 30 * 1000
 
 let requestCount = 0
 
+const retryableErrors = [
+  // - thrown by node when re-using a socket that was closed by the other side
+  //   See https://medium.com/ssense-tech/reduce-networking-errors-in-nodejs-23b4eb9f2d83
+  'ECONNRESET',
+  // - ERR_STREAM_PREMATURE_CLOSE: thrown by node-fetch. It can happen when the maxSockets limit is reached.
+  //   See https://github.com/node-fetch/node-fetch/issues/1576#issuecomment-1694418865
+  'ERR_STREAM_PREMATURE_CLOSE',
+] as const
+
 export interface RequestOptions {
   returnBodyOnly?: boolean
   parseJson?: boolean
@@ -64,17 +73,12 @@ export async function request (method: HttpMethod, url: AbsoluteUrl, options: Re
 
   const timer = startReqTimer(method, url, fetchOptions)
 
-  let res, statusCode, errorCode
+  let res, statusCode, errorName
   try {
     res = await fetch(url, fetchOptions)
   } catch (err) {
-    errorCode = err.code || err.type || err.name || err.message
-    // Known request errors:
-    // - ECONNRESET: thrown by node when re-using a socket that was closed by the other side
-    //   See https://medium.com/ssense-tech/reduce-networking-errors-in-nodejs-23b4eb9f2d83
-    // - ERR_STREAM_PREMATURE_CLOSE: thrown by node-fetch. It can happen when the maxSockets limit is reached.
-    //   See https://github.com/node-fetch/node-fetch/issues/1576#issuecomment-1694418865
-    if (!noRetry && attempts < 10) {
+    errorName = err.code || err.type || err.name || err.message
+    if (!noRetry && retryableErrors.includes(err.code) && attempts < 10) {
       await wait(retryDelayBase * attempts ** 2)
       warn(err, `retrying request ${timer.requestId} (attempts: ${attempts})`)
       return request(method, url, { ...options, attempts })
@@ -83,7 +87,7 @@ export async function request (method: HttpMethod, url: AbsoluteUrl, options: Re
     }
   } finally {
     statusCode = res?.status
-    endReqTimer(timer, statusCode || errorCode)
+    endReqTimer(timer, statusCode || errorName)
   }
 
   let responseText
