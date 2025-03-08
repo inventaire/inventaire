@@ -25,7 +25,7 @@ export interface RemoteUserAuthentifiedReq extends SignedReq {
   remoteUser: MinimalRemoteUser
 }
 
-export type Req = (Express.Request | AuthentifiedReq | SignedReq) & {
+export type Req = (Express.Request | AuthentifiedReq | MaybeSignedReq) & {
   _startAt?: ReturnType<typeof process.hrtime>
 }
 

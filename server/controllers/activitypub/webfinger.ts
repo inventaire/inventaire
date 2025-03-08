@@ -1,7 +1,7 @@
 import { makeUrl, getEntityUriFromActorName, getEntityActorName } from '#controllers/activitypub/lib/helpers'
 import { getEntityByUri } from '#controllers/entities/lib/federation/instance_agnostic_entities'
 import { isEntityUri, isUsername } from '#lib/boolean_validations'
-import { ControllerWrapper } from '#lib/controller_wrapper'
+import { controllerWrapperFactory } from '#lib/controller_wrapper'
 import { notFoundError } from '#lib/error/error'
 import { publicHost } from '#server/config'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
@@ -27,7 +27,7 @@ async function controller ({ resource }: SanitizedParameters) {
 }
 
 export default {
-  get: ControllerWrapper({
+  get: controllerWrapperFactory({
     access: 'public',
     sanitization,
     controller,

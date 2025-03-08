@@ -1,12 +1,13 @@
 import { map } from 'lodash-es'
 import { indexedTypes, socialTypes } from '#db/elasticsearch/indexes'
 import { isNonEmptyString } from '#lib/boolean_validations'
-import { ControllerWrapper } from '#lib/controller_wrapper'
+import { controllerWrapperFactory } from '#lib/controller_wrapper'
 import { newMissingError } from '#lib/error/pre_filled'
 import { addWarning } from '#lib/responses'
 import { someMatch } from '#lib/utils/base'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
 import { userIsGroupMember } from '#models/group'
+import type { ControllerInputSanitization } from '#types/controllers_input_sanitization'
 import type { IndexedTypes } from '#types/search'
 import type { Req, Res, Sanitized } from '#types/server'
 import type { UserId } from '#types/user'
@@ -38,7 +39,7 @@ const sanitization = {
     generic: 'string',
     optional: true,
   },
-}
+} satisfies ControllerInputSanitization
 
 export interface SearchParams {
   search: string
@@ -140,7 +141,7 @@ async function removeUnauthorizedDocs (results, reqUserId) {
 }
 
 export default {
-  get: ControllerWrapper({
+  get: controllerWrapperFactory({
     access: 'public',
     sanitization,
     controller,

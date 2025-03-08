@@ -3,16 +3,16 @@ import type { Req, Res } from '#types/server'
 
 type SanitizationObject = Record<string, unknown>
 
-export type ActionControllerStandaloneFunction <Response = unknown | void> = (req: Req, res: Res) => Response
-export type ActionControllerFunction <Response = unknown | void> = (params: unknown, req: Req, res: Res) => Response
+export type StandaloneControllerFunction <Response = unknown | void> = (req: Req, res: Res) => Response
+export type SanitizedControllerFunction <Response = unknown | void> = (params: unknown, req: Req, res: Res) => Response
 
 export interface ActionControllerObject {
   sanitization: SanitizationObject
-  controller: ActionControllerFunction
+  controller: SanitizedControllerFunction
   track?: string[]
 }
 
-export type ActionController = ActionControllerStandaloneFunction | ActionControllerObject
+export type ActionController = StandaloneControllerFunction | ActionControllerObject
 
 type ActionName = string
 

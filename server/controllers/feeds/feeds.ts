@@ -1,4 +1,4 @@
-import { ControllerWrapper } from '#lib/controller_wrapper'
+import { controllerWrapperFactory } from '#lib/controller_wrapper'
 import { newMissingQueryError } from '#lib/error/pre_filled'
 import { getLangFromHeaders } from '#lib/headers'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
@@ -73,7 +73,7 @@ function getFeedData ({ userId, groupId, shelfId, reqUserId }) {
 }
 
 export default {
-  get: ControllerWrapper({
+  get: controllerWrapperFactory({
     access: 'public',
     sanitization,
     controller,

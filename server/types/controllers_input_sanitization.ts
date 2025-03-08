@@ -16,7 +16,7 @@ export type ParameterPlace = 'query' | 'body'
 interface CommonControllerSanitizationParameterConfig extends Record<string, unknown> {
   allowlist?: string[]
   canBeNull?: boolean
-  default?: boolean
+  default?: boolean | string | number
   drop?: boolean
   max?: number
   optional?: boolean

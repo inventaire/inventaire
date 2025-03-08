@@ -1,11 +1,10 @@
 import { objectEntries } from '#lib/utils/base'
-import validateObject from '#lib/validate_object'
 import type { HttpMethod } from '#types/common'
 import type { ActionController, ActionsControllers, MethodsAndActionsControllers } from '#types/controllers'
 import type { Req, Res } from '#types/server'
 import { controllerWrapper, validateControllerWrapperParams } from './controller_wrapper.js'
 import { bundleMissingQueryError, bundleUnknownAction } from './error/pre_filled.js'
-import { accessLevels, type AccessLevel } from './user_access_levels.js'
+import { type AccessLevel } from './user_access_levels.js'
 
 // A function to route requests to an endpoint to sub-endpoints identified by their 'action' names
 
@@ -28,7 +27,6 @@ export function actionsControllersFactory (controllers: ActionsControllers) {
 }
 
 function getActionsControllersParams (controllers: ActionsControllers) {
-  validateObject(controllers, accessLevels, 'object')
   const actionsControllersParams = {}
   for (const [ accessLevel, actionControllers ] of objectEntries(controllers)) {
     for (const [ actionName, actionData ] of objectEntries(actionControllers)) {

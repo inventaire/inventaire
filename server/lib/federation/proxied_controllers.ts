@@ -9,7 +9,7 @@ import type { AccessLevel } from '#lib/user_access_levels'
 import { logError, warn } from '#lib/utils/logs'
 import { remoteEntitiesOrigin } from '#server/config'
 import type { AbsoluteUrl, RelativeUrl } from '#types/common'
-import type { ActionController, ActionControllerFunction, ActionControllerStandaloneFunction, HttpMethod } from '#types/controllers'
+import type { ActionController, SanitizedControllerFunction, StandaloneControllerFunction, HttpMethod } from '#types/controllers'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { AuthentifiedReq, Req, Res } from '#types/server'
 
@@ -46,11 +46,11 @@ function proxiedControllerFunctionFactory (accessLevel: AccessLevel, method: Htt
       } else {
         throw newError('non-public controllers can not be redirected', 500, { url: req.url, accessLevel, method, action })
       }
-    } as ActionControllerStandaloneFunction
+    } as StandaloneControllerFunction
   } else {
     return async function controller (params: SanitizedParameters, req: Req | AuthentifiedReq) {
       return proxyWrappedController(req, accessLevel, method, action, params)
-    } as ActionControllerFunction
+    } as SanitizedControllerFunction
   }
 }
 
