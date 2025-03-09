@@ -5,11 +5,11 @@ import { getPatchById } from '#controllers/entities/lib/patches/patches'
 import { addItemSnapshot } from '#controllers/items/lib/snapshot/snapshot'
 import { isCouchUuid } from '#lib/boolean_validations'
 import { newError, notFoundError } from '#lib/error/error'
+import { memoryCachePublicController } from '#lib/memory_cache_public_controller'
 import type { RelativeUrl } from '#types/common'
 import type { CouchUuid } from '#types/couchdb'
 import type { SerializedItem, Item } from '#types/item'
 import type { PatchId } from '#types/patch'
-import type { Req, Res } from '#types/server'
 import type { User } from '#types/user'
 import { getActivitiesFromPatch } from './lib/entity_patch_activities.js'
 import formatShelfItemsActivities from './lib/format_shelf_items_activities.js'
@@ -28,8 +28,7 @@ const sanitization = {
   },
 }
 
-async function controller ({ id }: ActivityArgs, req: Req, res: Res) {
-  setActivityPubContentType(res)
+async function controller ({ id }: ActivityArgs) {
   if (isEntityActivityId(id)) {
     return getEntityActivity(id)
   } else if (id.startsWith('item-')) {
@@ -89,5 +88,11 @@ async function getShelfActivity (activityDoc, name) {
 
 export default {
   sanitization,
-  controller,
+  // Caching the controller response to prevent an activity to trigger a fediverse DDoS
+  controller: memoryCachePublicController<ActivityArgs>({
+    before: setActivityPubContentType,
+    controller,
+    getCacheKey: (params: ActivityArgs) => `activity:id:${params.id}`,
+    cacheTtl: 30 * 1000,
+  }),
 }

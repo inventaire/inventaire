@@ -7,6 +7,7 @@ import { stringifyQuery } from '#lib/utils/url'
 import { publicOrigin } from '#server/config'
 import type { FollowActivity, Context, ActivityDoc } from '#types/activity'
 import type { AbsoluteUrl, RelativeUrl } from '#types/common'
+import type { Res } from '#types/server'
 
 interface MakeUrlArgs {
   origin?: AbsoluteUrl
@@ -57,7 +58,7 @@ export const context: Context[] = [
   'https://www.w3.org/ns/activitystreams',
 ]
 
-export function setActivityPubContentType (res) {
+export function setActivityPubContentType (res: Res) {
   res.header('content-type', 'application/activity+json')
 }
 
