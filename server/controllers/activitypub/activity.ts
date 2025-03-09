@@ -93,6 +93,5 @@ export default {
     before: setActivityPubContentType,
     controller,
     getCacheKey: (params: ActivityArgs) => `activity:id:${params.id}`,
-    cacheTtl: 30 * 1000,
   }),
 }

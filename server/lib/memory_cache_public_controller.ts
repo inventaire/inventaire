@@ -4,12 +4,12 @@ interface MemoryCachePublicControllerParams <T> {
   before?: (res: Res) => unknown
   controller: (params: T) => unknown
   getCacheKey: (params: T) => string
-  cacheTtl: number
+  cacheTtl?: number
 }
 
 const cache: Record<string, { body: string, timeout: NodeJS.Timeout }> = {}
 
-export function memoryCachePublicController <T> ({ before, controller, getCacheKey, cacheTtl }: MemoryCachePublicControllerParams<T>) {
+export function memoryCachePublicController <T> ({ before, controller, getCacheKey, cacheTtl = 30 * 1000 }: MemoryCachePublicControllerParams<T>) {
   return async function cachedController (params: T, req: Req, res: Res) {
     if (before != null) before(res)
     let stringifiedBody

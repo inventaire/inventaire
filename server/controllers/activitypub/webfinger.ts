@@ -35,7 +35,6 @@ export default {
     controller: memoryCachePublicController<SanitizedParameters>({
       controller,
       getCacheKey: (params: SanitizedParameters) => `webfinger:${params.resource}`,
-      cacheTtl: 30 * 1000,
     }),
   }),
 }
