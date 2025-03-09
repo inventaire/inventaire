@@ -39,8 +39,8 @@ export const genreEntity = { ...entity, entityValueTypes: [ 'genre' ] } as const
 export const languageEntity = { ...entity, entityValueTypes: [ 'language' ] } as const
 export const uniqueEntity = { ...entity, uniqueValue: true } as const
 
-export const concurrentString = { ...uniqueString, concurrency: true } as const
-export const concurrentExternalId = { ...concurrentString, datatype: 'external-id' } as const
+export const concurrentAndUniqueString = { ...uniqueString, concurrency: true } as const
+export const concurrentAndUniqueExternalId = { ...concurrentAndUniqueString, datatype: 'external-id' } as const
 
 export const url = {
   datatype: 'url',
