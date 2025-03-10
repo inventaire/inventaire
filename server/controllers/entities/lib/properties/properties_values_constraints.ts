@@ -293,7 +293,15 @@ export const propertiesValuesConstraints = {
   // BookBrainz edition ID
   'wdt:P12351': externalId(uuidPattern),
   // Bluesky username
-  'wdt:P12361': externalId(/^[\w-]+$/),
+  'wdt:P12361': externalIdWithFormatter({
+    regex: /^[\w-.]+$/,
+    format: (id: string) => {
+      if (/\/profile\//.test(id)) {
+        id = id.split('/profile/')[1]
+      }
+      return id.replace(/^@/, '').trim()
+    },
+  }),
   // NooSFere publisher ID
   'wdt:P12852': externalId(signedIntegerPattern),
   // NooSFere editorial collection ID

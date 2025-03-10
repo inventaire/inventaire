@@ -1,5 +1,6 @@
 import should from 'should'
 import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri, someBnfId, createEditionWithIsbn, someImageHash, generateSomeRecoverableIsni, getRandomInvUri } from '#fixtures/entities'
+import { getSomeUsername } from '#fixtures/text'
 import { federatedMode } from '#server/config'
 import { getByUri, addClaim, updateClaim, removeClaim, merge } from '#tests/api/utils/entities'
 import { getAdminUser } from '#tests/api/utils/utils'
@@ -309,6 +310,18 @@ describe('entities:update-claims:inv', () => {
     await addClaim({ uri: human.uri, property: 'wdt:P268', value: recoverableBnfId })
     const updatedHuman = await getByUri(human.uri)
     updatedHuman.claims['wdt:P268'].should.deepEqual([ someValidBnfId ])
+  })
+
+  it('should accept a recoverable BlueSky id', async () => {
+    const human = await createHuman()
+    const blueSkyHandleA = `${getSomeUsername()}.example.org`
+    const recoverableBlueSkyHandleA = `@${blueSkyHandleA}`
+    const blueSkyHandleB = `${getSomeUsername()}.example.org`
+    const recoverableBlueSkyHandleB = `https://bsky.app/profile/${blueSkyHandleB}`
+    await addClaim({ uri: human.uri, property: 'wdt:P12361', value: recoverableBlueSkyHandleA })
+    await updateClaim({ uri: human.uri, property: 'wdt:P12361', oldValue: blueSkyHandleA, newValue: recoverableBlueSkyHandleB })
+    const updatedHuman = await getByUri(human.uri)
+    updatedHuman.claims['wdt:P12361'].should.deepEqual([ blueSkyHandleB ])
   })
 
   it('should reject invp:P1 updates on local entities', async () => {
