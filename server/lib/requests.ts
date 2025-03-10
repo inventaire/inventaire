@@ -37,12 +37,14 @@ const defaultTimeout = 30 * 1000
 let requestCount = 0
 
 const retryableErrors = [
-  // - thrown by node when re-using a socket that was closed by the other side
-  //   See https://medium.com/ssense-tech/reduce-networking-errors-in-nodejs-23b4eb9f2d83
+  // Thrown by node when re-using a socket that was closed by the other side
+  // See https://medium.com/ssense-tech/reduce-networking-errors-in-nodejs-23b4eb9f2d83
   'ECONNRESET',
-  // - ERR_STREAM_PREMATURE_CLOSE: thrown by node-fetch. It can happen when the maxSockets limit is reached.
-  //   See https://github.com/node-fetch/node-fetch/issues/1576#issuecomment-1694418865
+  // Thrown by node-fetch. It can happen when the maxSockets limit is reached.
+  // See https://github.com/node-fetch/node-fetch/issues/1576#issuecomment-1694418865
   'ERR_STREAM_PREMATURE_CLOSE',
+  'HPE_INVALID_CHUNK_SIZE',
+  'EPIPE',
 ] as const
 
 export interface RequestOptions {

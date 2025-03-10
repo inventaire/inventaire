@@ -72,7 +72,7 @@
     "@types/subleveldown": "^4.1.4",
     "abort-controller": "^3.0.0",
     "abstract-leveldown": "^7.2.0",
-    "blue-cot": "^9.1.3",
+    "blue-cot": "^9.1.4",
     "body-parser": "^1.18.2",
     "cloudant-follow": "^0.18.2",
     "config": "^3.3.8",
