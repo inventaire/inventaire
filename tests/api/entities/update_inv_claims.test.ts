@@ -294,36 +294,6 @@ describe('entities:update-claims:inv', () => {
     })
   })
 
-  it('should accept a recoverable ISNI', async () => {
-    const human = await createHuman()
-    const someRecoverableIsni = generateSomeRecoverableIsni()
-    const someValidIsni = someRecoverableIsni.replace(/\s/g, '')
-    await addClaim({ uri: human.uri, property: 'wdt:P213', value: someRecoverableIsni })
-    const updatedHuman = await getByUri(human.uri)
-    updatedHuman.claims['wdt:P213'].should.deepEqual([ someValidIsni ])
-  })
-
-  it('should accept a recoverable BNF id', async () => {
-    const human = await createHuman()
-    const someValidBnfId = someBnfId()
-    const recoverableBnfId = `cb${someValidBnfId}`
-    await addClaim({ uri: human.uri, property: 'wdt:P268', value: recoverableBnfId })
-    const updatedHuman = await getByUri(human.uri)
-    updatedHuman.claims['wdt:P268'].should.deepEqual([ someValidBnfId ])
-  })
-
-  it('should accept a recoverable BlueSky id', async () => {
-    const human = await createHuman()
-    const blueSkyHandleA = `${getSomeUsername()}.example.org`
-    const recoverableBlueSkyHandleA = `@${blueSkyHandleA}`
-    const blueSkyHandleB = `${getSomeUsername()}.example.org`
-    const recoverableBlueSkyHandleB = `https://bsky.app/profile/${blueSkyHandleB}`
-    await addClaim({ uri: human.uri, property: 'wdt:P12361', value: recoverableBlueSkyHandleA })
-    await updateClaim({ uri: human.uri, property: 'wdt:P12361', oldValue: blueSkyHandleA, newValue: recoverableBlueSkyHandleB })
-    const updatedHuman = await getByUri(human.uri)
-    updatedHuman.claims['wdt:P12361'].should.deepEqual([ blueSkyHandleB ])
-  })
-
   it('should reject invp:P1 updates on local entities', async () => {
     const { uri } = await createEdition()
     await addClaim({ uri, property: 'invp:P1', value: 'wd:Q1' })
@@ -342,6 +312,38 @@ describe('entities:update-claims:inv', () => {
     .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('local entity can not have remote-entity-only claims')
+    })
+  })
+
+  describe('format', () => {
+    it('should accept a recoverable ISNI', async () => {
+      const human = await createHuman()
+      const someRecoverableIsni = generateSomeRecoverableIsni()
+      const someValidIsni = someRecoverableIsni.replace(/\s/g, '')
+      await addClaim({ uri: human.uri, property: 'wdt:P213', value: someRecoverableIsni })
+      const updatedHuman = await getByUri(human.uri)
+      updatedHuman.claims['wdt:P213'].should.deepEqual([ someValidIsni ])
+    })
+
+    it('should accept a recoverable BNF id', async () => {
+      const human = await createHuman()
+      const someValidBnfId = someBnfId()
+      const recoverableBnfId = `cb${someValidBnfId}`
+      await addClaim({ uri: human.uri, property: 'wdt:P268', value: recoverableBnfId })
+      const updatedHuman = await getByUri(human.uri)
+      updatedHuman.claims['wdt:P268'].should.deepEqual([ someValidBnfId ])
+    })
+
+    it('should accept a recoverable BlueSky id', async () => {
+      const human = await createHuman()
+      const blueSkyHandleA = `${getSomeUsername()}.example.org`
+      const recoverableBlueSkyHandleA = `@${blueSkyHandleA}`
+      const blueSkyHandleB = `${getSomeUsername()}.example.org`
+      const recoverableBlueSkyHandleB = `https://bsky.app/profile/${blueSkyHandleB}`
+      await addClaim({ uri: human.uri, property: 'wdt:P12361', value: recoverableBlueSkyHandleA })
+      await updateClaim({ uri: human.uri, property: 'wdt:P12361', oldValue: blueSkyHandleA, newValue: recoverableBlueSkyHandleB })
+      const updatedHuman = await getByUri(human.uri)
+      updatedHuman.claims['wdt:P12361'].should.deepEqual([ blueSkyHandleB ])
     })
   })
 })
