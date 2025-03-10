@@ -1,12 +1,19 @@
 import { pick } from 'lodash-es'
-import { concurrentIdsProperties, getPropertyDatatype } from '#controllers/entities/lib/properties/properties_values_constraints'
+import { getPropertyDatatype } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { isNonEmptyArray } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { arrayIncludes, objectEntries } from '#lib/utils/base'
 import type { SerializedEntity, EntityUri } from '#types/entity'
 
+// If merged entities have different ISBN values, the merge should be aborted
+// This list could also be obtained with filtering properties with `(prop) => prop.uniqueValue && prop.concurrency`
+const conflictingProperties = [
+  'wdt:P212',
+  'wdt:P957',
+] as const
+
 export function validateAbsenceOfConflictingProperties (fromEntity: SerializedEntity, toEntity: SerializedEntity) {
-  const fromConcurrentIdsClaims = pick(fromEntity.claims, concurrentIdsProperties)
+  const fromConcurrentIdsClaims = pick(fromEntity.claims, conflictingProperties)
 
   for (const [ property, fromValues ] of objectEntries(fromConcurrentIdsClaims)) {
     const toPropertyValues = toEntity.claims[property]

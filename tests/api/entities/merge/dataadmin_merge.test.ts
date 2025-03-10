@@ -12,6 +12,7 @@ import {
   someRandomImageHash,
   getSomeWdEditionUri,
   existsOrCreate,
+  someOpenLibraryId,
 } from '#fixtures/entities'
 import { getRandomString } from '#lib/utils/random_string'
 import { federatedMode } from '#server/config'
@@ -45,11 +46,11 @@ describe('entities:merge:as:dataadmin', () => {
   it('should reject invalid uris', async function () {
     if (federatedMode) this.skip()
     await dataadminReq('put', '/api/entities?action=merge', { from: 'fromUri', to: 'toUri' })
-  .then(shouldNotBeCalled)
-  .catch(err => {
-    err.body.status_verbose.should.startWith('invalid from:')
-    err.statusCode.should.equal(400)
-  })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.status_verbose.should.startWith('invalid from:')
+      err.statusCode.should.equal(400)
+    })
   })
 
   it('should reject invalid from prefix', async function () {
@@ -293,6 +294,19 @@ describe('entities:merge:as:dataadmin', () => {
     ])
     editionA.uri.should.startWith('isbn')
     await merge(`inv:${editionA._id}`, editionB.uri)
+  })
+
+  it('should merge entities with different values for a given external identifier', async function () {
+    if (federatedMode) this.skip()
+    const olIdA = someOpenLibraryId('work')
+    const olIdB = someOpenLibraryId('work')
+    const [ workA, workB ] = await Promise.all([
+      existsOrCreate({ claims: { 'wdt:P648': [ olIdA ] } }),
+      existsOrCreate({ claims: { 'wdt:P648': [ olIdB ] } }),
+    ])
+    await merge(workA.uri, workB.uri)
+    const updatedWorkB = await getByUri(workB.uri)
+    updatedWorkB.claims['wdt:P648'].should.deepEqual([ olIdB, olIdA ])
   })
 
   describe('local entity layer', () => {
