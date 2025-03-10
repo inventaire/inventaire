@@ -334,6 +334,21 @@ describe('entities:update-claims:inv', () => {
       updatedHuman.claims['wdt:P268'].should.deepEqual([ someValidBnfId ])
     })
 
+    it('should accept a recoverable Mastodon id', async () => {
+      const human = await createHuman()
+      const handleA = `${getSomeUsername()}@mastodon.social`
+      const handleB = `${getSomeUsername()}@mamot.fr`
+      const handleC = `${getSomeUsername()}@mamot.fr`
+      const recoverableHandleA = `https://mastodon.social/@${handleA.split('@')[0]}`
+      const recoverableHandleB = `https://mastodon.social/@${handleB}`
+      const recoverableHandleC = `@${handleC}`
+      await addClaim({ uri: human.uri, property: 'wdt:P4033', value: recoverableHandleA })
+      await updateClaim({ uri: human.uri, property: 'wdt:P4033', oldValue: handleA, newValue: recoverableHandleB })
+      await updateClaim({ uri: human.uri, property: 'wdt:P4033', oldValue: handleB, newValue: recoverableHandleC })
+      const updatedHuman = await getByUri(human.uri)
+      updatedHuman.claims['wdt:P4033'].should.deepEqual([ handleC ])
+    })
+
     it('should accept a recoverable BlueSky id', async () => {
       const human = await createHuman()
       const blueSkyHandleA = `${getSomeUsername()}.example.org`

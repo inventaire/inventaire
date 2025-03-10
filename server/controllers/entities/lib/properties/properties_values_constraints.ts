@@ -4,13 +4,14 @@
 // Bases and builders are an attempt to keep those configuration objects DRY:
 // Bases represent the most common configuration objects, and can be extended
 // into more specific configs
+import { getHost } from '#lib/network/helpers'
 import {
   PositiveInteger as positiveIntegerPattern,
   StrictlyPositiveInteger as strictlyPositiveIntegerPattern,
   SignedInteger as signedIntegerPattern,
 } from '#lib/regex'
 import { objectKeys } from '#lib/utils/types'
-import type { OmitNever } from '#types/common'
+import type { AbsoluteUrl, OmitNever } from '#types/common'
 import type { PropertyUri } from '#types/entity'
 import type { PropertyValueConstraints } from '#types/property'
 import { collectionEntity, entity, entityType, genreEntity, humanEntity, imageHash, languageEntity, movementEntity, positiveInteger, positiveIntegerString, publisherEntity, remoteEntity, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
@@ -233,7 +234,24 @@ export const propertiesValuesConstraints = {
   // Babelio work ID
   'wdt:P3631': externalId(positiveIntegerPattern),
   // Mastodon address
-  'wdt:P4033': externalId(/^\w+@[a-z0-9.-]+[a-z0-9]+$/),
+  'wdt:P4033': externalIdWithFormatter({
+    regex: /^\w+@[a-z0-9.-]+[a-z0-9]+$/,
+    format: (id: string) => {
+      if (id.startsWith('http')) {
+        const parts = id.split('@')
+        if (parts.length === 3) {
+          // Example https://mastodon.social/@foo@mamot.fr
+          id = parts.slice(-2).join('@')
+        } else if (parts.length === 2) {
+          // Example https://mastodon.social/@foo
+          const host = getHost(id as AbsoluteUrl)
+          const handle = parts[1]
+          id = `${handle}@${host}`
+        }
+      }
+      return id.replace(/^@/, '').trim()
+    },
+  }),
   // MyAnimeList people ID
   'wdt:P4084': externalId(positiveIntegerPattern),
   // MyAnimeList manga ID
