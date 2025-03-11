@@ -3,6 +3,7 @@ import { getEntityByUri } from '#controllers/entities/lib/federation/instance_ag
 import { isEntityUri, isUsername } from '#lib/boolean_validations'
 import { controllerWrapperFactory } from '#lib/controller_wrapper'
 import { notFoundError } from '#lib/error/error'
+import { memoryCachePublicController } from '#lib/memory_cache_public_controller'
 import { publicHost } from '#server/config'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import { validateUser, validateShelf } from './lib/validations.js'
@@ -30,7 +31,11 @@ export default {
   get: controllerWrapperFactory({
     access: 'public',
     sanitization,
-    controller,
+    // Caching the controller response to prevent an activity to trigger a fediverse DDoS
+    controller: memoryCachePublicController<SanitizedParameters>({
+      controller,
+      getCacheKey: (params: SanitizedParameters) => `webfinger:${params.resource}`,
+    }),
   }),
 }
 
