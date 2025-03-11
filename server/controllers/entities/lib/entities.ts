@@ -222,7 +222,7 @@ export async function getWdEntitiesLocalLayers (wdIds: WdEntityId[]) {
 }
 
 // Regrouping queries, as it seems to be responsible for many requests to CouchDB
-export const getWdEntityLocalLayer = requestGrouper<WdEntityId, InvEntity>({ requester: getWdEntitiesLocalLayers, delay: 10 })
+export const getWdEntityLocalLayer = requestGrouper<WdEntityId, InvEntity>({ requester: getWdEntitiesLocalLayers, delay: 100 })
 
 export async function wdEntityHasALocalLayer (wdUri: WdEntityUri) {
   const wdId = unprefixify(wdUri)
