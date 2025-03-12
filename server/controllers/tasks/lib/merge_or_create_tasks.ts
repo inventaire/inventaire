@@ -1,13 +1,15 @@
-import { map, uniq } from 'lodash-es'
+import { difference, map, uniq } from 'lodash-es'
 import { getAuthorsFromWorksUris, getPublishersFromPublicationsUris } from '#controllers/entities/lib/entities'
 import { getEntitiesList } from '#controllers/entities/lib/get_entities_list'
+import { getClaimValue } from '#controllers/entities/lib/inv_claims_utils'
 import { haveExactMatch } from '#controllers/entities/lib/labels_match'
 import mergeEntities from '#controllers/entities/lib/merge_entities'
+import { isExternaIdProperty } from '#controllers/entities/lib/properties/properties_values_constraints'
 import { getEntityNormalizedTerms } from '#controllers/entities/lib/terms_normalization'
 import { getAuthorWorksData } from '#controllers/tasks/lib/get_author_works_data'
 import { updateTasks, getExistingTasks, createTasksFromSuggestions, getTasksBySuspectUri } from '#controllers/tasks/lib/tasks'
 import type { UserWithAcct } from '#lib/federation/remote_user'
-import { someMatch } from '#lib/utils/base'
+import { objectEntries, someMatch } from '#lib/utils/base'
 import { log } from '#lib/utils/logs'
 import type { SerializedEntity, EntityUri, EntityType } from '#types/entity'
 import type { UserAccountUri } from '#types/server'
@@ -121,7 +123,7 @@ async function getEditionWorks (edition) {
 export async function mergeOrCreateOrUpdateTask (entitiesType: EntityType, fromUri: EntityUri, toUri: EntityUri, fromEntity: SerializedEntity, toEntity: SerializedEntity, user: UserWithAcct) {
   const { acct: userAcct } = user
   const mergeIfLabelsMatch = mergeIfLabelsMatchByType[entitiesType]
-  if (mergeIfLabelsMatch) {
+  if (!someExternalIdsMightConflict(fromEntity, toEntity) && mergeIfLabelsMatch) {
     const isMerged = await mergeIfLabelsMatch({ fromUri, toUri, fromEntity, toEntity, user })
     if (isMerged) {
       log({ fromUri, toUri }, 'entities have been merged')
@@ -162,4 +164,18 @@ function someUrisMatch (fromEntityAuthors, toEntityAuthors) {
   const fromUris = map(fromEntityAuthors, 'uri')
   const toUris = map(toEntityAuthors, 'uri')
   return someMatch(fromUris, toUris)
+}
+
+// An entity can have several external id if they are duplicates in the external database,
+// but it can also be the sign of an invalid merge
+export function someExternalIdsMightConflict (entityA: SerializedEntity, entityB: SerializedEntity) {
+  for (const [ property, propertyClaims ] of objectEntries(entityA.claims)) {
+    if (isExternaIdProperty(property) && entityB.claims[property]) {
+      const valuesA = propertyClaims.map(getClaimValue)
+      const valuesB = entityB.claims[property].map(getClaimValue)
+      if (difference(valuesA, valuesB).length > 0) return true
+      if (difference(valuesB, valuesA).length > 0) return true
+    }
+  }
+  return false
 }
