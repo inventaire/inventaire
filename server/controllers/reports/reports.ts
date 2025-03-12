@@ -3,17 +3,19 @@ import { actionsControllersFactory } from '#lib/actions_controllers'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { bundleMissingBodyError } from '#lib/error/pre_filled'
+import { isBotRequest } from '#lib/incoming_requests'
 import { responses_ } from '#lib/responses'
 import { logError } from '#lib/utils/logs'
+import type { Req, Res } from '#types/server'
 
-function cspReport (req, res) {
+function cspReport (req: Req, res: Res) {
   const report = req.body['csp-report'] || req.body
   const err = buildError('csp report', report, req)
   logError(err, 'csp report')
   responses_.ok(res)
 }
 
-function errorReport (req, res) {
+function errorReport (req: Req, res: Res) {
   const { error: errData } = req.body
 
   if (errData == null) {
@@ -27,7 +29,10 @@ function errorReport (req, res) {
   // Non-standard status codes used in reported errors
   // 599 = client implementation error
   // 598 = user abuse
-  logError(err, 'client error report')
+
+  if (!(isBotRequest(req) && err.message.startsWith('Loading'))) {
+    logError(err, 'client error report')
+  }
   responses_.ok(res)
 }
 

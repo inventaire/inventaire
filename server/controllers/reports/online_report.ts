@@ -1,16 +1,17 @@
 import { getLangFromHeaders } from '#lib/headers'
+import { isBotRequest } from '#lib/incoming_requests'
 import { responses_ } from '#lib/responses'
+import type { Req, Res } from '#types/server'
 import onlineUsers from './lib/online_users.js'
 
-export default (req, res) => {
+export default function (req: Req, res: Res) {
   const { headers } = req
-  const { 'user-agent': userAgent } = headers
 
   // Excluding bots from online counts
-  if (isBot(userAgent)) return responses_.ok(res)
+  if (isBotRequest(req)) return responses_.ok(res)
 
   onlineUsers({
-    userId: req.user && req.user._id,
+    userId: 'user' in req ? req.user._id : null,
     // For production, when behind a Nginx proxy
     ip: headers['x-forwarded-for'],
     userAgent: headers['user-agent'],
@@ -19,7 +20,3 @@ export default (req, res) => {
 
   responses_.ok(res)
 }
-
-// In production, bots should be routed to use prerender
-// cf https://github.com/inventaire/inventaire-deploy/blob/f3cda7210d29d9b3bfb983f8fbb1106c43c18968/nginx/inventaire.original.nginx#L160
-const isBot = userAgent => /prerender/.test(userAgent)
