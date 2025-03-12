@@ -330,7 +330,13 @@ export const propertiesValuesConstraints = {
   'wdt:P13137': externalId(strictlyPositiveIntegerPattern),
 } as const satisfies Readonly<Record<PropertyUri, PropertyValueConstraints>>
 
-export const getPropertyDatatype = property => propertiesValuesConstraints[property]?.datatype
+export function getPropertyDatatype (property: PropertyUri) {
+  return propertiesValuesConstraints[property]?.datatype
+}
+
+export function isExternaIdProperty (property: PropertyUri) {
+  return getPropertyDatatype(property) === 'external-id'
+}
 
 export type PropertiesValuesConstraints = typeof propertiesValuesConstraints
 
@@ -340,6 +346,4 @@ type ExternalIdPropertiesValuesConstraints = OmitNever<{
 
 export type ExternalIdProperty = keyof ExternalIdPropertiesValuesConstraints
 
-export const externalIdsProperties = objectKeys(propertiesValuesConstraints).filter(property => {
-  return propertiesValuesConstraints[property].datatype === 'external-id'
-}) as ExternalIdProperty[]
+export const externalIdsProperties = objectKeys(propertiesValuesConstraints).filter(isExternaIdProperty) as ExternalIdProperty[]
