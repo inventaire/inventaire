@@ -67,6 +67,9 @@ export async function getResizedImage (req: Req, res: Res, url: Url, dimensions?
   if (errMessage) {
     statusCode = statusCode === 404 ? 404 : 400
     const err = newError(errMessage, statusCode)
+    // In development, it's common to make reference to images that are not available,
+    // which would get quite noisy without muting the error
+    err.mute = statusCode === 404
     // Do not pass the URL as error.context in the response to prevent leaking internal information
     // but still get it logged with the error
     err.privateContext = { url }

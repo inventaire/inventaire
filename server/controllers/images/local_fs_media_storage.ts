@@ -63,7 +63,7 @@ export default {
 
     res.sendFile(filepath, options, err => {
       if (err != null) {
-        logError(err, `failed to send ${filepath}`)
+        if (err.statusCode !== 404) logError(err, `failed to send ${filepath}`)
         res.status(err.statusCode).json(err)
       }
     })
