@@ -63,8 +63,12 @@ export function logError (err: ContextualizedError, label?: string) {
   }
 
   // If the error is of a lower lever than 500, make it a warning, not an error
-  if ((err.statusCode != null) && (err.statusCode < 500)) {
-    return warn(err, label)
+  if (err.statusCode != null && err.statusCode < 500) {
+    if (label && err.context?.url) {
+      return warn(`${label}: ${err.statusCode} ${err.context.url}`)
+    } else {
+      return warn(err, label)
+    }
   }
 
   // Prevent logging big error stack traces for network errors

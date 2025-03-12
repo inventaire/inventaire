@@ -6,7 +6,7 @@ import { isNonEmptyString } from '#lib/boolean_validations'
 import { newError, catchNotFound } from '#lib/error/error'
 import type { ContextualizedError } from '#lib/error/format_error'
 import { forceArray } from '#lib/utils/base'
-import { warn, logError } from '#lib/utils/logs'
+import { logError } from '#lib/utils/logs'
 import config from '#server/config'
 
 const cacheDb = leveldbFactory('cache', 'utf8')
@@ -194,7 +194,7 @@ async function putValue (key: string, value: unknown, { ttl, waitWrite = true }:
 
 function logCachePopulationError (key: string, err: ContextualizedError) {
   const label = `final cache_ err: ${key}`
-  // not logging the stack trace in case of 404 and alikes
-  if (err.statusCode?.toString().startsWith('4')) warn(err, label)
-  else logError(err, label)
+  if (!(err.statusCode && err.statusCode < 500)) {
+    logError(err, label)
+  }
 }
