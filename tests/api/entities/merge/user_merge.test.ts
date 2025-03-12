@@ -21,12 +21,13 @@ import { getByUris, merge } from '#tests/api/utils/entities'
 import { getBySuspectUri } from '#tests/api/utils/tasks'
 import { publicReq, getUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
+import type { EntityUri, EntityValue } from '#types/entity'
 
-async function userMerge (fromUri, toUri) {
+async function userMerge (fromUri: EntityUri, toUri: EntityUri) {
   return merge(fromUri, toUri, { user: getUser() })
 }
 
-async function getMergeTaskBySuspectUri (uri) {
+async function getMergeTaskBySuspectUri (uri: EntityUri) {
   return getBySuspectUri(uri, 'merge')
 }
 
@@ -41,21 +42,23 @@ describe('entities:merge:as:user', () => {
     })
   })
 
-  it('should reject merging if entities have conflicting external identifiers', async () => {
-    const work = await existsOrCreate({
-      claims: {
-        'wdt:P648': [ someOpenLibraryId('work') ],
-      },
-    })
-    // wdWorkUri should have a 'wdt:P648' claim
-    const wdWorkUri = 'wd:Q4728504'
-    await userMerge(work.uri, wdWorkUri)
-    .then(shouldNotBeCalled)
-    .catch(err => {
-      err.statusCode.should.equal(400)
-      err.body.status_verbose.should.equal('entities have conflicting properties')
-      err.body.context.conflictingProperty.should.equal('wdt:P648')
-    })
+  it('should create a task if entities have conflicting external identifiers', async () => {
+    const author = await createHuman()
+    const labels = { en: randomLabel() }
+    const olIdA = someOpenLibraryId('work')
+    const olIdB = someOpenLibraryId('work')
+    const [ workA, workB ] = await Promise.all([
+      createWork({ labels, claims: { 'wdt:P50': [ author.uri as EntityValue ], 'wdt:P648': [ olIdA ] } }),
+      createWork({ labels, claims: { 'wdt:P50': [ author.uri as EntityValue ], 'wdt:P648': [ olIdB ] } }),
+    ])
+    await userMerge(workA.uri, workB.uri)
+    const tasks = await getMergeTaskBySuspectUri(workA.uri)
+    tasks.length.should.aboveOrEqual(1)
+    const user = await getUser()
+    const userAcct = await getLocalUserAcct(user)
+    const task = tasks[0]
+    task.type.should.equal('merge')
+    task.reporters.should.deepEqual([ userAcct ])
   })
 
   it('should merge if entities have the same external identifier', async () => {
