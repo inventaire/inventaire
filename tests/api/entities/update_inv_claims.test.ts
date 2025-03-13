@@ -1,11 +1,19 @@
+import { random } from 'lodash-es'
 import should from 'should'
+import wdk from 'wikibase-sdk/wikidata.org'
+import { getFirstClaimValue } from '#controllers/entities/lib/inv_claims_utils'
+import { prefixifyWd } from '#controllers/entities/lib/prefix'
 import { createWork, createEdition, createHuman, someOpenLibraryId, someFakeUri, someBnfId, createEditionWithIsbn, someImageHash, generateSomeRecoverableIsni, getRandomInvUri } from '#fixtures/entities'
 import { getSomeUsername } from '#fixtures/text'
 import { federatedMode } from '#server/config'
 import { getByUri, addClaim, updateClaim, removeClaim, merge } from '#tests/api/utils/entities'
+import { request } from '#tests/api/utils/request'
 import { getAdminUser } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
+import type { AbsoluteUrl } from '#types/common'
 import type { EntityUri } from '#types/entity'
+
+const { cirrusSearchPages, parse } = wdk
 
 describe('entities:update-claims:inv', () => {
   it('should reject without uri', async () => {
@@ -280,17 +288,36 @@ describe('entities:update-claims:inv', () => {
     })
   })
 
-  it('should reject an update with a duplicated concurrent value', async () => {
+  it('should reject an update with a duplicated local concurrent value', async () => {
     const id = someOpenLibraryId()
-    const human = await createHuman()
-    const res = await addClaim({ uri: human.uri, property: 'wdt:P648', value: id })
-    res.ok.should.be.true()
-    const human2 = await createHuman()
+    const [ human, human2 ] = await Promise.all([
+      createHuman({ claims: { 'wdt:P648': [ id ] } }),
+      createHuman(),
+    ])
     await addClaim({ uri: human2.uri, property: 'wdt:P648', value: id })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.statusCode.should.equal(400)
       err.body.status_verbose.should.equal('invalid claim value: this property value is already used')
+      const { context } = err.body
+      context.entity.should.equal(human.uri)
+      context.property.should.equal('wdt:P648')
+      context.value.should.equal(id)
+    })
+  })
+
+  it('should reject an update with a duplicated Wikidata concurrent value', async () => {
+    const { uri, olId } = await getSomeOpenLibraryIdUsedWdEntity()
+    const human = await createHuman()
+    await addClaim({ uri: human.uri, property: 'wdt:P648', value: olId })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(400)
+      err.body.status_verbose.should.equal('invalid claim value: this property value is already used')
+      const { context } = err.body
+      context.entity.should.equal(uri)
+      context.property.should.equal('wdt:P648')
+      context.value.should.equal(olId)
     })
   })
 
@@ -362,3 +389,22 @@ describe('entities:update-claims:inv', () => {
     })
   })
 })
+
+export async function getSomeOpenLibraryIdUsedWdEntity () {
+  const url = cirrusSearchPages({
+    haswbstatement: [
+      // Human
+      'P31=Q5',
+      // with an OpenLibrary ID
+      'P648',
+    ],
+    limit: 1,
+    offset: random(0, 10000),
+    prop: [],
+  }) as AbsoluteUrl
+  const res = await request('get', url)
+  const [ uri ] = parse.pagesTitles(res).map(prefixifyWd)
+  const human = await getByUri(uri)
+  const olId = getFirstClaimValue(human.claims, 'wdt:P648')
+  return { uri, olId }
+}
