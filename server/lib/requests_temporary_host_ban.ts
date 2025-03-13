@@ -15,6 +15,7 @@ const unbannableServicesHosts = new Set(compact([
   getHost(config.elasticsearch.origin),
   getHost(config.federation.remoteEntitiesOrigin),
   config.dataseed.enabled ? getHost(config.dataseed.origin) : null,
+  config.mediaStorage.mode === 'swift' ? getHost(config.mediaStorage.swift.publicURL) : null,
 ]))
 
 const db = leveldbFactory('hosts-bans', 'json')
