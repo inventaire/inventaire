@@ -15,6 +15,8 @@ function cspReport (req: Req, res: Res) {
   responses_.ok(res)
 }
 
+const ignoredBotErrorsPattern = /loading css chunk|failed to fetch/i
+
 function errorReport (req: Req, res: Res) {
   const { error: errData } = req.body
 
@@ -30,7 +32,7 @@ function errorReport (req: Req, res: Res) {
   // 599 = client implementation error
   // 598 = user abuse
 
-  if (!(isBotRequest(req) && err.message.startsWith('Loading'))) {
+  if (!(isBotRequest(req) && ignoredBotErrorsPattern.test(err.message))) {
     logError(err, 'client error report')
   }
   responses_.ok(res)
