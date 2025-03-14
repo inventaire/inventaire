@@ -32,6 +32,7 @@ function errorReport (req: Req, res: Res) {
   // 599 = client implementation error
   // 598 = user abuse
 
+  console.log('🚀 ~ file: reports.ts ~ line', 36, 'errorReport ~ ', { isBotRequest: isBotRequest(req), message: err.message, test: ignoredBotErrorsPattern.test(err.message) })
   if (!(isBotRequest(req) && ignoredBotErrorsPattern.test(err.message))) {
     logError(err, 'client error report')
   }
