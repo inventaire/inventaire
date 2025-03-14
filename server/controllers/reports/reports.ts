@@ -53,15 +53,12 @@ function buildError (message, errData, req) {
   return err
 }
 
-// Faking an error object for the needs of server/lib/utils/open_issue.js
-// Define the stack first to stringify only what was reported
 function getErrStack (err) {
-  let { message, stack } = err
-  stack = err.stack || JSON.stringify(err, null, 2)
+  let { message, stack = '' } = err
   // Adding the message at the top of the stack trace
   // as expected by logError that will log only the stack trace, assuming it
   // contains the error message too
-  if (isNonEmptyString(message) && (stack.search(message) === -1)) {
+  if (isNonEmptyString(message) && !stack.includes(message)) {
     stack = `${message}\n${stack}`
   }
   return stack
