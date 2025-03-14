@@ -467,7 +467,7 @@ describe('entities:resolve:on-labels', () => {
 
 describe('entities:resolve:on-external-terms', () => {
   // Fragile test: its validity depends on the stability of Wikipedia and Wikidata
-  it('should resolve the author when a work label appears in Wikipedia', async function () {
+  it('should resolve the author when a work label appears in Wikipedia [flaky]', async function () {
     this.timeout(60000)
     const workLabel = "Mémoires d'outre-espace"
     const authorLabel = 'Enki Bilal'
@@ -479,6 +479,7 @@ describe('entities:resolve:on-external-terms', () => {
     if (matchingWdWork) throw new Error(`This test is obsolete: the Wikidata work now exists (${matchingWdWork.uri})`)
 
     const { entries } = await resolve(basicEntry(workLabel, authorLabel))
+    console.log('🚀 ~ file: resolve.test.ts ~ line', 482, { entries })
     entries[0].works[0].resolved.should.be.false()
     entries[0].authors[0].resolved.should.be.true()
     entries[0].authors[0].uri.should.equal('wd:Q333668')

@@ -15,12 +15,9 @@ const { getEntities } = wdk
 async function requester (ids: WdEntityId[]) {
   ids = uniq(ids)
   const idsBatches = chunk(ids, 50)
-  const entitiesBatches = {}
-  for (const idsBatch of idsBatches) {
-    const entitiesBatch = await getEntitiesBatch(idsBatch)
-    Object.assign(entitiesBatches, entitiesBatch)
-  }
-  return entitiesBatches
+  // Let the http request agent maxSockets handle request queueing
+  const batchesResults = await Promise.all(idsBatches.map(getEntitiesBatch))
+  return Object.assign({}, ...batchesResults)
 }
 
 async function getEntitiesBatch (idsBatch: WdEntityId[]) {
