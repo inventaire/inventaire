@@ -54,7 +54,8 @@ fi
 echo -ne "\nReset Elasticsearch index ${elastic_index_url}? y/N "
 read response_b
 if [ "$response_b" == 'y' ] ; then
-  curl "$elastic_curl_options" -XDELETE "$elastic_index_url"
+  # shellcheck disable=SC2086
+  curl -XDELETE "$elastic_index_url" $elastic_curl_options
   echo -e "\n$elastic_index_url was deleted and will be re-created by the indexation/load.js script"
 fi
 
