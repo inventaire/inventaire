@@ -3,7 +3,6 @@ import { createHuman } from '#fixtures/entities'
 import { getSomeGroup } from '#fixtures/groups'
 import { createItem } from '#fixtures/items'
 import { createUser } from '#fixtures/users'
-import { publicOrigin } from '#server/config'
 import { rawRequest } from '#tests/api/utils/request'
 
 const someEntityPromise = createHuman()
@@ -15,7 +14,7 @@ describe('json redirections', () => {
     it('should redirect to an item by id', async () => {
       const { _id } = await someItemPromise
       const { headers } = await rawRequest('get', `/items/${_id}.json`)
-      headers.location.should.equal(`${publicOrigin}/api/items?action=by-ids&ids=${_id}`)
+      headers.location.should.equal(`/api/items?action=by-ids&ids=${_id}`)
     })
   })
 
@@ -24,21 +23,21 @@ describe('json redirections', () => {
       const { _id } = await someEntityPromise
       const uri = `inv:${_id}`
       const { headers } = await rawRequest('get', `/entity/${uri}.json`)
-      headers.location.should.equal(`${publicOrigin}/api/entities?action=by-uris&uris=${uri}`)
+      headers.location.should.equal(`/api/entities?action=by-uris&uris=${uri}`)
     })
 
     it('should redirect a claim to its entity value', async () => {
       const { _id } = await someEntityPromise
       const uri = `inv:${_id}`
       const { headers } = await rawRequest('get', `/entity/wdt:P921-${uri}.json`)
-      headers.location.should.equal(`${publicOrigin}/api/entities?action=by-uris&uris=${uri}`)
+      headers.location.should.equal(`/api/entities?action=by-uris&uris=${uri}`)
     })
 
     it('should redirect to a local entity history', async () => {
       const { _id } = await someEntityPromise
       const uri = `inv:${_id}`
       const { headers } = await rawRequest('get', `/entity/${uri}/history.json`)
-      headers.location.should.equal(`${publicOrigin}/api/entities?action=history&id=${_id}`)
+      headers.location.should.equal(`/api/entities?action=history&id=${_id}`)
     })
   })
 
@@ -46,38 +45,38 @@ describe('json redirections', () => {
     it('should redirect to a user by id', async () => {
       const { _id } = await someUserPromise
       const { headers } = await rawRequest('get', `/users/${_id}.json`)
-      headers.location.should.equal(`${publicOrigin}/api/users?action=by-ids&ids=${_id}`)
+      headers.location.should.equal(`/api/users?action=by-ids&ids=${_id}`)
     })
 
     it('should redirect to a user by username', async () => {
       const { username } = await someUserPromise
       const { headers } = await rawRequest('get', `/users/${username}.json`)
-      headers.location.should.equal(`${publicOrigin}/api/users?action=by-usernames&usernames=${username}`)
+      headers.location.should.equal(`/api/users?action=by-usernames&usernames=${username}`)
     })
 
     it("should redirect to a user's items", async () => {
       const { _id, username } = await someUserPromise
       const { headers } = await rawRequest('get', `/users/${username}/inventory.json`)
-      headers.location.should.equal(`${publicOrigin}/api/items?action=by-users&users=${_id}&include-users=true`)
+      headers.location.should.equal(`/api/items?action=by-users&users=${_id}&include-users=true`)
     })
 
     it("should redirect to a user's listings", async () => {
       const { _id, username } = await someUserPromise
       const { headers } = await rawRequest('get', `/users/${username}/lists.json`)
-      headers.location.should.equal(`${publicOrigin}/api/lists?action=by-creators&users=${_id}`)
+      headers.location.should.equal(`/api/lists?action=by-creators&users=${_id}`)
     })
 
     it("should redirect to a user's contributions", async () => {
       const { _id, username } = await someUserPromise
       const { headers } = await rawRequest('get', `/users/${username}/contributions.json`)
-      headers.location.should.equal(`${publicOrigin}/api/entities?action=contributions&user=${_id}`)
+      headers.location.should.equal(`/api/entities?action=contributions&user=${_id}`)
     })
 
     // Legacy
     it('should redirect to a user by username from /inventory/:username', async () => {
       const { username } = await someUserPromise
       const { headers } = await rawRequest('get', `/inventory/${username}.json`)
-      headers.location.should.equal(`${publicOrigin}/api/users?action=by-usernames&usernames=${username}`)
+      headers.location.should.equal(`/api/users?action=by-usernames&usernames=${username}`)
     })
   })
 
@@ -85,13 +84,13 @@ describe('json redirections', () => {
     it('should redirect to a group by id', async () => {
       const { _id } = await getSomeGroup()
       const { headers } = await rawRequest('get', `/groups/${_id}.json`)
-      headers.location.should.equal(`${publicOrigin}/api/groups?action=by-id&id=${_id}`)
+      headers.location.should.equal(`/api/groups?action=by-id&id=${_id}`)
     })
 
     it('should redirect to a group by slug', async () => {
       const { slug } = await getSomeGroup()
       const { headers } = await rawRequest('get', `/groups/${slug}.json`)
-      headers.location.should.equal(`${publicOrigin}/api/groups?action=by-slug&slug=${slug}`)
+      headers.location.should.equal(`/api/groups?action=by-slug&slug=${slug}`)
     })
 
     it("should redirect to a group's items", async () => {
@@ -99,11 +98,10 @@ describe('json redirections', () => {
       const { headers } = await rawRequest('get', `/groups/${_id}/inventory.json`)
       const { location } = headers
       const allUsersIds = getGroupMembersIds({ admins, members })
-      const parsedLocation = new URL(location)
-      const { searchParams } = parsedLocation
+      const [ pathname, query ] = location.split('?')
+      const searchParams = new URLSearchParams(query)
       const paramsUsersIds = searchParams.get('users').split('|')
-      parsedLocation.origin.should.equal(publicOrigin)
-      parsedLocation.pathname.should.equal('/api/items')
+      pathname.should.equal('/api/items')
       searchParams.get('action').should.equal('by-users')
       searchParams.get('filter').should.equal('group')
       paramsUsersIds.length.should.equal(allUsersIds.length)
@@ -115,11 +113,10 @@ describe('json redirections', () => {
       const { headers } = await rawRequest('get', `/groups/${slug}/lists.json`)
       const { location } = headers
       const allUsersIds = getGroupMembersIds({ admins, members })
-      const parsedLocation = new URL(location)
-      const { searchParams } = parsedLocation
+      const [ pathname, query ] = location.split('?')
+      const searchParams = new URLSearchParams(query)
       const paramsUsersIds = searchParams.get('users').split('|')
-      parsedLocation.origin.should.equal(publicOrigin)
-      parsedLocation.pathname.should.equal('/api/lists')
+      pathname.should.equal('/api/lists')
       searchParams.get('action').should.equal('by-creators')
       paramsUsersIds.length.should.equal(allUsersIds.length)
       paramsUsersIds.every(userId => allUsersIds.includes(userId))
@@ -130,7 +127,7 @@ describe('json redirections', () => {
     it('should redirect to a shelf with its items', async () => {
       const { _id } = await someUserPromise
       const { headers } = await rawRequest('get', `/shelves/${_id}.json`)
-      headers.location.should.equal(`${publicOrigin}/api/shelves?action=by-ids&ids=${_id}&with-items=true`)
+      headers.location.should.equal(`/api/shelves?action=by-ids&ids=${_id}&with-items=true`)
     })
   })
 
@@ -138,7 +135,7 @@ describe('json redirections', () => {
     it('should redirect to a listing with its elements', async () => {
       const { _id } = await someUserPromise
       const { headers } = await rawRequest('get', `/lists/${_id}.json`)
-      headers.location.should.equal(`${publicOrigin}/api/lists?action=by-ids&ids=${_id}&with-elements=true`)
+      headers.location.should.equal(`/api/lists?action=by-ids&ids=${_id}&with-elements=true`)
     })
   })
 })

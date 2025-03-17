@@ -98,7 +98,7 @@ describe('activitypub:actor', () => {
       const actorUrl = makeUrl({ params: { action: 'actor', name: username } })
       const { statusCode, headers } = await getHtml(actorUrl)
       statusCode.should.equal(302)
-      headers.location.should.equal(`${publicOrigin}/users/${username}`)
+      headers.location.should.equal(`/users/${username}`)
     })
   })
 
@@ -189,7 +189,7 @@ describe('activitypub:actor', () => {
       const actorUrl = makeUrl({ params: { action: 'actor', name: `wd-${wdId}` } })
       const { statusCode, headers } = await getHtml(actorUrl)
       statusCode.should.equal(302)
-      headers.location.should.equal(`${publicOrigin}/entity/wd:${wdId}`)
+      headers.location.should.equal(`/entity/wd:${wdId}`)
     })
   })
 
@@ -234,7 +234,7 @@ describe('activitypub:actor', () => {
       const actorUrl = makeUrl({ params: { action: 'actor', name } })
       const { statusCode, headers } = await getHtml(actorUrl)
       statusCode.should.equal(302)
-      headers.location.should.equal(`${publicOrigin}/shelves/${shelf._id}`)
+      headers.location.should.equal(`/shelves/${shelf._id}`)
     })
   })
 
@@ -258,7 +258,7 @@ describe('item', () => {
     const actorUrl = makeUrl({ params: { action: 'actor', name } })
     const { statusCode, headers } = await getHtml(actorUrl)
     statusCode.should.equal(302)
-    headers.location.should.equal(`${publicOrigin}/items/${item._id}`)
+    headers.location.should.equal(`/items/${item._id}`)
   })
 })
 

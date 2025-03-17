@@ -42,7 +42,7 @@ describe('content', () => {
         'content-type': 'application/x-www-form-urlencoded',
       },
     })
-    res.headers.get('location').should.equal(`${localOrigin}/foo`)
+    res.headers.get('location').should.equal('/foo')
     res.status.should.equal(302)
   })
 })

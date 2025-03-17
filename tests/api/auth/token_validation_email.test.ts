@@ -51,7 +51,7 @@ describe('token:validation-email', () => {
     await db.update(user._id, BasicUpdater('validEmail', true))
     await wait(100)
     const { headers } = await rawRequest('get', `${publicOrigin}${endpoint}&email=${email}&token=${token}`)
-    headers.location.should.equal(`${publicOrigin}/?validEmail=false`)
+    headers.location.should.equal('/?validEmail=false')
   })
 
   it('should reject if invalid token', async () => {
@@ -60,6 +60,6 @@ describe('token:validation-email', () => {
     const userPromise = getUserGetter(email)()
     await userPromise
     const { headers } = await rawRequest('get', `${publicOrigin}${endpoint}&email=${email}&token=${token}`)
-    headers.location.should.equal(`${publicOrigin}/?validEmail=false`)
+    headers.location.should.equal('/?validEmail=false')
   })
 })
