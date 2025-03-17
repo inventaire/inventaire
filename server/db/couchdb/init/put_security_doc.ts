@@ -5,19 +5,17 @@ export async function putSecurityDoc (dbUrl, dbName) {
   const username = parseUsername(dbUrl)
   const url = `${dbUrl}/_security`
   const body = await fetch(url).then(res => res.json())
-  if (body.admins == null) {
+  if (typeof body === 'object' && 'admins' in body && body.admins != null) {
+    return { created: false }
+  } else {
     const res = await fetch(url, {
       method: 'PUT',
       body: securityDoc(username),
     })
-
     if (res.status >= 400) {
       throw (await couchdbError(res, { dbUrl, dbName }))
     }
-
     return { created: true }
-  } else {
-    return { created: false }
   }
 }
 

@@ -20,7 +20,7 @@ async function testServerAvailability () {
     await requests_.get(`${publicOrigin}/api/tests`, { timeout: 1000 })
     success('tests server is ready')
   } catch (err) {
-    if (err.code !== 'ECONNREFUSED' && err.name !== 'TimeoutError') throw err
+    if (err.code !== 'ECONNREFUSED' && err.type !== 'aborted') throw err
     log('waiting for tests server', null, 'grey')
     await wait(500)
     return testServerAvailability()

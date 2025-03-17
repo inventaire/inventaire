@@ -1,9 +1,7 @@
 import { URL } from 'node:url'
 // Reasons to use node-fetch rather than the native fetch:
 // - accepts a custom agent (see https://github.com/nodejs/undici/issues/1489)
-// Reasons to use node-fetch@2
-// - accepts a timeout parameter
-import fetch from 'node-fetch'
+import fetch, { type RequestInit } from 'node-fetch'
 import { magenta, green, cyan, yellow, red, grey } from 'tiny-chalk'
 import { newError, addContextToStack } from '#lib/error/error'
 import type { ContextualizedError } from '#lib/error/format_error'
@@ -14,12 +12,13 @@ import { assertObject, assertString } from '#lib/utils/assert_types'
 import { arrayIncludes, truncateString } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
 import config, { publicOrigin } from '#server/config'
-import type { AbsoluteUrl, HighResolutionTime, Host, HttpHeaders, HttpMethod } from '#types/common'
+import type { AbsoluteUrl, HighResolutionTime, Host, HttpHeaders, HttpMethod, Url } from '#types/common'
 import { isUrl, isPositiveIntegerString } from './boolean_validations.js'
 import { isPrivateUrl } from './network/is_private_url.js'
 import { getAgent, insecureHttpsAgent } from './requests_agent.js'
 import { assertHostIsNotTemporarilyBanned, resetBanData, declareHostError, conditionallyDeclareHostError } from './requests_temporary_host_ban.js'
 import { coloredElapsedTime } from './time.js'
+import type { ReadStream } from 'node:fs'
 import type { Agent } from 'node:http'
 import type { Stream } from 'node:stream'
 import type OAuth from 'oauth-1.0a'
@@ -42,6 +41,7 @@ const retryableErrors = [
   'ECONNRESET',
   // Thrown by node-fetch. It can happen when the maxSockets limit is reached.
   // See https://github.com/node-fetch/node-fetch/issues/1576#issuecomment-1694418865
+  // Should have been patched by https://github.com/inventaire/node-fetch-patched/commit/625fd38
   'ERR_STREAM_PREMATURE_CLOSE',
   'HPE_INVALID_CHUNK_SIZE',
   'EPIPE',
@@ -77,7 +77,7 @@ export async function request (method: HttpMethod, url: AbsoluteUrl, options: Re
 
   let res, statusCode, errorName
   try {
-    res = await fetch(url, fetchOptions)
+    res = await fetch(url, fetchOptions as RequestInit)
   } catch (err) {
     errorName = err.code || err.type || err.name || err.message
     if (!noRetry && retryableErrors.includes(err.code) && attempts < 10) {
@@ -190,14 +190,14 @@ function formatHeaders (headers) {
 }
 
 interface FetchOptions {
-  method: string
-  headers: Record<string, string>
+  method?: string
+  headers?: Record<string, string>
   body?: unknown
+  bodyStream?: ReadStream
   agent?: Agent | typeof getAgent
-  redirect: 'follow' | 'error' | 'manual'
-  compress: boolean
-  // Non-standard: node-fetch@2 only
-  timeout?: number
+  redirect?: 'follow' | 'error' | 'manual'
+  compress?: boolean
+  signal?: AbortSignal
 }
 
 function getFetchOptions (method, options) {
@@ -205,7 +205,7 @@ function getFetchOptions (method, options) {
   const fetchOptions: FetchOptions = {
     method,
     headers,
-    timeout: options.timeout || defaultTimeout,
+    signal: getTimeoutSignal(options.timeout || defaultTimeout),
     redirect: options.redirect,
     compress: true,
   }
@@ -242,9 +242,9 @@ export interface RequestTimer {
   startTime: HighResolutionTime
 }
 
-export function startReqTimer (method = 'get', url, fetchOptions) {
+export function startReqTimer (method = 'get', url: Url, fetchOptions: FetchOptions) {
   // Prevent logging Basic Auth credentials
-  url = url.replace(basicAuthPattern, '//')
+  url = url.replace(basicAuthPattern, '//') as Url
 
   let body = ''
   if (fetchOptions.bodyStream) body += ' [stream]'
@@ -320,4 +320,11 @@ async function waitForHostToAcceptNewRequests (host: Host, method: HttpMethod, u
   await hostHadTooManyRequests[host]
   await wait(1000)
   if (hostHadTooManyRequests[host] != null) return waitForHostToAcceptNewRequests(host, method, url)
+}
+
+// Based on https://github.com/node-fetch/node-fetch#request-cancellation-with-abortsignal
+export function getTimeoutSignal (ms: number) {
+  const controller = new AbortController()
+  setTimeout(() => controller.abort(), ms)
+  return controller.signal
 }

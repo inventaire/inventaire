@@ -39,13 +39,13 @@ describe('requests:hosts-bans', function () {
       await requests_.get(timeoutEndpoint, { timeout: 100 }).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
-      err.type.should.equal('request-timeout')
+      err.type.should.equal('aborted')
     }
   })
 
   it('should not re-request a host that just had a timeout', async () => {
     const { timeoutEndpoint, host } = await startMockServer()
-    await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout'))
+    await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('aborted'))
     try {
       await requests_.get(timeoutEndpoint, { timeout: 100 }).then(shouldNotBeCalled)
     } catch (err) {
@@ -61,37 +61,37 @@ describe('requests:hosts-bans', function () {
 
   it('should retry after expiration of the ban', async () => {
     const { timeoutEndpoint } = await startMockServer()
-    await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout'))
+    await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('aborted'))
     await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.message.should.startWith('temporary ban'))
     await wait(baseBanTime + 100)
     try {
       await requests_.get(timeoutEndpoint, { timeout: 100 }).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
-      err.type.should.equal('request-timeout')
+      err.type.should.equal('aborted')
     }
   })
 
   it('should keep timeout data for the whole host', async () => {
     const { timeoutEndpoint } = await startMockServer()
-    await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout'))
+    await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('aborted'))
     await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.message.should.startWith('temporary ban'))
     await wait(baseBanTime + 100)
     try {
       await requests_.get(timeoutEndpoint, { timeout: 100 }).then(shouldNotBeCalled)
     } catch (err) {
       rethrowShouldNotBeCalledErrors(err)
-      err.type.should.equal('request-timeout')
+      err.type.should.equal('aborted')
     }
   })
 
   it('should increase ban time on next failure', async () => {
     const { timeoutEndpoint } = await startMockServer()
-    await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout'))
+    await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('aborted'))
     await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.message.should.startWith('temporary ban'))
     await wait(baseBanTime + 100)
     const beforeReban = Date.now()
-    await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout'))
+    await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('aborted'))
     try {
       await requests_.get(timeoutEndpoint, { timeout: 100 }).then(shouldNotBeCalled)
     } catch (err) {
@@ -107,13 +107,13 @@ describe('requests:hosts-bans', function () {
 
   it('should reset ban time after a successful request', async () => {
     const { timeoutEndpoint, noTimeoutEndpoint } = await startMockServer()
-    await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout'))
+    await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('aborted'))
     await wait(baseBanTime + 100)
-    await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout'))
+    await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('aborted'))
     await wait(baseBanTime * banTimeIncreaseFactor + 100)
     await requests_.get(noTimeoutEndpoint, { timeout: 100 })
     const beforeReban = Date.now()
-    await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout'))
+    await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('aborted'))
     try {
       await requests_.get(timeoutEndpoint, { timeout: 100 }).then(shouldNotBeCalled)
     } catch (err) {
@@ -130,8 +130,8 @@ describe('requests:hosts-bans', function () {
   it('should count simultaneous requests failures as only one', async () => {
     const { timeoutEndpoint } = await startMockServer()
     await Promise.all([
-      requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout')),
-      requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('request-timeout')),
+      requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('aborted')),
+      requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => err.type.should.equal('aborted')),
     ])
     await requests_.get(timeoutEndpoint, { timeout: 100 }).catch(err => {
       const { banTime } = err.context.hostBanData
@@ -163,7 +163,7 @@ describe('requests:hosts-bans', function () {
     await requests_.head(redirectsToTimeoutEndpoint, { timeout: 100 })
     .then(shouldNotBeCalled)
     .catch(err => {
-      err.type.should.equal('request-timeout')
+      err.type.should.equal('aborted')
     })
   })
 })

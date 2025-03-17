@@ -1,4 +1,5 @@
 import 'should'
+import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import { startGenericMockServer } from '#tests/integration/utils/mock_server'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
@@ -23,6 +24,10 @@ const startMockServer = async () => {
     app.all('/hangup', (req, res) => {
       res.destroy(new Error('ECONNRESET'))
     })
+    app.all('/slow', async (req, res) => {
+      await wait(1000)
+      res.json({ ok: true })
+    })
   })
   return {
     port,
@@ -31,11 +36,12 @@ const startMockServer = async () => {
     endpoint: `${origin}/test` as AbsoluteUrl,
     busyEndpoint: `${origin}/busy` as AbsoluteUrl,
     hangupEndpoint: `${origin}/hangup` as AbsoluteUrl,
+    slowEndpoint: `${origin}/slow` as AbsoluteUrl,
   }
 }
 
 describe('requests', async () => {
-  const { endpoint, busyEndpoint, hangupEndpoint } = await startMockServer()
+  const { endpoint, busyEndpoint, hangupEndpoint, slowEndpoint } = await startMockServer()
 
   describe('methods', () => {
     it('should make a GET request', async () => {
@@ -105,6 +111,17 @@ describe('requests', async () => {
       .catch(err => {
         err.code.should.equal('ECONNRESET')
         err.context.url.should.equal(hangupEndpoint)
+      })
+    })
+  })
+
+  describe('timeout', () => {
+    it('should abort the request after a timeout', async () => {
+      await requests_.get(slowEndpoint, { timeout: 100 })
+      .then(shouldNotBeCalled)
+      .catch(err => {
+        err.type.should.equal('aborted')
+        err.context.url.should.equal(slowEndpoint)
       })
     })
   })
