@@ -33,7 +33,7 @@ function logRequest (req: Req, res: Res) {
   if ('mute' in req && req.mute) return
   const user = 'user' in req ? req.user : null
   const remoteUser = 'remoteUser' in req ? req.remoteUser as MinimalRemoteUser : null
-  const { statusCode: status, finished } = res
+  const { statusCode: status, writableEnded: finished } = res
 
   const color = statusCategoryColor[status.toString()[0]]
 
