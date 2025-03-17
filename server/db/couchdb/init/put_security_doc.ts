@@ -1,16 +1,18 @@
 import fetch from 'node-fetch'
+import { authorizedCouchdbHeaders as headers } from '#db/couchdb/init/credentials'
 import { couchdbError } from './couchdb_error.js'
 
 export async function putSecurityDoc (dbUrl, dbName) {
   const username = parseUsername(dbUrl)
   const url = `${dbUrl}/_security`
-  const body = await fetch(url).then(res => res.json())
+  const body = await fetch(url, { headers }).then(res => res.json())
   if (typeof body === 'object' && 'admins' in body && body.admins != null) {
     return { created: false }
   } else {
     const res = await fetch(url, {
       method: 'PUT',
       body: securityDoc(username),
+      headers,
     })
     if (res.status >= 400) {
       throw (await couchdbError(res, { dbUrl, dbName }))

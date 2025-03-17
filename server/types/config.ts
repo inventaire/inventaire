@@ -50,7 +50,6 @@ export type Config = ReadonlyDeep<{
     password: string
     suffix?: string | null
     getOrigin: () => Origin
-    getOriginSansAuth: () => Origin
     databaseUrl: (string) => AbsoluteUrl
     name: (string) => string
     follow: {

@@ -1,5 +1,7 @@
 import fetch from 'node-fetch'
+import { authorizedCouchdbHeaders as headers } from '#db/couchdb/init/credentials'
 import config from '#server/config'
+import type { AbsoluteUrl } from '#types/common'
 import type { DatabaseOperationsSummary } from '#types/couchdb_init'
 import { putSecurityDoc } from './put_security_doc.js'
 import { syncDesignDocs } from './sync_design_docs.js'
@@ -8,7 +10,7 @@ const couchdbOrigin = config.db.getOrigin()
 
 export async function initDb (dbData) {
   const { name: dbName, designDocs } = dbData
-  const dbUrl = `${couchdbOrigin}/${dbName}`
+  const dbUrl = `${couchdbOrigin}/${dbName}` as AbsoluteUrl
   const operation: DatabaseOperationsSummary = await ensureDbExistance(dbUrl)
 
   const [ designDocsOps, securityDocOp ] = await Promise.all([
@@ -22,8 +24,8 @@ export async function initDb (dbData) {
   return operation
 }
 
-async function ensureDbExistance (dbUrl) {
-  const res = await fetch(dbUrl)
+async function ensureDbExistance (dbUrl: AbsoluteUrl) {
+  const res = await fetch(dbUrl, { headers })
   if (res.status === 200) {
     return { created: false }
   } else if (res.status === 404) {
@@ -34,7 +36,7 @@ async function ensureDbExistance (dbUrl) {
   }
 }
 
-async function create (dbUrl) {
-  const res = await fetch(dbUrl, { method: 'PUT' })
+async function create (dbUrl: AbsoluteUrl) {
+  const res = await fetch(dbUrl, { method: 'PUT', headers })
   if (res.status !== 201) throw new Error(`${res.status}: ${res.statusText}`)
 }

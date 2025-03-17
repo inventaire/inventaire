@@ -1,11 +1,11 @@
 import fetch from 'node-fetch'
 import { grey, yellow } from 'tiny-chalk'
+import { authorizedCouchdbHeaders as headers } from '#db/couchdb/init/credentials'
 import { wait } from '#lib/promises'
 import { getTimeoutSignal } from '#lib/requests'
 import config from '#server/config'
 
-const { username, password } = config.db
-const couchdbOrigin = config.db.getOriginSansAuth()
+const couchdbOrigin = config.db.getOrigin()
 
 export function waitForCouchdb () {
   async function testAvailability (delay) {
@@ -13,9 +13,7 @@ export function waitForCouchdb () {
 
     try {
       const res = await fetch(couchdbOrigin, {
-        headers: {
-          authorization: `Basic ${getBasicCredentials(username, password)}`,
-        },
+        headers,
         signal: getTimeoutSignal(5000),
       })
       if (res.status === 401) throw new Error('CouchDB name or password is incorrect')
@@ -37,8 +35,4 @@ export function waitForCouchdb () {
 function obfuscateLogin (dbBaseUrl) {
   return dbBaseUrl
   .replace(/(https?):\/\/(\w+):([^@]+)@/, '$1://$2:*************@')
-}
-
-function getBasicCredentials (username: string, password: string) {
-  return Buffer.from(`${username}:${password}`).toString('base64')
 }

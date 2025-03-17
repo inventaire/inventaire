@@ -1,5 +1,6 @@
 #!/usr/bin/env tsx
 import { databases } from '#db/couchdb/databases'
+import { authorizedCouchdbHeaders as headers } from '#db/couchdb/init/credentials'
 import { catchNotFound } from '#lib/error/error'
 import { requests_ } from '#lib/requests'
 import { Log } from '#lib/utils/logs'
@@ -16,7 +17,7 @@ const replicate = async dbName => {
     source: dbUrl(dbTestName),
     target: dbUrl(dbName),
   }
-  return requests_.post(`${dbOrigin}/_replicate`, { body: repDoc })
+  return requests_.post(`${dbOrigin}/_replicate`, { body: repDoc, headers })
   .then(Log(`${dbTestName} replication response`))
 }
 

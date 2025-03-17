@@ -1,4 +1,5 @@
 import fetch from 'node-fetch'
+import { authorizedCouchdbHeaders as headers } from '#db/couchdb/init/credentials'
 import { objectPromise } from '#lib/promises'
 import { couchdbError } from './couchdb_error.js'
 
@@ -16,7 +17,7 @@ async function syncDesignDoc (dbUrl, designDocName, designDocViews) {
   const designDocId = `_design/${designDocName}`
   const designDocUrl = `${dbUrl}/${designDocId}`
   let currentDesignDoc, created
-  const res = await fetch(designDocUrl)
+  const res = await fetch(designDocUrl, { headers })
   if (res.status === 200) {
     currentDesignDoc = await res.json()
   } else if (res.status === 404) {
@@ -83,6 +84,7 @@ async function updateDesignDoc (designDocParams, currentDesignDoc, designDocUrl)
   const res = await fetch(designDocUrl, {
     method: 'PUT',
     body: JSON.stringify(update),
+    headers,
   })
 
   if (res.status !== 201) {

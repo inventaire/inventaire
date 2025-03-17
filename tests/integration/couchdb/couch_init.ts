@@ -1,16 +1,15 @@
 import fetch from 'node-fetch'
 import should from 'should'
+import { authorizedCouchdbHeaders as headers } from '#db/couchdb/init/credentials'
 import { initCouchDbs } from '#db/couchdb/init/init_couch_dbs'
 import { getStringifiedDesignDoc } from '#db/couchdb/init/sync_design_docs'
 import config from '#server/config'
 import { someDesignDocView } from '#tests/integration/couchdb/fixtures'
 
-const authOrigin = config.db.getOrigin()
-const nonAuthOrigin = config.db.getOriginSansAuth()
+const couchdbOrigin = config.db.getOrigin()
 const dbName = 'couch-init-tests'
 const someDesignDocName = 'some-design-doc'
-const dbUrlWithAuth = `${authOrigin}/${dbName}`
-const dbUrlWithoutAuth = `${nonAuthOrigin}/${dbName}`
+const dbUrl = `${couchdbOrigin}/${dbName}`
 
 const dbsList = [
   {
@@ -24,17 +23,17 @@ const dbsList = [
 const stringifiedDesignDoc = getStringifiedDesignDoc(someDesignDocName, someDesignDocView)
 
 const db = {
-  info: async () => await fetch(dbUrlWithAuth).then(res => res.json()),
-  get: async id => await fetch(`${dbUrlWithAuth}/${id}`).then(res => res.json()),
+  info: async () => await fetch(dbUrl, { headers }).then(res => res.json()),
+  get: async id => await fetch(`${dbUrl}/${id}`, { headers }).then(res => res.json()),
   put: async (id, body) => {
-    return fetch(`${dbUrlWithAuth}/${id}`, {
+    return fetch(`${dbUrl}/${id}`, {
       method: 'PUT',
       body: JSON.stringify(body),
+      headers,
     })
   },
   delete: async () => {
-    const res = await fetch(dbUrlWithAuth, { method: 'DELETE' })
-
+    const res = await fetch(dbUrl, { method: 'DELETE', headers })
     if (res.status >= 400 && res.status !== 404) {
       throw new Error(`${res.status}: ${res.statusText}`)
     }
@@ -66,7 +65,7 @@ describe('initCouchDbs', () => {
 
   it('should create security documents (if not already set)', async () => {
     await initCouchDbs(dbsList)
-    const securityDoc = await fetch(`${dbUrlWithAuth}/_security`).then(res => res.json())
+    const securityDoc = await fetch(`${dbUrl}/_security`, { headers }).then(res => res.json())
     securityDoc.should.deepEqual({
       admins: { roles: [ '_admin' ] },
       members: { roles: [ '_admin' ] },
@@ -75,13 +74,13 @@ describe('initCouchDbs', () => {
 
   it('should create a secured database', async () => {
     await initCouchDbs(dbsList)
-    const res = await fetch(dbUrlWithoutAuth)
+    const res = await fetch(dbUrl)
     res.status.should.equal(401)
   })
 
   it('should create missing design docs', async () => {
     await initCouchDbs(dbsList)
-    const designDoc = await fetch(`${dbUrlWithAuth}/_design/${someDesignDocName}`).then(res => res.json())
+    const designDoc = await fetch(`${dbUrl}/_design/${someDesignDocName}`, { headers }).then(res => res.json())
     designDoc._rev.split('-')[0].should.equal('1')
     delete designDoc._rev
     designDoc.should.deepEqual(JSON.parse(stringifiedDesignDoc))
@@ -89,7 +88,7 @@ describe('initCouchDbs', () => {
 
   it('should update an existing design docs', async () => {
     await initCouchDbs(dbsList)
-    const designDoc = await fetch(`${dbUrlWithAuth}/_design/${someDesignDocName}`).then(res => res.json())
+    const designDoc = await fetch(`${dbUrl}/_design/${someDesignDocName}`, { headers }).then(res => res.json())
     delete designDoc.views.byExample2
     await db.put(`_design/${someDesignDocName}`, designDoc)
     const updatedDesignDoc = await db.get(`_design/${someDesignDocName}`)

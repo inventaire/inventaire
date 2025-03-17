@@ -4,6 +4,7 @@ import follow from 'cloudant-follow'
 import { debounce } from 'lodash-es'
 import type { DbName } from '#db/couchdb/databases'
 import { waitForCouchInit } from '#db/couchdb/init'
+import { authorizedCouchdbHeaders as headers } from '#db/couchdb/init/credentials'
 import { leveldbFactory } from '#db/level/get_sub_db'
 import { catchNotFound } from '#lib/error/error'
 import { wait } from '#lib/promises'
@@ -118,6 +119,7 @@ function startFollowingDb (params) {
     include_docs: true,
     feed: 'continuous',
     since: lastSeq || 0,
+    headers,
   }
 
   return follow(config, (err, change) => {
@@ -152,6 +154,6 @@ function SetLastSeq (dbName: DbName) {
 const buildKey = (dbName: DbName) => `${dbName}-last-seq`
 
 async function getDbLastSeq (dbUrl: AbsoluteUrl) {
-  const { last_seq: lastSeq } = await requests_.get(`${dbUrl}/_changes?limit=0&descending=true`)
+  const { last_seq: lastSeq } = await requests_.get(`${dbUrl}/_changes?limit=0&descending=true`, { headers })
   return lastSeq as DatabaseSeq
 }

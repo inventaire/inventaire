@@ -12,6 +12,7 @@
 //    export NODE_ENV=production; npm run couchdb:cleanup-after-design-docs-changes
 
 import { databases } from '#db/couchdb/databases'
+import { authorizedCouchdbHeaders as headers } from '#db/couchdb/init/credentials'
 import { requests_ } from '#lib/requests'
 import { success } from '#lib/utils/logs'
 import config from '#server/config'
@@ -37,15 +38,15 @@ async function deleteDesignDoc ([ dbBaseName, designDocBaseName ]) {
   const dbName = config.db.name(dbBaseName)
   const docUrl = `${dbBaseUrl}/${dbName}/_design/${designDocBaseName}_preload` as AbsoluteUrl
   try {
-    const { _rev } = await requests_.get(docUrl)
-    await requests_.delete(`${docUrl}?rev=${_rev}`)
+    const { _rev } = await requests_.get(docUrl, { headers })
+    await requests_.delete(`${docUrl}?rev=${_rev}`, { headers })
   } catch (err) {
     if (err.statusCode !== 404) throw err
   }
 }
 
 async function removeDatabaseOutdatedViewIndexes (dbName) {
-  return requests_.post(`${dbBaseUrl}/${dbName}/_view_cleanup` as AbsoluteUrl)
+  return requests_.post(`${dbBaseUrl}/${dbName}/_view_cleanup` as AbsoluteUrl, { headers })
 }
 
 await deleteDesignDocs()

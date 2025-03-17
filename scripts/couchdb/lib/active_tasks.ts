@@ -1,3 +1,4 @@
+import { authorizedCouchdbHeaders as headers } from '#db/couchdb/init/credentials'
 import { wait } from '#lib/promises'
 import { requests_ } from '#lib/requests'
 import { info } from '#lib/utils/logs'
@@ -7,7 +8,7 @@ const dbBaseUrl = config.db.getOrigin()
 
 let count = 0
 export const waitForActiveTasksToBeDone = async () => {
-  const activeTasks = await requests_.get(`${dbBaseUrl}/_active_tasks`)
+  const activeTasks = await requests_.get(`${dbBaseUrl}/_active_tasks`, { headers })
   if (activeTasks.length > 0) {
     info(formatTasks(activeTasks), `waiting for active tasks (${++count})`)
     await wait(5000)

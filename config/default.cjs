@@ -113,9 +113,6 @@ const config = {
     password: 'yourcouchdbpassword',
     suffix: null,
     getOrigin: function () {
-      return `${this.protocol}://${this.username}:${this.password}@${this.hostname}:${this.port}`
-    },
-    getOriginSansAuth: function () {
       return `${this.protocol}://${this.hostname}:${this.port}`
     },
     databaseUrl: function (dbBaseName) {
