@@ -13,7 +13,7 @@ describe('get_wikidata_entry_from_isbn', () => {
     // Assuming the existance of the triple: ?work wdt:P212 ?isbn
     // New test cases can be found with this query https://w.wiki/AsyJ
     const entry = await getWikidataEntryFromIsbn('978-2-02-009336-1')
-    entry.edition.claims['wdt:P1476'].should.equal('Adventures in the Alaskan Skin Trade')
+    entry.edition.claims['wdt:P1476'].should.equal('Aventures dans le commerce des peaux en Alaska')
     entry.works[0].uri.should.equal('wd:Q2873488')
   })
 
