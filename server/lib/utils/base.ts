@@ -1,4 +1,4 @@
-import { chain, isArguments, isArray, keyBy, sum } from 'lodash-es'
+import { chain, countBy, isArguments, isArray, keyBy, sum } from 'lodash-es'
 import {
   Integer as integerPattern,
   PositiveInteger as PositiveIntegerPattern,
@@ -210,4 +210,10 @@ export function invert (obj: Record<string | number, string | number>) {
 export function truncateString (str: string, limit: number) {
   if (str.length > limit) return `${str.slice(0, limit)}…`
   else return str
+}
+
+export function uniqSortedByCount <T extends string> (array: T[]) {
+  return objectEntries(countBy(array))
+    .sort((a, b) => b[1] - a[1])
+    .map(([ value ]) => value) as T[]
 }

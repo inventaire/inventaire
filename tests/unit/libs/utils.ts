@@ -1,5 +1,5 @@
 import 'should'
-import { forceArray, getHashCode, mapKeysValues, uniqByKey } from '#lib/utils/base'
+import { forceArray, getHashCode, mapKeysValues, uniqByKey, uniqSortedByCount } from '#lib/utils/base'
 import { typeOf } from '#lib/utils/types'
 
 describe('utils', () => {
@@ -96,6 +96,14 @@ describe('utils', () => {
     it('should return a deduplicated collection', () => {
       const collection = [ { a: 1 }, { a: 1 }, { a: 2 } ]
       uniqByKey(collection, 'a').should.deepEqual([ { a: 1 }, { a: 2 } ])
+    })
+  })
+
+  describe('uniqSortedByCount', () => {
+    it('should sort values by count', () => {
+      uniqSortedByCount([ 'a', 'b', 'c', 'c', 'b', 'b' ]).should.deepEqual([ 'b', 'c', 'a' ])
+      // The `countBy` implementation stringifies the values, so the follow fails
+      // uniqSortedByCount([ 1, 2, 3, 3, 4, 5, 5, 5 ]).should.deepEqual([ 5, 3, 1, 2, 4 ])
     })
   })
 })

@@ -33,7 +33,6 @@ const wikidataOnlyP31Values = {
     'wd:Q53843792', // literary dylogy
     'wd:Q2005755', // novel sequence
     'wd:Q21190961', // fumetti series
-    'wd:Q213369', // webcomic
     'wd:Q2620972', // story arc
   ],
   works: [
@@ -167,7 +166,7 @@ for (const [ type, wdTypeValues ] of objectEntries(wikidataOnlyP31Values)) {
   primaryTypesAliases[type] = [ ...wdTypeValues, ...invTypeValues ]
 }
 
-type EntityTypeByP31Value = Record<WdEntityUri, ExtendedEntityType>
+export type EntityTypeByP31Value = Record<WdEntityUri, ExtendedEntityType>
 
 export function getTypesFromTypesAliases (aliases: TypesAliases) {
   const entityTypeByP31Value: EntityTypeByP31Value = {}
@@ -183,7 +182,7 @@ export function getTypesFromTypesAliases (aliases: TypesAliases) {
   return entityTypeByP31Value
 }
 
-export const types = getTypesFromTypesAliases(primaryTypesAliases)
+export const typesByPrimaryP31AliasesValues = getTypesFromTypesAliases(primaryTypesAliases)
 
 export const typesNames = objectKeys(primaryTypesAliases)
 
@@ -193,7 +192,7 @@ export function getPluralType (singularType: string) {
   return pluralizedType
 }
 
-export const getPluralTypeByTypeUri = uri => types[uri] ? `${types[uri]}s` : null
+export const getPluralTypeByTypeUri = uri => typesByPrimaryP31AliasesValues[uri] ? `${typesByPrimaryP31AliasesValues[uri]}s` : null
 
 export const getSingularType = type => type.replace(/s$/, '')
 
