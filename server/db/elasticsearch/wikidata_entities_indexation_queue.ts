@@ -91,3 +91,4 @@ export function addWdEntityToIndexationQueue (wdId: WdEntityId) {
 }
 
 export const getWikidataIndexationQueueLength = wdEntitiesIndexationJobQueue?.getQueueLength
+export const clearWikidataIndexationQueue = wdEntitiesIndexationJobQueue?.clearQueue

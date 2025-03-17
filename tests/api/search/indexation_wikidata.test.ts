@@ -1,6 +1,7 @@
 import 'should'
 import { unprefixify } from '#controllers/entities/lib/prefix'
 import { indexesNamesByBaseNames } from '#db/elasticsearch/indexes'
+import { clearWikidataIndexationQueue } from '#db/elasticsearch/wikidata_entities_indexation_queue'
 import { getSomeWdEditionUri } from '#fixtures/entities'
 import { wait } from '#lib/promises'
 import config, { federatedMode } from '#server/config'
@@ -13,9 +14,10 @@ const { wikidata: wikidataIndex } = indexesNamesByBaseNames
 const { updateDelay: elasticsearchUpdateDelay } = config.elasticsearch
 
 describe('indexation:wikidata', () => {
-  before(function () {
+  before(async function () {
     // Entities are not indexed locally in federated mode
     if (federatedMode) this.skip()
+    await clearWikidataIndexationQueue()
   })
   // Flaky tests: seen to fail when called within the whole test suite
   // Running `lev db/leveldb-tests --prefix '!job'` revealed that jobs

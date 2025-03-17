@@ -1,6 +1,7 @@
 import { difference, filter, map, property } from 'lodash-es'
 import type { GetEntitiesByUrisResponse, GetEntitiesParams } from '#controllers/entities/by_uris_get'
 import { unprefixify } from '#controllers/entities/lib/prefix'
+import { clearWikidataIndexationQueue } from '#db/elasticsearch/wikidata_entities_indexation_queue'
 import type { AwaitableUserWithCookie } from '#fixtures/users'
 import { isInvEntityId, isNonEmptyArray } from '#lib/boolean_validations'
 import { assertStrings, assertString } from '#lib/utils/assert_types'
@@ -56,8 +57,9 @@ export async function getEntityAttributesByUri ({ uri, attributes }: { uri: Enti
 }
 
 export async function findOrIndexEntities (uris: EntityUri[], index = 'wikidata') {
+  await clearWikidataIndexationQueue()
   const ids = map(uris, unprefixify)
-  const results = await Promise.all(ids.map(id => getIndexedDoc(index, id)))
+  const results = await Promise.all(ids.map(id => getIndexedDoc(index, id, { retry: false })))
   const entitiesFound = filter(results, property('found'))
   const entitiesFoundUris: EntityUri[] = entitiesFound.map(property('_source.uri'))
   const entitiesNotFoundUris = difference(uris, entitiesFoundUris)

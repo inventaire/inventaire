@@ -52,6 +52,7 @@ function promisifyApi (queue, db: CustomLevelDb) {
   queue.push = promisify(queue.push).bind(queue)
   queue.pushBatch = promisify(queue.pushBatch).bind(queue)
   queue.getQueueLength = getQueueLength.bind(null, db)
+  queue.clearQueue = clearQueue.bind(null, db)
   return queue
 }
 
@@ -76,4 +77,10 @@ function keepWorkerAwake (queue) {
 async function getQueueLength (db: CustomLevelDb) {
   const keys = await getKeys(db)
   return keys.length
+}
+
+async function clearQueue (db: CustomLevelDb) {
+  const keys = await getKeys(db)
+  if (keys.length > 0) warn(keys, 'clearning job queue')
+  await db.batch(keys.map(key => ({ key, type: 'del' })))
 }
