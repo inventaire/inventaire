@@ -21,7 +21,7 @@ async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   log(params, 'update group settings')
 
   await membershipValidations.updateSettings(reqUserId, groupId)
-  const { hooksUpdates } = await updateSettings(params, reqUserId)
+  const { hooksUpdates } = await updateSettings({ groupId, attribute, value }, reqUserId)
   // Allow to pass an update object, with key/values to be updated on the client-side model
   // as the results of update hooks
   // Only current case: the slug might be updated after an update of the group name
