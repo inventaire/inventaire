@@ -34,4 +34,6 @@ const actions = {
   accept: 'acceptRequest',
   discard: 'discardRequest',
   unfriend: 'removeFriendship',
-}
+} as const
+
+export type RelationAction = keyof typeof actions
