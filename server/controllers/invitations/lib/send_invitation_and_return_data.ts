@@ -26,7 +26,7 @@ export async function sendInvitationAndReturnData ({ reqUser, message, group, pa
 
   return {
     users: existingUsers,
-    emails: remainingEmails,
+    emails: remainingEmails as Email[],
   }
 }
 

@@ -7,8 +7,10 @@ import { newError } from '#lib/error/error'
 import { newInvalidError } from '#lib/error/pre_filled'
 import { userIsGroupMember } from '#models/group'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
+import type { GroupId } from '#types/group'
 import type { AuthentifiedReq } from '#types/server'
-import parseEmails from './lib/parse_emails.js'
+import type { Email, UserId } from '#types/user'
+import { parseEmails } from './lib/parse_emails.js'
 import { sendInvitationAndReturnData } from './lib/send_invitation_and_return_data.js'
 
 const sanitization = {
@@ -40,42 +42,40 @@ async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   return invitationByEmailsData
 }
 
-async function parseAndValidateEmails (emails, userEmail) {
+async function parseAndValidateEmails (emails: string[], userEmail: Email) {
   const parsedEmails = parseEmails(emails)
   // Removing the requesting user email if for some reason
   // it ended up in the list
-  const filteredEmails = without(parsedEmails, userEmail.toLowerCase())
+  const filteredEmails = without(parsedEmails, userEmail.toLowerCase()) as Email[]
   return applyLimit(filteredEmails)
 }
 
-async function validateGroup (groupId, reqUserId) {
+async function validateGroup (groupId: GroupId, reqUserId: UserId) {
   if (groupId == null) return null
 
   if (!isGroupId(groupId)) {
     throw newInvalidError('group id', groupId)
   }
-
-  return getGroupById(groupId)
-  .then(group => {
+  try {
+    const group = await getGroupById(groupId)
     const userIsMember = userIsGroupMember(reqUserId, group)
     if (!userIsMember) {
       throw newError("user isn't a group member", 403, { groupId, reqUserId })
     }
     return group
-  })
-  .catch(err => {
+  } catch (err) {
     if (err.statusCode === 404) {
       throw newError('group not found', 404, { groupId, reqUserId })
     } else {
       throw err
     }
-  })
+  }
 }
 
 // This is totally arbitrary but sending too many invites at a time
 // will probably end up being reported as spam
 const limit = 50
-function applyLimit (emails) {
+function applyLimit (emails: Email[]) {
   if (emails.length > limit) {
     throw newError(`you can't send more than ${limit} invitations at a time`, 400)
   } else {
@@ -84,3 +84,5 @@ function applyLimit (emails) {
 }
 
 export default { sanitization, controller, track: [ 'invitation', 'email' ] }
+
+export type PostInvitationsByEmailsResponse = Awaited<ReturnType<typeof controller>>
