@@ -17,3 +17,5 @@ async function controller ({ ids, reqUserId }: SanitizedParameters, req: Authent
 }
 
 export default { sanitization, controller }
+
+export type GetUsersByIdsResponse = Awaited<ReturnType<typeof controller>>

@@ -34,6 +34,9 @@ interface OmitPrivateDataParams {
   reqUserHasAdminAccess?: boolean
 }
 
+type PublicAttributes = typeof userAttributes.public[number]
+export type PublicUser = (Pick<User, PublicAttributes> & Partial<Pick<User, UserExtraAttribute | 'anonymizableId'>>) | SpecialUser
+
 export function omitPrivateData (params: OmitPrivateDataParams) {
   const { extraAttribute, reqUserId, reqUserHasAdminAccess } = params
   let { networkIds } = params
@@ -48,7 +51,7 @@ export function omitPrivateData (params: OmitPrivateDataParams) {
       return ownerSafeData(userDoc as Exclude<DocWithUsernameInUserDb, SpecialUser>)
     }
 
-    const formattedUserDoc = pick(userDoc, attributes)
+    const formattedUserDoc = pick(userDoc, attributes) as PublicUser
     const anonymize = get(userDoc, 'settings.contributions.anonymize', true)
     if (reqUserHasAdminAccess || !anonymize) {
       // Sending the anonymizableId allows to request the user's contributions by acct

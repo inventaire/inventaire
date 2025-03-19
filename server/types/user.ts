@@ -95,6 +95,7 @@ export interface User extends CouchDoc {
   lastSummary?: EpochTimeStamp
   lastNews?: string
   reports?: AbuseReport[]
+  special: never
 }
 
 export interface SpecialUser extends ReadonlyDeep<typeof specialUserDocBase> {
