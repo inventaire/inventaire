@@ -5,7 +5,7 @@ import userMadeAdmin from '#controllers/notifications/lib/user_made_admin'
 import { actionsControllersFactory } from '#lib/actions_controllers'
 import { radio } from '#lib/radio'
 import get from './get.js'
-import updateStatus from './update_status.js'
+import { updateNotificationsStatus } from './update_status.js'
 
 export default {
   get: actionsControllersFactory({
@@ -15,7 +15,7 @@ export default {
   }),
   post: actionsControllersFactory({
     authentified: {
-      default: updateStatus,
+      default: updateNotificationsStatus,
     },
   }),
 }
