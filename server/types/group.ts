@@ -4,6 +4,7 @@ import type { ImageHash } from '#types/image'
 import type { UserId } from '#types/user'
 
 export type GroupId = CouchUuid
+export type GroupSlug = string
 
 export type GroupImg = `/img/groups/${ImageHash}`
 
@@ -24,7 +25,7 @@ export interface GroupMemberships {
 export type Group = CouchDoc & {
   _id: GroupId
   name: string
-  slug: string
+  slug: GroupSlug
   description?: string
   searchable: boolean
   open: boolean
