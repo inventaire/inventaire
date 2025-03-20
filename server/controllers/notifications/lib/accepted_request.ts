@@ -1,8 +1,7 @@
 import { createNotification } from '#controllers/notifications/lib/notifications'
-import { assertStrings } from '#lib/utils/assert_types'
+import type { UserId } from '#types/user'
 
-export default (userToNotify, newFriend) => {
-  assertStrings([ userToNotify, newFriend ])
+export function acceptedRequest (userToNotify: UserId, newFriend: UserId) {
   return createNotification(userToNotify, 'friendAcceptedRequest', {
     user: newFriend,
   })

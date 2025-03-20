@@ -42,4 +42,13 @@ export interface UserMadeAdminNotification extends NotificationBase {
   }
 }
 
-export type Notification = FriendAcceptedRequestNotification | GroupUpdateNotification | UserMadeAdminNotification
+export type NotificationByType = {
+  'friendAcceptedRequest': FriendAcceptedRequestNotification
+  'groupUpdate': GroupUpdateNotification
+  'userMadeAdmin': UserMadeAdminNotification
+}
+
+export type NotificationType = keyof NotificationByType
+export type Notification = NotificationByType[NotificationType]
+
+export type NotificationSubjectId = UserId | GroupId

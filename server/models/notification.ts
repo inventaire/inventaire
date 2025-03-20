@@ -1,6 +1,12 @@
+import type { NotificationByType, NotificationType } from '#types/notification'
+import type { UserId } from '#types/user'
 import validations from './validations/notification.js'
 
-export function createNotificationDoc ({ user, type, data }) {
+export function createNotificationDoc <T extends NotificationType> ({ user, type, data }: {
+  user: UserId
+  type: T
+  data: NotificationByType[T]['data']
+}) {
   validations.pass('userId', user)
   validations.pass('type', type)
   validations.pass('data', data, { type })
@@ -21,7 +27,6 @@ export function updateNotificationDoc (doc) {
   validations.pass('userId', doc.user)
   validations.pass('type', doc.type)
   validations.pass('data', doc.data, { type: doc.type })
-
   doc.time = Date.now()
   return doc
 }

@@ -1,4 +1,4 @@
-import acceptedRequest from '#controllers/notifications/lib/accepted_request'
+import { acceptedRequest } from '#controllers/notifications/lib/accepted_request'
 import deleteNotifications from '#controllers/notifications/lib/delete_notifications'
 import groupUpdate from '#controllers/notifications/lib/group_update'
 import userMadeAdmin from '#controllers/notifications/lib/user_made_admin'
