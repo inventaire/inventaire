@@ -1,5 +1,5 @@
 import 'should'
-import { getSomeGroup, createGroup, addInvited } from '#fixtures/groups'
+import { getSomeGroup, createGroup, addInvited, addDeclined } from '#fixtures/groups'
 import { createUser } from '#fixtures/users'
 import { getGroup } from '#tests/api/utils/groups'
 import { customAuthReq } from '#tests/api/utils/request'
@@ -38,6 +38,15 @@ describe('groups:update:request', () => {
     await customAuthReq(user, 'put', endpoint, { group: group._id })
     const resGroup = await getGroup(group)
     resGroup.requested.at(-1).user.should.equal(user._id)
+  })
+
+  it('should add user to members list after they where invited but declined, and now request to join', async () => {
+    const group = await createGroup()
+    const user = await createUser()
+    await addDeclined(group, user)
+    await customAuthReq(user, 'put', endpoint, { group: group._id })
+    const resGroup = await getGroup(group)
+    resGroup.members.at(-1).user.should.equal(user._id)
   })
 
   it('should add user to members list if already invited', async () => {

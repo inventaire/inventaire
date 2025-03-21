@@ -1,5 +1,5 @@
 import 'should'
-import { createGroup, addMember, createGroupWithAMember, addRequested } from '#fixtures/groups'
+import { createGroup, addMember, createGroupWithAMember, addRequested, addDeclined } from '#fixtures/groups'
 import { createUser } from '#fixtures/users'
 import { getGroup } from '#tests/api/utils/groups'
 import { customAuthReq } from '#tests/api/utils/request'
@@ -61,6 +61,17 @@ describe('groups:update:invite', () => {
     .catch(err => {
       err.body.status_verbose.should.equal("invitor isn't in group")
       err.statusCode.should.equal(403)
+    })
+  })
+
+  it('reject if invited user already declined', async () => {
+    const [ group, user ] = await Promise.all([ createGroup(), createUser() ])
+    await addDeclined(group, user)
+    await authReq('put', endpoint, { user: user._id, group: group._id })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.body.status_verbose.should.equal('user already declined the invitation')
+      err.statusCode.should.equal(400)
     })
   })
 })

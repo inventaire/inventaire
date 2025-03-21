@@ -48,6 +48,7 @@ export const findGroupInvitation = (userId, group, wanted) => findMembership(use
 export const groupMembershipActions = {
   invite: (invitorId, invitedId, group) => {
     const { role, membership } = findUserGroupMembership(invitedId, group)
+    const context = { groupId: group._id, userId: invitedId, role }
     if (role === 'requested') {
       membership.invitor = invitorId
       // If the invited user already requested to join, accept that request
@@ -56,8 +57,9 @@ export const groupMembershipActions = {
       moveMembership(invitedId, group, 'requested', 'members')
       // and send the "accepted" notification
       return { actionToNotify: 'acceptRequest' }
+    } else if (role === 'declined') {
+      throw newError('user already declined the invitation', 400, context)
     } else if (role) {
-      const context = { groupId: group._id, userId: invitedId, role }
       throw newError('membership already exist', 200, context)
     }
     group.invited.push(createMembership(invitedId, invitorId))
@@ -76,6 +78,11 @@ export const groupMembershipActions = {
     if (role === 'invited') {
       // If the requesting user was already invited, accept that request
       moveMembership(userId, group, 'invited', 'members')
+      // and no need to then send a "accepted" notification
+      return { actionToNotify: null }
+    } else if (role === 'declined') {
+      // If the requesting user was already invited, then declined, then re-requests to join, accept that request
+      moveMembership(userId, group, 'declined', 'members')
       // and no need to then send a "accepted" notification
       return { actionToNotify: null }
     } else if (role) {
