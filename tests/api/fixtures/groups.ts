@@ -42,7 +42,7 @@ export async function membershipAction (actor: AwaitableUserWithCookie, action: 
   return customAuthReq(actor, 'put', endpointBase, data)
 }
 
-export async function addMember (group, member) {
+export async function addMember (group: Group, member: AwaitableUserWithCookie) {
   member = await member
   await membershipAction(member, 'request', group, member)
   await membershipAction(getUser(), 'accept-request', group, member)
@@ -50,26 +50,26 @@ export async function addMember (group, member) {
   return [ refreshedGroup, member ]
 }
 
-export async function addAdmin (group, member) {
+export async function addAdmin (group: Group, member: AwaitableUserWithCookie) {
   await addMember(group, member)
   await membershipAction(getUser(), 'make-admin', group, member)
   const refreshedGroup = await getGroup(group)
   return [ refreshedGroup, member ]
 }
 
-export async function addInvited (group, invited) {
+export async function addInvited (group: Group, invited: AwaitableUserWithCookie) {
   await membershipAction(getUser(), 'invite', group, invited)
   const refreshedGroup = await getGroup(group)
   return [ refreshedGroup, invited ]
 }
 
-export async function addRequested (group, requester) {
+export async function addRequested (group: Group, requester: AwaitableUserWithCookie) {
   await membershipAction(requester, 'request', group)
   const refreshedGroup = await getGroup(group)
   return [ refreshedGroup, requester ]
 }
 
-export async function addDeclined (group, declined) {
+export async function addDeclined (group: Group, declined: AwaitableUserWithCookie) {
   await addInvited(group, declined)
   await membershipAction(declined, 'decline', group)
   const refreshedGroup = await getGroup(group)

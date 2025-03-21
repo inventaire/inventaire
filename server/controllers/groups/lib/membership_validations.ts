@@ -2,8 +2,10 @@ import { getInvitedUser } from '#controllers/groups/lib/groups'
 import { userCanLeaveGroup } from '#controllers/groups/lib/leave_groups'
 import { userIsInAdmins, userIsInGroup, userIsInGroupOrRequested, userIsInRequested } from '#controllers/groups/lib/users_lists'
 import { newError } from '#lib/error/error'
+import type { GroupId } from '#types/group'
+import type { UserId } from '#types/user'
 
-function validateRequestDecision (reqUserId, groupId, requesterId) {
+function validateRequestDecision (reqUserId: UserId, groupId: GroupId, requesterId: UserId) {
   return Promise.all([
     userIsInAdmins(reqUserId, groupId),
     userIsInRequested(requesterId, groupId),
@@ -18,7 +20,7 @@ function validateRequestDecision (reqUserId, groupId, requesterId) {
   })
 }
 
-function validateInvite (reqUserId, groupId, invitedUserId) {
+function validateInvite (reqUserId: UserId, groupId: GroupId, invitedUserId: UserId) {
   return userIsInGroup(reqUserId, groupId)
   .then(invitorInGroup => {
     if (!invitorInGroup) {
@@ -28,7 +30,7 @@ function validateInvite (reqUserId, groupId, invitedUserId) {
   })
 }
 
-function validateAdmin (reqUserId, groupId) {
+function validateAdmin (reqUserId: UserId, groupId: GroupId) {
   return userIsInAdmins(reqUserId, groupId)
   .then(bool => {
     if (!bool) {
@@ -37,7 +39,7 @@ function validateAdmin (reqUserId, groupId) {
   })
 }
 
-function validateAdminWithoutAdminsConflict (reqUserId, groupId, targetId) {
+function validateAdminWithoutAdminsConflict (reqUserId: UserId, groupId: GroupId, targetId: UserId) {
   return Promise.all([
     userIsInAdmins(reqUserId, groupId),
     userIsInAdmins(targetId, groupId),
@@ -52,7 +54,7 @@ function validateAdminWithoutAdminsConflict (reqUserId, groupId, targetId) {
   })
 }
 
-function validateLeaving (reqUserId, groupId) {
+function validateLeaving (reqUserId: UserId, groupId: GroupId) {
   return Promise.all([
     userIsInGroup(reqUserId, groupId),
     userCanLeaveGroup(reqUserId, groupId),
@@ -68,7 +70,7 @@ function validateLeaving (reqUserId, groupId) {
   })
 }
 
-function validateRequest (reqUserId, groupId) {
+function validateRequest (reqUserId: UserId, groupId: GroupId) {
   return userIsInGroupOrRequested(reqUserId, groupId)
   .then(bool => {
     if (bool) {
@@ -77,7 +79,7 @@ function validateRequest (reqUserId, groupId) {
   })
 }
 
-function validateCancelRequest (reqUserId, groupId) {
+function validateCancelRequest (reqUserId: UserId, groupId: GroupId) {
   return userIsInRequested(reqUserId, groupId)
   .then(bool => {
     if (!bool) {

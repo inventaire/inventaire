@@ -9,6 +9,7 @@ import { groupRoles } from '#models/attributes/group'
 import { createGroupDoc, findGroupInvitation, getAllGroupDocMembersIds, type GroupCreationParams } from '#models/group'
 import type { NewCouchDoc } from '#types/couchdb'
 import type { GroupId, Group } from '#types/group'
+import type { ImageHash } from '#types/image'
 import type { UserId } from '#types/user'
 import { addSlug } from './slug.js'
 
@@ -22,26 +23,26 @@ export async function getGroupsByIds (ids: GroupId[]) {
 }
 export const getGroupBySlug = (id: GroupId) => db.findDocByViewKey<Group>('bySlug', id)
 
-export async function getGroupsWhereUserIsAdmin (userId) {
+export async function getGroupsWhereUserIsAdmin (userId: UserId) {
   return db.getDocsByViewKeys<Group>('byRoleAndUser', [
     [ 'admins', userId ],
   ])
 }
 
-export async function getGroupsWhereUserIsAdminOrMember (userId) {
+export async function getGroupsWhereUserIsAdminOrMember (userId: UserId) {
   return db.getDocsByViewKeys<Group>('byRoleAndUser', [
     [ 'admins', userId ],
     [ 'members', userId ],
   ])
 }
 
-export async function getGroupsWhereUserIsInvited (userId) {
+export async function getGroupsWhereUserIsInvited (userId: UserId) {
   return db.getDocsByViewKeys<Group>('byRoleAndUser', [
     [ 'invited', userId ],
   ])
 }
 
-export async function getGroupsWhereUserIsAdminOrMemberOrInvited (userId) {
+export async function getGroupsWhereUserIsAdminOrMemberOrInvited (userId: UserId) {
   return db.getDocsByViewKeys<Group>('byRoleAndUser', [
     [ 'admins', userId ],
     [ 'members', userId ],
@@ -49,11 +50,11 @@ export async function getGroupsWhereUserIsAdminOrMemberOrInvited (userId) {
   ])
 }
 
-export async function getGroupsWhereUserHasAnyRole (userId) {
+export async function getGroupsWhereUserHasAnyRole (userId: UserId) {
   return db.getDocsByViewKeys<Group>('byRoleAndUser', groupRoles.map(role => [ role, userId ]))
 }
 
-export async function getGroupsIdsWhereUserIsAdminOrMember (userId) {
+export async function getGroupsIdsWhereUserIsAdminOrMember (userId: UserId) {
   assertString(userId)
   const { rows } = await db.view<Group>('groups', 'byRoleAndUser', {
     include_docs: false,
@@ -93,17 +94,17 @@ export async function createGroup (params: GroupCreationParams) {
   return groupDoc
 }
 
-export async function getUserGroupsCoMembers (userId) {
+export async function getUserGroupsCoMembers (userId: UserId) {
   const groups = await getGroupsWhereUserIsAdminOrMember(userId)
   return getCoMembersIds(groups, userId)
 }
 
-export async function getInvitedUser (userId, groupId) {
+export async function getInvitedUser (userId: UserId, groupId: GroupId) {
   const group = await getGroupById(groupId)
   return findGroupInvitation(userId, group, true)
 }
 
-export async function getGroupMembersIds (groupId) {
+export async function getGroupMembersIds (groupId: GroupId) {
   const group = await getGroupById(groupId)
   if (group == null) throw notFoundError({ group: groupId })
   return getAllGroupDocMembersIds(group)
@@ -111,13 +112,13 @@ export async function getGroupMembersIds (groupId) {
 
 export const getGroupsByPosition = searchGroupsByPosition
 
-export async function imageIsUsed (imageHash) {
+export async function imageIsUsed (imageHash: ImageHash) {
   assertString(imageHash)
   const { rows } = await db.view<Group>('groups', 'byPicture', { key: imageHash })
   return rows.length > 0
 }
 
-function getCoMembersIds (groups, userId) {
+function getCoMembersIds (groups: Group[], userId: UserId) {
   const usersIds = getAllGroupsMembersIds(groups)
   // Deduplicate and remove the user own id from the list
   return uniq(without(usersIds, userId))
