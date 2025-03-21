@@ -18,19 +18,29 @@ describe('groups:update:invite', () => {
     })
   })
 
-  it('should add an invited when invitor is admin', async () => {
+  it('should reject without an existing user', async () => {
     const group = await createGroup()
-    const invitedCount = group.invited.length
     await authReq('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
+    .then(shouldNotBeCalled)
+    .catch(err => {
+      err.statusCode.should.equal(404)
+      err.body.status_verbose.should.equal('user not found')
+    })
+  })
+
+  it('should add an invited when invitor is admin', async () => {
+    const [ group, user ] = await Promise.all([ createGroup(), createUser() ])
+    const invitedCount = group.invited.length
+    await authReq('put', endpoint, { user: user._id, group: group._id })
     const updatedGroup = await getGroup(group)
     updatedGroup.invited.length.should.equal(invitedCount + 1)
   })
 
   it('should add an invited when invitor is member', async () => {
-    const group = await createGroup()
+    const [ group, user ] = await Promise.all([ createGroup(), createUser() ])
     const userB = await getUserB()
     await addMember(group, userB)
-    await authReqB('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
+    await authReqB('put', endpoint, { user: user._id, group: group._id })
     const updatedGroup = await getGroup(group)
     updatedGroup.invited.length.should.equal(1)
   })
@@ -45,8 +55,8 @@ describe('groups:update:invite', () => {
   })
 
   it('reject if invitor is not group member', async () => {
-    const group = await createGroup()
-    await authReqB('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
+    const [ group, user ] = await Promise.all([ createGroup(), createUser() ])
+    await authReqB('put', endpoint, { user: user._id, group: group._id })
     .then(shouldNotBeCalled)
     .catch(err => {
       err.body.status_verbose.should.equal("invitor isn't in group")

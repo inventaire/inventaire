@@ -1,3 +1,4 @@
+import { validateUserExistance } from '#controllers/relations/lib/helpers'
 import { newError } from '#lib/error/error'
 import { success } from '#lib/utils/logs'
 import * as intent from './lib/intent.js'
@@ -8,6 +9,8 @@ const sanitization = {
 
 const controller = action => async params => {
   const { reqUserId, user: userId } = params
+  // The other relation actions don't need such a validation as the relation already exists
+  if (action === 'request') await validateUserExistance(userId)
   await solveNewRelation(action, userId, reqUserId)
   success(userId, `${action}: OK!`)
   return { ok: true }

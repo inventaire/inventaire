@@ -1,6 +1,7 @@
 import { getInvitedUser } from '#controllers/groups/lib/groups'
 import { userCanLeaveGroup } from '#controllers/groups/lib/leave_groups'
 import { userIsInAdmins, userIsInGroup, userIsInGroupOrRequested, userIsInRequested } from '#controllers/groups/lib/users_lists'
+import { validateUserExistance } from '#controllers/relations/lib/helpers'
 import { newError } from '#lib/error/error'
 import type { GroupId } from '#types/group'
 import type { UserId } from '#types/user'
@@ -19,7 +20,12 @@ async function validateRightToAcceptOrRefuseRequest (reqUserId: UserId, groupId:
 }
 
 async function validateRightToInvite (reqUserId: UserId, groupId: GroupId, invitedUserId: UserId) {
-  const invitorInGroup = await userIsInGroup(reqUserId, groupId)
+  const [ invitorInGroup ] = await Promise.all([
+    userIsInGroup(reqUserId, groupId),
+    // The other group actions don't need such a validation, as either the membership already exists
+    // or the user existance is validated by the request authentification
+    validateUserExistance(invitedUserId),
+  ])
   if (!invitorInGroup) {
     const context = { reqUserId, groupId, invitedUserId }
     throw newError("invitor isn't in group", 403, { context })
