@@ -47,49 +47,69 @@ export const findGroupInvitation = (userId, group, wanted) => findMembership(use
 
 export const groupMembershipActions = {
   invite: (invitorId, invitedId, group) => {
-    // Using findGroupInvitation as a validator throwing
-    // if the document isn't in the desired state
-    findGroupInvitation(invitedId, group, false)
+    const { role, membership } = findUserGroupMembership(invitedId, group)
+    if (role === 'requested') {
+      membership.invitor = invitorId
+      // If the invited user already requested to join, accept that request
+      // TODO: add a allowUsersToInvite group config flag to clarify this behavior,
+      // which currently gives any member the right to requalify an "invite" into an "accept request"
+      moveMembership(invitedId, group, 'requested', 'members')
+      // and send the "accepted" notification
+      return { actionToNotify: 'acceptRequest' }
+    } else if (role) {
+      const context = { groupId: group._id, userId: invitedId, role }
+      throw newError('membership already exist', 200, context)
+    }
     group.invited.push(createMembership(invitedId, invitorId))
-    return group
   },
 
   // there is room for a secondaryUserId but only some actions actually need it:
   // the empty variable is thus passed to 'placeholder'
   accept: (userId, placeholder, group) => {
-    return moveMembership(userId, group, 'invited', 'members')
+    moveMembership(userId, group, 'invited', 'members')
   },
   decline: (userId, placeholder, group) => {
-    return moveMembership(userId, group, 'invited', 'declined')
+    moveMembership(userId, group, 'invited', 'declined')
   },
   request: (userId, placeholder, group) => {
+    const { role } = findUserGroupMembership(userId, group)
+    if (role === 'invited') {
+      // If the requesting user was already invited, accept that request
+      moveMembership(userId, group, 'invited', 'members')
+      // and no need to then send a "accepted" notification
+      return { actionToNotify: null }
+    } else if (role) {
+      const context = { groupId: group._id, userId, role }
+      throw newError('membership already exist', 200, context)
+    }
     if (group.open) {
       group.members.push(createMembership(userId, null))
     } else {
       group.requested.push(createMembership(userId, null))
     }
-    return group
   },
   cancelRequest: (userId, placeholder, group) => {
-    return moveMembership(userId, group, 'requested', null)
+    moveMembership(userId, group, 'requested', null)
   },
   acceptRequest: (adminId, requesterId, group) => {
-    return moveMembership(requesterId, group, 'requested', 'members')
+    moveMembership(requesterId, group, 'requested', 'members')
   },
   refuseRequest: (adminId, requesterId, group) => {
-    return moveMembership(requesterId, group, 'requested', null)
+    moveMembership(requesterId, group, 'requested', null)
   },
   makeAdmin: (adminId, memberId, group) => {
-    return moveMembership(memberId, group, 'members', 'admins')
+    moveMembership(memberId, group, 'members', 'admins')
   },
   kick: (adminId, memberId, group) => {
-    return moveMembership(memberId, group, 'members', null)
+    moveMembership(memberId, group, 'members', null)
   },
   leave: (userId, placeholder, group) => {
     const role = userIsAdmin(userId, group) ? 'admins' : 'members'
-    return moveMembership(userId, group, role, null)
+    moveMembership(userId, group, role, null)
   },
-}
+} as const
+
+export type GroupMembershipAction = keyof typeof groupMembershipActions
 
 export function removeUserFromGroupDoc (group, userId) {
   for (const list of groupRoles) {
@@ -175,4 +195,13 @@ export function getAllGroupDocMembersIds (group: Group) {
 
 export const groupFormatters = {
   position: truncateLatLng,
+}
+
+export function findUserGroupMembership (userId: UserId, group: Group) {
+  for (const role of groupRoles) {
+    for (const membership of group[role]) {
+      if (membership.user === userId) return { role, membership }
+    }
+  }
+  return {}
 }

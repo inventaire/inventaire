@@ -1,5 +1,5 @@
 import 'should'
-import { getSomeGroup, createGroup } from '#fixtures/groups'
+import { getSomeGroup, createGroup, addInvited } from '#fixtures/groups'
 import { createUser } from '#fixtures/users'
 import { getGroup } from '#tests/api/utils/groups'
 import { customAuthReq } from '#tests/api/utils/request'
@@ -34,11 +34,19 @@ describe('groups:update:request', () => {
 
   it('should add user to requesters list', async () => {
     const group = await createGroup()
-    const userPromise = createUser()
-    const requestCount = group.invited.length
-    await customAuthReq(userPromise, 'put', endpoint, { group: group._id })
+    const user = await createUser()
+    await customAuthReq(user, 'put', endpoint, { group: group._id })
     const resGroup = await getGroup(group)
-    resGroup.requested.length.should.equal(requestCount + 1)
+    resGroup.requested.at(-1).user.should.equal(user._id)
+  })
+
+  it('should add user to members list if already invited', async () => {
+    const group = await createGroup()
+    const user = await createUser()
+    await addInvited(group, user)
+    await customAuthReq(user, 'put', endpoint, { group: group._id })
+    const resGroup = await getGroup(group)
+    resGroup.members.at(-1).user.should.equal(user._id)
   })
 
   describe('when group is open', () => {

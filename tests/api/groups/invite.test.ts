@@ -1,6 +1,8 @@
 import 'should'
-import { createGroup, addMember } from '#fixtures/groups'
+import { createGroup, addMember, createGroupWithAMember, addRequested } from '#fixtures/groups'
+import { createUser } from '#fixtures/users'
 import { getGroup } from '#tests/api/utils/groups'
+import { customAuthReq } from '#tests/api/utils/request'
 import { authReq, authReqB, getUserB } from '#tests/api/utils/utils'
 import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 
@@ -31,6 +33,15 @@ describe('groups:update:invite', () => {
     await authReqB('put', endpoint, { user: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', group: group._id })
     const updatedGroup = await getGroup(group)
     updatedGroup.invited.length.should.equal(1)
+  })
+
+  it('should add a member when the invited had requested to join', async () => {
+    const { group, member } = await createGroupWithAMember()
+    const user = await createUser()
+    await addRequested(group, user)
+    await customAuthReq(member, 'put', endpoint, { user: user._id, group: group._id })
+    const updatedGroup = await getGroup(group)
+    updatedGroup.members.at(-1).user.should.equal(user._id)
   })
 
   it('reject if invitor is not group member', async () => {

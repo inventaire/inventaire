@@ -1,7 +1,8 @@
-import 'should'
+import should from 'should'
 import { wait } from '#lib/promises'
-import { createGroupDoc, groupMembershipActions, removeUserFromGroupDoc } from '#models/group'
+import { createGroupDoc, findUserGroupMembership, groupMembershipActions, removeUserFromGroupDoc } from '#models/group'
 import { shouldNotBeCalled, rethrowShouldNotBeCalledErrors } from '#tests/unit/utils/utils'
+import type { Group } from '#types/group'
 
 const someUserId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
 const someOtherUserId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab'
@@ -90,6 +91,16 @@ describe('group model', () => {
       groupMembershipActions.invite(someUserId, someOtherUserId, group)
       group.invited[0].user.should.equal(someOtherUserId)
     })
+
+    it('should requalify the request of a requesting user into a acceptRequest', () => {
+      const group = createSomeGroup()
+      groupMembershipActions.request(someOtherUserId, null, group)
+      const { actionToNotify } = groupMembershipActions.invite(someUserId, someOtherUserId, group)
+      actionToNotify.should.equal('acceptRequest')
+      const { role, membership } = findUserGroupMembership(someOtherUserId, group as Group)
+      role.should.equal('members')
+      membership.invitor.should.equal(someUserId)
+    })
   })
 
   describe('accept', () => {
@@ -117,6 +128,16 @@ describe('group model', () => {
       const group = createSomeGroup()
       groupMembershipActions.request(someOtherUserId, null, group)
       group.requested[0].user.should.equal(someOtherUserId)
+    })
+
+    it('should requalify an invite into an accept', () => {
+      const group = createSomeGroup()
+      groupMembershipActions.invite(someUserId, someOtherUserId, group)
+      const { actionToNotify } = groupMembershipActions.request(someOtherUserId, null, group)
+      should(actionToNotify).equal(null)
+      const { role, membership } = findUserGroupMembership(someOtherUserId, group as Group)
+      role.should.equal('members')
+      membership.invitor.should.equal(someUserId)
     })
   })
 
