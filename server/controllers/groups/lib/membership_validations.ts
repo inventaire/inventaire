@@ -5,87 +5,73 @@ import { newError } from '#lib/error/error'
 import type { GroupId } from '#types/group'
 import type { UserId } from '#types/user'
 
-function validateRequestDecision (reqUserId: UserId, groupId: GroupId, requesterId: UserId) {
-  return Promise.all([
+async function validateRequestDecision (reqUserId: UserId, groupId: GroupId, requesterId: UserId) {
+  const [ userInAdmins, requesterInRequested ] = await Promise.all([
     userIsInAdmins(reqUserId, groupId),
     userIsInRequested(requesterId, groupId),
   ])
-  .then(([ userInAdmins, requesterInRequested ]) => {
-    if (!userInAdmins) {
-      throw newError('user is not admin', 403, { reqUserId, groupId })
-    }
-    if (!requesterInRequested) {
-      throw newError('request not found', 401, { requesterId, groupId })
-    }
-  })
+  if (!userInAdmins) {
+    throw newError('user is not admin', 403, { reqUserId, groupId })
+  }
+  if (!requesterInRequested) {
+    throw newError('request not found', 401, { requesterId, groupId })
+  }
 }
 
-function validateInvite (reqUserId: UserId, groupId: GroupId, invitedUserId: UserId) {
-  return userIsInGroup(reqUserId, groupId)
-  .then(invitorInGroup => {
-    if (!invitorInGroup) {
-      const context = { reqUserId, groupId, invitedUserId }
-      throw newError("invitor isn't in group", 403, { context })
-    }
-  })
+async function validateInvite (reqUserId: UserId, groupId: GroupId, invitedUserId: UserId) {
+  const invitorInGroup = await userIsInGroup(reqUserId, groupId)
+  if (!invitorInGroup) {
+    const context = { reqUserId, groupId, invitedUserId }
+    throw newError("invitor isn't in group", 403, { context })
+  }
 }
 
-function validateAdmin (reqUserId: UserId, groupId: GroupId) {
-  return userIsInAdmins(reqUserId, groupId)
-  .then(bool => {
-    if (!bool) {
-      throw newError('user is not a group admin', 403, { reqUserId, groupId })
-    }
-  })
+async function validateAdmin (reqUserId: UserId, groupId: GroupId) {
+  const bool = await userIsInAdmins(reqUserId, groupId)
+  if (!bool) {
+    throw newError('user is not a group admin', 403, { reqUserId, groupId })
+  }
 }
 
-function validateAdminWithoutAdminsConflict (reqUserId: UserId, groupId: GroupId, targetId: UserId) {
-  return Promise.all([
+async function validateAdminWithoutAdminsConflict (reqUserId: UserId, groupId: GroupId, targetId: UserId) {
+  const [ userIsAdmin, targetIsAdmin ] = await Promise.all([
     userIsInAdmins(reqUserId, groupId),
     userIsInAdmins(targetId, groupId),
   ])
-  .then(([ userIsAdmin, targetIsAdmin ]) => {
-    if (!userIsAdmin) {
-      throw newError('user is not a group admin', 403, { reqUserId, groupId })
-    }
-    if (targetIsAdmin) {
-      throw newError('target user is also a group admin', 403, { reqUserId, groupId, targetId })
-    }
-  })
+  if (!userIsAdmin) {
+    throw newError('user is not a group admin', 403, { reqUserId, groupId })
+  }
+  if (targetIsAdmin) {
+    throw newError('target user is also a group admin', 403, { reqUserId, groupId, targetId })
+  }
 }
 
-function validateLeaving (reqUserId: UserId, groupId: GroupId) {
-  return Promise.all([
+async function validateLeaving (reqUserId: UserId, groupId: GroupId) {
+  const [ userInGroup, userCanLeave ] = await Promise.all([
     userIsInGroup(reqUserId, groupId),
     userCanLeaveGroup(reqUserId, groupId),
   ])
-  .then(([ userInGroup, userCanLeave ]) => {
-    if (!userInGroup) {
-      throw newError('user is not in the group', 403, { reqUserId, groupId })
-    }
-    if (!userCanLeave) {
-      const message = "the last group admin can't leave before naming another admin"
-      throw newError(message, 403, { reqUserId, groupId })
-    }
-  })
+  if (!userInGroup) {
+    throw newError('user is not in the group', 403, { reqUserId, groupId })
+  }
+  if (!userCanLeave) {
+    const message = "the last group admin can't leave before naming another admin"
+    throw newError(message, 403, { reqUserId, groupId })
+  }
 }
 
-function validateRequest (reqUserId: UserId, groupId: GroupId) {
-  return userIsInGroupOrRequested(reqUserId, groupId)
-  .then(bool => {
-    if (bool) {
-      throw newError('user is already in group', 403, { reqUserId, groupId })
-    }
-  })
+async function validateRequest (reqUserId: UserId, groupId: GroupId) {
+  const bool = await userIsInGroupOrRequested(reqUserId, groupId)
+  if (bool) {
+    throw newError('user is already in group', 403, { reqUserId, groupId })
+  }
 }
 
-function validateCancelRequest (reqUserId: UserId, groupId: GroupId) {
-  return userIsInRequested(reqUserId, groupId)
-  .then(bool => {
-    if (!bool) {
-      throw newError('request not found', 403, { reqUserId, groupId })
-    }
-  })
+async function validateCancelRequest (reqUserId: UserId, groupId: GroupId) {
+  const bool = await userIsInRequested(reqUserId, groupId)
+  if (!bool) {
+    throw newError('request not found', 403, { reqUserId, groupId })
+  }
 }
 
 export default {
