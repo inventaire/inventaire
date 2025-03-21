@@ -47,7 +47,7 @@ export const superTrim = (str: string) => str.replaceAll(/\s+/g, ' ').trim()
 
 export const KeyBy = (attribute: string) => (collection: object[]) => keyBy(collection, attribute)
 
-export function uniqByKey<T> (collection: object[], key: string) {
+export function uniqByKey<T extends object> (collection: T[], key: string) {
   assertArray(collection)
   assertString(key)
   return Object.values(keyBy(collection, key)) as T[]
