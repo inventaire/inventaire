@@ -5,7 +5,7 @@ import { newError } from '#lib/error/error'
 import type { GroupId } from '#types/group'
 import type { UserId } from '#types/user'
 
-async function validateRequestDecision (reqUserId: UserId, groupId: GroupId, requesterId: UserId) {
+async function validateRightToAcceptOrRefuseRequest (reqUserId: UserId, groupId: GroupId, requesterId: UserId) {
   const [ userInAdmins, requesterInRequested ] = await Promise.all([
     userIsInAdmins(reqUserId, groupId),
     userIsInRequested(requesterId, groupId),
@@ -18,7 +18,7 @@ async function validateRequestDecision (reqUserId: UserId, groupId: GroupId, req
   }
 }
 
-async function validateInvite (reqUserId: UserId, groupId: GroupId, invitedUserId: UserId) {
+async function validateRightToInvite (reqUserId: UserId, groupId: GroupId, invitedUserId: UserId) {
   const invitorInGroup = await userIsInGroup(reqUserId, groupId)
   if (!invitorInGroup) {
     const context = { reqUserId, groupId, invitedUserId }
@@ -26,14 +26,14 @@ async function validateInvite (reqUserId: UserId, groupId: GroupId, invitedUserI
   }
 }
 
-async function validateAdmin (reqUserId: UserId, groupId: GroupId) {
+async function validateAdminRights (reqUserId: UserId, groupId: GroupId) {
   const bool = await userIsInAdmins(reqUserId, groupId)
   if (!bool) {
     throw newError('user is not a group admin', 403, { reqUserId, groupId })
   }
 }
 
-async function validateAdminWithoutAdminsConflict (reqUserId: UserId, groupId: GroupId, targetId: UserId) {
+async function validateRightToKick (reqUserId: UserId, groupId: GroupId, targetId: UserId) {
   const [ userIsAdmin, targetIsAdmin ] = await Promise.all([
     userIsInAdmins(reqUserId, groupId),
     userIsInAdmins(targetId, groupId),
@@ -46,7 +46,7 @@ async function validateAdminWithoutAdminsConflict (reqUserId: UserId, groupId: G
   }
 }
 
-async function validateLeaving (reqUserId: UserId, groupId: GroupId) {
+async function validateRightToLeaving (reqUserId: UserId, groupId: GroupId) {
   const [ userInGroup, userCanLeave ] = await Promise.all([
     userIsInGroup(reqUserId, groupId),
     userCanLeaveGroup(reqUserId, groupId),
@@ -60,31 +60,35 @@ async function validateLeaving (reqUserId: UserId, groupId: GroupId) {
   }
 }
 
-async function validateRequest (reqUserId: UserId, groupId: GroupId) {
+async function validateRightToRequestToJoin (reqUserId: UserId, groupId: GroupId) {
   const bool = await userIsInGroupOrRequested(reqUserId, groupId)
   if (bool) {
     throw newError('user is already in group', 403, { reqUserId, groupId })
   }
 }
 
-async function validateCancelRequest (reqUserId: UserId, groupId: GroupId) {
+async function validateRightToCancelRequest (reqUserId: UserId, groupId: GroupId) {
   const bool = await userIsInRequested(reqUserId, groupId)
   if (!bool) {
     throw newError('request not found', 403, { reqUserId, groupId })
   }
 }
 
+async function validateRightToAcceptOrDeclineInvitation (reqUserId: UserId, groupId: GroupId) {
+  const invitation = await getInvitedUser(reqUserId, groupId)
+  return invitation != null
+}
+
 export default {
-  invite: validateInvite,
-  // /!\ getInvitedUser returns a group doc, not a boolean
-  accept: getInvitedUser,
-  decline: getInvitedUser,
-  request: validateRequest,
-  cancelRequest: validateCancelRequest,
-  acceptRequest: validateRequestDecision,
-  refuseRequest: validateRequestDecision,
-  updateSettings: validateAdmin,
-  makeAdmin: validateAdmin,
-  kick: validateAdminWithoutAdminsConflict,
-  leave: validateLeaving,
+  invite: validateRightToInvite,
+  accept: validateRightToAcceptOrDeclineInvitation,
+  decline: validateRightToAcceptOrDeclineInvitation,
+  request: validateRightToRequestToJoin,
+  cancelRequest: validateRightToCancelRequest,
+  acceptRequest: validateRightToAcceptOrRefuseRequest,
+  refuseRequest: validateRightToAcceptOrRefuseRequest,
+  updateSettings: validateAdminRights,
+  makeAdmin: validateAdminRights,
+  kick: validateRightToKick,
+  leave: validateRightToLeaving,
 }
