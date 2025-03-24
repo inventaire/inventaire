@@ -24,4 +24,4 @@ const relationsTypes = [
   'userRequested',
   'otherRequested',
   'none',
-]
+] as const
