@@ -23,14 +23,16 @@ async function controller (params: SanitizedParameters, req: AuthentifiedReq, re
   }
 }
 
-function getAllowedAttributes (scopeNames) {
-  return scopeNames.map(scopeName => attributesByScope[scopeName])
-}
-
 const attributesByScope = {
   username: 'username',
   'stable-username': 'stableUsername',
   email: 'email',
+} as const
+
+type Scope = keyof typeof attributesByScope
+
+function getAllowedAttributes (scopeNames: Scope[]) {
+  return scopeNames.map(scopeName => attributesByScope[scopeName])
 }
 
 export default { sanitization: {}, controller }
