@@ -1,6 +1,6 @@
 // Inspired by https://blog.goncharov.page/node-config-made-type-safe
 
-import type { AbsoluteUrl, Origin, Path, RelativeUrl } from '#types/common'
+import type { AbsoluteUrl, AuthentifiedOrigin, Origin, Path, RelativeUrl } from '#types/common'
 import type { ImagePath } from '#types/image'
 import type { Email, OAuthConsumer, OwnerOnlyOAuthConsumer } from '#types/user'
 import type { ReadonlyDeep } from 'type-fest'
@@ -50,6 +50,7 @@ export type Config = ReadonlyDeep<{
     password: string
     suffix?: string | null
     getOrigin: () => Origin
+    getOriginWithAuth: () => AuthentifiedOrigin
     databaseUrl: (string) => AbsoluteUrl
     name: (string) => string
     follow: {

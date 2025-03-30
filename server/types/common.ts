@@ -27,6 +27,7 @@ export type AbsoluteUrl = `http${string}`
 export type RelativeUrl = `/${string}`
 export type Url = AbsoluteUrl | RelativeUrl
 export type Origin = AbsoluteUrl
+export type AuthentifiedOrigin = `http${string}:${string}@${string}`
 export type Host = string
 export type Hostname = string
 export type Path = string

@@ -12,7 +12,7 @@ set -eo pipefail
 if [ "$1" != "" ]; then
   entities_db_authentified_url="$1"
 else
-  entities_db_authentified_url="$(node -p 'require("config").db.getOrigin() + "/" + require("config").db.name("entities")')"
+  entities_db_authentified_url="$(node -p 'require("config").db.getOriginWithAuth() + "/" + require("config").db.name("entities")')"
 fi
 
 # Set after $entities_db_authentified_url to allow $1 to be an unbound variable

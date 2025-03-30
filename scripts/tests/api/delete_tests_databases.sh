@@ -19,9 +19,9 @@ fi
 for db in $databases
 do
   echo "deleting ${db} in couchdb... " &&
-  curl -sXDELETE "${couchdb_origin}/${db}"
+  curl --fail -XDELETE "${couchdb_origin}/${db}"
   echo "deleting ${db} in elastic search... " &&
-  curl -sXDELETE "${elastic_origin}/${db}"
+  curl --fail -XDELETE "${elastic_origin}/${db}"
 done
 
 echo "deleting ${leveldb_path}... " &&
