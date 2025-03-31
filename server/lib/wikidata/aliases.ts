@@ -37,6 +37,7 @@ const wikidataOnlyP31Values = {
   ],
   works: [
     'wd:Q571', // book
+    'wd:Q8261', // novel
     'wd:Q2831984', // comic book album
     'wd:Q838795', // comic strip
     'wd:Q149537', // novella
