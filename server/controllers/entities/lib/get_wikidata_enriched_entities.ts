@@ -70,7 +70,7 @@ export async function getAggregatedWdEntityLayers ({ wdId, refresh, dry }: { wdI
   return aggregateWdEntityLayers(wdId, remoteEntity, localEntityLayer)
 }
 
-interface SerializedEmptyWdEntity {
+export interface SerializedEmptyWdEntity {
   wdId: WdEntityId
   uri: WdEntityUri
   type: 'meta' | 'missing'
