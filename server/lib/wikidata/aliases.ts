@@ -101,6 +101,8 @@ const wikidataOnlyP31Values = {
     'wd:Q108368282', // literary genre by form
     'wd:Q108317211', // novel genre
     'wd:Q20076756', // speculative fiction genre
+    'wd:Q20644555', // fantasy genre
+    'wd:Q11796169', // literary subgenre
   ],
   publishers: [
     'wd:Q1320047', // book publishing company
