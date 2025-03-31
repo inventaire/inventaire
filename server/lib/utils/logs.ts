@@ -78,8 +78,13 @@ export function logError (err: ContextualizedError, label?: string) {
     return
   }
 
-  decreaseForwardedErrorsVerbosity(err)
-  log(err, label, 'red')
+  if (err.type === 'aborted' && typeof err.context?.method === 'string') {
+    const { method, url } = err.context
+    log(`${method.toUpperCase()} ${url} request timeout`, null, 'red')
+  } else {
+    decreaseForwardedErrorsVerbosity(err)
+    log(err, label, 'red')
+  }
 
   let host = 'local'
   if ('context' in err) {
