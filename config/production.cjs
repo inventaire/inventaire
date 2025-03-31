@@ -26,6 +26,10 @@ const config = {
   },
   mailer: {
     disabled: false,
+    nodemailer: {
+      // See https://www.nodemailer.com/smtp/
+      requireTLS: true,
+    },
   },
   activitySummary: {
     disabled: false,
