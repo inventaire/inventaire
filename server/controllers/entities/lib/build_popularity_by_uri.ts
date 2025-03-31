@@ -90,7 +90,6 @@ async function getSimpleEntityScore (uri) {
   return claimCount + sitelinksCount * 2
 }
 
-// TODO: add collections popularity getter
 const popularityGettersByType = {
   edition: getItemsCount,
   work: getWorkEditionsScores,
@@ -99,6 +98,7 @@ const popularityGettersByType = {
   publisher: getPublisherScore,
   genre: getSimpleEntityScore,
   movement: getSimpleEntityScore,
+  collection: getSimpleEntityScore,
   language: getSimpleEntityScore,
 }
 
