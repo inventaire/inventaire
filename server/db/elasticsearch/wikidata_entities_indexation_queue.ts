@@ -44,17 +44,17 @@ async function entitiesIndexationWorker (jobId, wdId: WdEntityId) {
     // such as answering users requests
     if (nice) await waitForCPUsLoadToBeBelow({ threshold: 0.5 })
     info(`wd entity indexation worker running: ${wdId}`)
-    const formattedEntity = await getAggregatedWdEntityLayers({ wdId, dry: true })
-    if (formattedEntity) {
+    const entity = await getAggregatedWdEntityLayers({ wdId, dry: true })
+    if (entity) {
       const indexedEntity = await getIndexedEntity(wdId)
       const indexationTime = indexedEntity?._indexationTime
       const entityWasRecentlyIndexed = indexationTime && ((Date.now() - indexationTime) < minReindexationInterval)
-      if (entityWasRecentlyIndexed && indexedEntity.lastrevid === formattedEntity.lastrevid && indexedEntity.type === formattedEntity.type) {
+      if (entityWasRecentlyIndexed && noObviousChange(indexedEntity, entity)) {
         info(`wd entity indexation worker skipped (too recently reindexed): ${wdId}`)
       } else {
-        formattedEntity._indexationTime = Date.now()
-        formattedEntity._id = wdId
-        await reindexWdEntity(formattedEntity)
+        entity._indexationTime = Date.now()
+        entity._id = wdId
+        await reindexWdEntity(entity)
         info(`wd entity indexation worker done: ${wdId}`)
       }
     } else {
@@ -74,6 +74,13 @@ async function getIndexedEntity (wdId: WdEntityId) {
   } catch (err) {
     if (err.statusCode !== 404) throw err
   }
+}
+
+function noObviousChange (indexedEntity, entity) {
+  if (indexedEntity.lastrevid !== entity.lastrevid) return false
+  if (indexedEntity.type !== entity.type) return false
+  if (indexedEntity.invRev !== entity.invRev) return false
+  return true
 }
 
 let wdEntitiesIndexationJobQueue
