@@ -17,7 +17,7 @@ tsc  --project ./tsconfig.build.json --diagnostics --outDir "$tmpdir"
 # .hbs files are not copied by tsc
 # See https://github.com/microsoft/TypeScript/issues/30835
 cp -r server/lib/emails/views "$tmpdir/server/lib/emails"
-cp -r server/assets "$tmpdir/server/assets"
+cp -r server/assets "$tmpdir/server"
 
 cp -r $tmpdir/server ./dist
 
