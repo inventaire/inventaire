@@ -4,6 +4,8 @@ export interface PageParams {
   limit: number
   offset?: number
   context?: string
+  total?: number
+  continue?: number
 }
 
 export function paginate <T> (collection: T[], params: PageParams) {

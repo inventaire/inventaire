@@ -5,6 +5,7 @@ import { setItemsBusyFlag } from '#controllers/transactions/lib/transactions'
 import { getUsersAuthorizedDataByIds } from '#controllers/user/lib/user'
 import { paginate, type PageParams } from '#lib/pagination'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
+import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { Item } from '#types/item'
 
 async function addUsersData (page, reqParams) {
@@ -24,7 +25,12 @@ async function addUsersData (page, reqParams) {
   return page
 }
 
-export async function addAssociatedData (page, reqParams) {
+export interface ItemsPage extends Partial<PageParams> {
+  items: Item[]
+  users?: Awaited<ReturnType<typeof getUsersAuthorizedDataByIds>>
+}
+
+export async function addAssociatedData (page: ItemsPage, reqParams: SanitizedParameters) {
   await Promise.all([
     addItemsSnapshots(page.items),
     addUsersData(page, reqParams),
