@@ -119,3 +119,5 @@ const userAttributes = {
 }
 
 export default userAttributes
+
+export type NotificationKey = typeof userAttributes['settings']['notifications'][number]
