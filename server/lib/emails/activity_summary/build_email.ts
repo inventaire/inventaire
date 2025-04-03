@@ -3,6 +3,7 @@ import { getPendingGroupInvitationsCount, getPendingGroupRequestsCount } from '#
 import { getUnreadNotificationsCount } from '#controllers/notifications/lib/notifications'
 import { getPendingFriendsRequestsCount } from '#controllers/relations/lib/queries'
 import { getUserActiveTransactionsCount } from '#controllers/transactions/lib/transactions'
+import { getEmailUnsubscribeUrl } from '#lib/emails/unsubscribe'
 import { objectPromise } from '#lib/promises'
 import { shortLang } from '#lib/utils/base'
 import config, { publicOrigin } from '#server/config'
@@ -111,6 +112,9 @@ const spreadEmailData = (user: User) => results => {
       news,
       didYouKnowKey: getDidYouKnowKey(),
       hasActivities: countTotal > 0,
+      unsubscribe: {
+        url: getEmailUnsubscribeUrl(email, user._id, 'inventories_activity_summary'),
+      },
     },
   }
 }
