@@ -8,11 +8,14 @@ import { basicUpdater } from '#lib/doc_updates'
 import { newError } from '#lib/error/error'
 import { newInvalidError, newMissingBodyError } from '#lib/error/pre_filled'
 import { emit } from '#lib/radio'
+import { assertString } from '#lib/utils/assert_types'
+import { arrayIncludes } from '#lib/utils/base'
 import userAttributes from '#models/attributes/user'
 import { userFormatters } from '#models/user'
 import userValidations from '#models/validations/user'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { AuthentifiedReq } from '#types/server'
+import type { User } from '#types/user'
 
 const { updatable, concurrencial, acceptNullValue } = userAttributes
 const db = await dbFactory('users')
@@ -34,8 +37,8 @@ async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
 
 // This function update the document and should thus
 // rather be in the User model, but async checks make it a bit hard
-async function update (user, attribute, value) {
-  if (value == null && !acceptNullValue.includes(attribute)) {
+export async function update (user: User, attribute: string, value: unknown) {
+  if (value == null && !arrayIncludes(acceptNullValue, attribute)) {
     throw newMissingBodyError('value')
   }
 
@@ -58,7 +61,7 @@ async function update (user, attribute, value) {
 
   if (userFormatters[attribute]) value = userFormatters[attribute](value)
 
-  if (updatable.includes(rootAttribute)) {
+  if (arrayIncludes(updatable, rootAttribute)) {
     if (!get(userValidations, rootAttribute)(value)) {
       throw newInvalidError('value', value)
     }
@@ -70,7 +73,8 @@ async function update (user, attribute, value) {
     return
   }
 
-  if (concurrencial.includes(attribute)) {
+  if (arrayIncludes(concurrencial, attribute)) {
+    assertString(value)
     // Checks for validity and availability (+ reserve words for username)
     await availability_[attribute](value, currentValue)
     return updateAttribute(user, attribute, value)
