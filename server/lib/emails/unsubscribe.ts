@@ -5,19 +5,26 @@ import type { NotificationKey } from '#models/attributes/user'
 import { publicOrigin } from '#server/config'
 import { buildBase64EncodedJson, parseBase64EncodedJson } from '#tests/api/utils/auth'
 import type { AbsoluteUrl } from '#types/common'
-import type { Email, UserId } from '#types/user'
+import type { UserId } from '#types/user'
 
-const userEndpoint = `${publicOrigin}/api/user` as AbsoluteUrl
+const endpoint = `${publicOrigin}/api/auth` as AbsoluteUrl
 
-export function getEmailUnsubscribeUrl (email: Email, userId: UserId, notificationKey: NotificationKey) {
-  return getUnsubscribeUrl({ user: userId, email, set: `notifications.${notificationKey}=false` })
+export function getEmailUnsubscribeUrl (userId: UserId, notificationKey: NotificationKey) {
+  return getUnsubscribeUrl({
+    userId,
+    endpoint: 'user',
+    action: 'update',
+    // Mimick server/controllers/user/update.ts interface
+    attribute: `settings.notifications.${notificationKey}`,
+    value: false,
+  })
 }
 
 export function getUnsubscribeUrl (payload: unknown) {
   const stringifiedPayload = buildBase64EncodedJson(payload)
   const signature = autoRotatedKeys.sign(stringifiedPayload)
-  return buildUrl(userEndpoint, {
-    action: 'unsubscribe',
+  return buildUrl(endpoint, {
+    action: 'signed-url',
     data: stringifiedPayload,
     sig: signature,
   })
