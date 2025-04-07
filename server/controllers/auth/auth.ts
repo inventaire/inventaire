@@ -1,6 +1,6 @@
 import emailConfirmation from '#controllers/auth/email_confirmation'
 import resetPassword from '#controllers/auth/reset_password'
-import { signedUrlGetter, signedUrlAction } from '#controllers/auth/signed_url_action'
+import { signedUrlGetter, signedUrlAction } from '#controllers/auth/signed_url'
 import updatePassword from '#controllers/auth/update_password'
 import wikidataOauth from '#controllers/auth/wikidata_oauth'
 import { actionsControllersFactory } from '#lib/actions_controllers'
