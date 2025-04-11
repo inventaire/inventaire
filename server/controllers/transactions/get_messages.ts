@@ -14,3 +14,5 @@ export default {
   sanitization,
   controller,
 }
+
+export type GetTransactionsMessagesResponse = Awaited<ReturnType<typeof controller>>
