@@ -19,12 +19,16 @@ export const remoteEntity = {
   remoteEntityOnly: true,
 } as const
 
-export const uniqueString = {
+const baseString = {
   datatype: 'string',
   primitiveType: 'string',
   format: trim,
   // Aligning max length on Wikidata's limit
   validate: ({ value }) => boundedString(value, 1, 1500),
+} as const
+
+export const uniqueString = {
+  ...baseString,
   uniqueValue: true,
 } as const
 
@@ -40,7 +44,7 @@ export const languageEntity = { ...entity, entityValueTypes: [ 'language' ] } as
 export const uniqueEntity = { ...entity, uniqueValue: true } as const
 
 export const concurrentAndUniqueString = { ...uniqueString, concurrency: true } as const
-export const concurrentAndUniqueExternalId = { ...concurrentAndUniqueString, datatype: 'external-id' } as const
+export const concurrentExternalId = { ...baseString, concurrency: true, datatype: 'external-id' } as const
 
 export const url = {
   datatype: 'url',

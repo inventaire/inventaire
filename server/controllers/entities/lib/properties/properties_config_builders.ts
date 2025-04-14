@@ -7,7 +7,7 @@ import { objectValues } from '#lib/utils/base'
 import { getPluralType } from '#lib/wikidata/aliases'
 import type { EntityType } from '#types/entity'
 import { allowedValuesPerTypePerProperty } from './allowed_values_per_type_per_property.js'
-import { concurrentAndUniqueString, concurrentAndUniqueExternalId, uniqueEntity } from './properties_config_bases.js'
+import { concurrentAndUniqueString, concurrentExternalId, uniqueEntity } from './properties_config_bases.js'
 
 export function isbnProperty (num: 10 | 13) {
   return {
@@ -28,7 +28,7 @@ export function isbnProperty (num: 10 | 13) {
 // on their Wikidata property page P1793 statement
 export function externalId (regex) {
   return {
-    ...concurrentAndUniqueExternalId,
+    ...concurrentExternalId,
     format: trim,
     validate: ({ value }) => regex.test.bind(regex)(value),
   } as const
@@ -36,7 +36,7 @@ export function externalId (regex) {
 
 export function typedExternalId (regexPerType: Partial<Record<EntityType, RegExp>>) {
   return {
-    ...concurrentAndUniqueExternalId,
+    ...concurrentExternalId,
     typeSpecificValidation: true,
     format: trim,
     validate: ({ value, entityType }) => {
@@ -68,9 +68,9 @@ export function allowedPropertyValues (property: keyof typeof allowedValuesPerTy
   } as const
 }
 
-export function externalIdWithFormatter ({ regex, format }) {
+export function externalIdWithFormatter ({ regex, format }: { regex: RegExp, format: (str: string) => string }) {
   return {
-    ...concurrentAndUniqueExternalId,
+    ...concurrentExternalId,
     format,
     validate: ({ value }) => regex.test.bind(regex)(value),
   } as const
