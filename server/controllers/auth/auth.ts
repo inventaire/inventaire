@@ -1,5 +1,6 @@
 import emailConfirmation from '#controllers/auth/email_confirmation'
 import resetPassword from '#controllers/auth/reset_password'
+import { signedUrlGetter, signedUrlAction } from '#controllers/auth/signed_url'
 import updatePassword from '#controllers/auth/update_password'
 import wikidataOauth from '#controllers/auth/wikidata_oauth'
 import { actionsControllersFactory } from '#lib/actions_controllers'
@@ -11,6 +12,7 @@ export default {
     public: {
       'username-availability': usernameAvailability,
       'email-availability': emailAvailability,
+      'signed-url': signedUrlGetter,
     },
     authentified: {
       'wikidata-oauth': wikidataOauth,
@@ -23,6 +25,7 @@ export default {
       login,
       logout,
       'reset-password': resetPassword,
+      'signed-url': signedUrlAction,
     },
     authentified: {
       'email-confirmation': emailConfirmation,

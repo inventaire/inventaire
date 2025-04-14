@@ -1,9 +1,8 @@
 import cookieParser from 'cookie-parser'
 import cookieSession from 'cookie-session'
-import Keygrip from 'keygrip'
 import passport from 'passport'
 import oauthServer from '#controllers/auth/oauth_server'
-import autoRotatedKeys from '#lib/auto_rotated_keys'
+import { autoRotatedKeys } from '#lib/auto_rotated_keys'
 import { softwareName } from '#lib/package'
 import passport_ from '#lib/passport/passport'
 import { expired } from '#lib/utils/base'
@@ -19,8 +18,7 @@ const cookieSessionParams = {
   name: `${softwareName}${suffix}:session`,
   maxAge: cookieMaxAge,
 
-  // For a list of available algorithms, run `openssl list -digest-algorithms`
-  keys: new Keygrip(autoRotatedKeys, 'sha256', 'base64'),
+  keys: autoRotatedKeys,
 
   // See https://developer.mozilla.org/docs/Web/HTTP/Headers/Set-Cookie/SameSite
   // and https://web.dev/samesite-cookies-explained/

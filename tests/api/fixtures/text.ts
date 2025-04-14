@@ -2,6 +2,7 @@ import { sampleSize } from 'lodash-es'
 import { someNames } from '#fixtures/names'
 import { someWords } from '#fixtures/words'
 import { getRandomString } from '#lib/utils/random_string'
+import type { Email } from '#types/user'
 
 const capitalize = word => word[0].toUpperCase() + word.slice(1).toLowerCase()
 
@@ -19,4 +20,4 @@ export function randomLongWord (wordLength) {
 }
 
 export const humanName = () => `${firstName()} ${firstName()}`
-export const getSomeEmail = () => `${firstName()}@${firstName()}.org`
+export const getSomeEmail = () => `${firstName()}@${firstName()}.org`.toLowerCase() as Email

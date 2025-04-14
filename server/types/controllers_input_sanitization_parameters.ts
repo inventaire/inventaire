@@ -92,12 +92,14 @@ interface WellknownSanitizedParameters {
 interface GenericsBasedSanitizedParameters {
   claims: Claims
   container: string
+  data: string
   event: EventName
   height: number
   labels: Labels
   open: boolean
   redirect: boolean
   searchable: boolean
+  sig: string
   sort: boolean
   width: number
 }
