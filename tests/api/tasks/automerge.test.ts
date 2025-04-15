@@ -1,5 +1,5 @@
 import 'should'
-import ASCIIFolder from 'fold-to-ascii'
+import ASCIIDirectory from 'fold-to-ascii'
 import { cloneDeep } from 'lodash-es'
 import { putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { prefixifyIsbn } from '#controllers/entities/lib/prefix'
@@ -123,7 +123,7 @@ describe('tasks:automerge', () => {
   })
 })
 
-const normalize = (str: string) => ASCIIFolder.foldMaintaining(str.toLowerCase().normalize())
+const normalize = (str: string) => ASCIIDirectory.foldMaintaining(str.toLowerCase().normalize())
 
 async function forceUpdateEntityClaims (entity, claims, userId = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab') {
   // By pass API entity validations,

@@ -2,10 +2,10 @@ import parseUrl from 'parseurl'
 import { absolutePath } from '#lib/absolute_path'
 import { bundleError } from '#lib/error/pre_filled'
 
-const publicFolder = absolutePath('client', 'public')
+const publicDirectory = absolutePath('client', 'public')
 
 const indexOptions = {
-  root: publicFolder,
+  root: publicDirectory,
   headers: {
     'cache-control': 'no-cache, no-store, must-revalidate',
     // Opt-out from Google FLoC, see https://plausible.io/blog/google-floc

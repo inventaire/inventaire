@@ -25,8 +25,8 @@ elastic_origin=$(node -p "require('config').elasticsearch.origin")
 elastic_index_url="${elastic_origin}/${database_name}"
 elastic_curl_options=$(node -p "require('config').elasticsearch.selfSignedCertificate ? '--insecure' : ''")
 
-leveldb_folder_path_base=$(tsx ./server/lib/absolute_path.ts root db/leveldb)
-leveldb_folder_path=$(node -p "require('config').db.name('$leveldb_folder_path_base')")
+leveldb_directory_path_base=$(tsx ./server/lib/absolute_path.ts root db/leveldb)
+leveldb_directory_path=$(node -p "require('config').db.name('$leveldb_directory_path_base')")
 
 docs_indexed(){
   curl "$elastic_curl_options" -s "${elastic_index_url}/_stats" | jq ".indices[\"${database_name}\"].total.docs.count // 0"
@@ -39,7 +39,7 @@ database_name: ${database_name}\e[0m
 
 couchdb_database_url: \e[0;32m${couchdb_database_url}\e[0m
 elastic_index_url: \e[0;32m${elastic_index_url}\e[0m
-leveldb_folder_path: \e[0;32m${leveldb_folder_path}\e[0m
+leveldb_directory_path: \e[0;32m${leveldb_directory_path}\e[0m
 
 currently indexed documents: $(docs_indexed)
 "

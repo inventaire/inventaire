@@ -1,5 +1,5 @@
 // This config file contains the default values for all environments.
-// Override by creating per-environment files following the same structure in this same folder
+// Override by creating per-environment files following the same structure in this same directory
 // The file priority order can be found here https://github.com/node-config/node-config/wiki/Configuration-Files#file-load-order
 
 // For example, create a specific file named `local.cjs`
@@ -136,7 +136,7 @@ const config = {
     },
     // logs CouchDB requests parameters
     debug: false,
-    backupFolder: 'backups/couchdb',
+    backupDirectory: 'backups/couchdb',
   },
 
   leveldb: {
@@ -216,7 +216,7 @@ const config = {
     // Developpement purpose: allow to automatically find missing i18n keys to translate
     // It enables the api/i18n endpoint and its i18nMissingKeys controller
     autofix: false,
-    srcFolderPath: '../inventaire-i18n/src',
+    srcDirectoryPath: '../inventaire-i18n/src',
   },
 
   // Users inventories, shelves, and groups RSS feed configuration
@@ -282,7 +282,7 @@ const config = {
     mode: 'local',
     local: {
       // Storage path relative to the project root
-      folder: './storage',
+      directory: './storage',
     },
     // Swift parameters are required only when mediaStorage mode is set to 'swift'
     swift: {

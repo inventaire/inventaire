@@ -43,7 +43,7 @@ const config = {
     mode: 'local',
     local: {
       // Storage path relative to the project root
-      folder: './storage_federated',
+      directory: './storage_federated',
     },
   },
 }

@@ -18,30 +18,30 @@ fi
 # Set after $entities_db_authentified_url to allow $1 to be an unbound variable
 set -u
 
-folder=$(tsx ./server/lib/absolute_path.ts root dumps/inv)
+directory=$(tsx ./server/lib/absolute_path.ts root dumps/inv)
 today=$(date -I)
-today_folder="${folder}/${today}"
+today_directory="${directory}/${today}"
 
 full_database_export_filename="entities.full.ndjson"
-full_database_export_path="${today_folder}/${full_database_export_filename}"
+full_database_export_path="${today_directory}/${full_database_export_filename}"
 
 echo "full_database_export_path: $full_database_export_path"
 
 entities_export_filename="entities.ndjson"
-entities_export_path="${today_folder}/${entities_export_filename}"
+entities_export_path="${today_directory}/${entities_export_filename}"
 
 redirections_export_filename="redirections.ndjson"
-redirections_export_path="${today_folder}/${redirections_export_filename}"
+redirections_export_path="${today_directory}/${redirections_export_filename}"
 
 turtle_export_filename="entities.ttl"
-turtle_export_path="${today_folder}/${turtle_export_filename}"
+turtle_export_path="${today_directory}/${turtle_export_filename}"
 
-echo "dumps folder: $today_folder"
+echo "dumps directory: $today_directory"
 
-mkdir -p "$today_folder"
+mkdir -p "$today_directory"
 
-rm -f "$folder/latest"
-ln -sr "$today_folder" "$folder/latest"
+rm -f "$directory/latest"
+ln -sr "$today_directory" "$directory/latest"
 
 echo "export entities database: $full_database_export_path"
 ./scripts/couchdb/export_database_as_ndjson.sh "$entities_db_authentified_url" > "$full_database_export_path"

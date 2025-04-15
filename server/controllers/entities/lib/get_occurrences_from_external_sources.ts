@@ -1,5 +1,5 @@
 // A module to look for works labels occurrences in an author's external databases reference.
-import ASCIIFolder from 'fold-to-ascii'
+import ASCIIDirectory from 'fold-to-ascii'
 // BNB SPARQL service is currently suspended, see https://bnb.data.bl.uk/sparql:
 // "The Linked Open BNB is moving to a new home in Spring 2022"
 // import getBnbAuthorWorksTitles from '#data/bne/get_bnb_author_works_titles'
@@ -121,4 +121,4 @@ const createOccurrencesFromExactTitles = worksLabels => result => {
 
 // Example of a case requiring ascii-folding:
 // when "’" is used on one side and "'" on the other
-const normalize = (str: string) => ASCIIFolder.foldMaintaining(str.toLowerCase().normalize())
+const normalize = (str: string) => ASCIIDirectory.foldMaintaining(str.toLowerCase().normalize())

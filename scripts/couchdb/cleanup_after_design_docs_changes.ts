@@ -2,7 +2,7 @@
 
 // This cleanup script does several things:
 // - Delete the design docs created in CouchDB by ./preload_design_docs_changes
-// - Remove the symbolic links created in designDocFolder by ./preload_design_docs_changes
+// - Remove the symbolic links created in designDocDirectory by ./preload_design_docs_changes
 // - Trigger view cleanups to recover the disk space used by now outdated view indexes
 //   See https://docs.couchdb.org/en/3.1.2/maintenance/compaction.html#compact-views-cleanup
 

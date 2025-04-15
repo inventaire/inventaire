@@ -14,15 +14,15 @@ Assuming that CouchDB is running on `localhost:5984`, and that we want to backup
 npm run couchdb:backup-databases http://yourcouchdbusername:yourcouchdbpassword@localhost:5984 prod
 ```
 
-With default configuration, backups are stored at root application folder : `./backups/couchdb`
+With default configuration, backups are stored at root application directory : `./backups/couchdb`
 
-You can customize this target folder in `config/local.cjs`:
+You can customize this target directory in `config/local.cjs`:
 
 ```js
 module.exports = {
   ...
   db: {
-    backupFolder: 'backups/couchdb'
+    backupDirectory: 'backups/couchdb'
   }
   ...
 }
