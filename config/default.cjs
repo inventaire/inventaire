@@ -140,6 +140,7 @@ const config = {
   },
 
   leveldb: {
+    directory: './db/leveldb',
     inMemoryLRUCacheSize: 64 * 1024 ** 2,
     defaultCacheTtl: 30 * 24 * 60 * 60 * 1000,
     ttlCheckFrequency: 60000,
