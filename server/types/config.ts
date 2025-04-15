@@ -67,6 +67,7 @@ export type Config = ReadonlyDeep<{
   }
 
   leveldb: {
+    folder: Path
     inMemoryLRUCacheSize: number
     defaultCacheTtl: number
     ttlCheckFrequency: number

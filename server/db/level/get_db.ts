@@ -1,19 +1,18 @@
+import { resolve } from 'node:path'
 import level from 'level-party'
-import { absolutePath } from '#lib/absolute_path'
-import { newError } from '#lib/error/error'
-import { exists } from '#lib/fs'
+import { projectRoot } from '#lib/absolute_path'
+import { assertReadWriteAccess } from '#lib/fs'
 import { info } from '#lib/utils/logs'
 import config from '#server/config'
 
-const dbFolder = absolutePath('root', 'db')
-if (!(await exists(dbFolder))) {
-  throw newError('can not find db folder', 500, { dbFolder })
-}
+// Resolve relatively to the project root, unless it's an absolute path
+const leveldbPathBase = resolve(projectRoot, config.leveldb.folder)
+
+await assertReadWriteAccess(leveldbPathBase)
 
 const { suffix } = config.db
 const { inMemoryLRUCacheSize } = config.leveldb
-const generalDbPathBase = `${dbFolder}/leveldb`
-const generalDbFolderPath = suffix ? `${generalDbPathBase}-${suffix}` : generalDbPathBase
+const generalDbFolderPath = suffix ? `${leveldbPathBase}-${suffix}` : leveldbPathBase
 
 // See https://github.com/Level/leveldown#options
 const leveldownOptions = {

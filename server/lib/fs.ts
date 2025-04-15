@@ -1,4 +1,4 @@
-import { stat, unlink, mkdir } from 'node:fs/promises'
+import { stat, unlink, mkdir, constants, access } from 'node:fs/promises'
 import { promisify } from 'node:util'
 import mvWithCallback from 'mv'
 import type { Path } from '#types/common'
@@ -20,6 +20,10 @@ export async function exists (path: Path) {
   } catch {
     return false
   }
+}
+
+export async function assertReadWriteAccess (path: Path) {
+  await access(path, constants.W_OK | constants.R_OK)
 }
 
 export const fileOwnerOnlyReadWriteMode = 0o600
