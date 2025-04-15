@@ -9,24 +9,24 @@ set -euo pipefail
 
 couchdb_url=$1
 suffix=${2:-""}
-backup_folder_base=$(node -p "require('config').db.backupFolder")
-echo "backups folder: $backup_folder_base"
+backup_directory_base=$(node -p "require('config').db.backupDirectory")
+echo "backups directory: $backup_directory_base"
 
-backup_folder_name=$(ls -1 --reverse --color=never "$backup_folder_base" | fzf --no-info --header "Select a backup folder" --reverse --preview "du -ah $backup_folder_base/{1}" --exit-0)
-backup_folder="$backup_folder_base/$backup_folder_name"
+backup_directory_name=$(ls -1 --reverse --color=never "$backup_directory_base" | fzf --no-info --header "Select a backup directory" --reverse --preview "du -ah $backup_directory_base/{1}" --exit-0)
+backup_directory="$backup_directory_base/$backup_directory_name"
 
-echo "picked backup folder: $backup_folder"
+echo "picked backup directory: $backup_directory"
 
-ops_logs_folder=$(mktemp --directory /tmp/databases_restoration.XXXXX)
+ops_logs_directory=$(mktemp --directory /tmp/databases_restoration.XXXXX)
 
-echo "operations logs folder: $ops_logs_folder"
+echo "operations logs directory: $ops_logs_directory"
 
 drop_revs(){
   sed --regexp-extended 's/,"_rev":"[0-9]+-[0-9a-f]{32}"//'
 }
 
 for name in $(./scripts/couchdb/get_databases_names.ts "$suffix") ; do
-  file_path="$backup_folder/$name.ndjson.gz"
+  file_path="$backup_directory/$name.ndjson.gz"
   echo -e "\nrestoring $name from $file_path"
   db_url="$couchdb_url/$name"
   db_doc_counts=$(curl --silent "$db_url" | jq .doc_count || exit 1)
@@ -35,6 +35,6 @@ for name in $(./scripts/couchdb/get_databases_names.ts "$suffix") ; do
   else
     echo "$name db does not exist: creating and restoring"
     curl -XPUT "$db_url"
-    gzip --decompress < "$file_path" | drop_revs | couchdb-bulk2 "$db_url" > "$ops_logs_folder/$name.success" 2> "$ops_logs_folder/$name.errors"
+    gzip --decompress < "$file_path" | drop_revs | couchdb-bulk2 "$db_url" > "$ops_logs_directory/$name.success" 2> "$ops_logs_directory/$name.errors"
   fi
 done

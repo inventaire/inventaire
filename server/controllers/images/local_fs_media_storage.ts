@@ -1,10 +1,10 @@
 // Retrieves pictures stored on the server itself, when mediaStorage mode=local.
 // Images urls look like /img/${container}/${hash}"
-// expect the pictures' files to be in ${localStorageFolder}/${container}/
+// expect the pictures' files to be in ${localStorageDirectory}/${container}/
 
 import parseUrl from 'parseurl'
 import { uploadContainersNames } from '#controllers/images/lib/containers'
-import { localStorageFolder } from '#controllers/images/lib/local_client'
+import { localStorageDirectory } from '#controllers/images/lib/local_client'
 import { absolutePath } from '#lib/absolute_path'
 import { bundleError } from '#lib/error/pre_filled'
 import { mkdirp } from '#lib/fs'
@@ -13,14 +13,14 @@ import { arrayIncludes } from '#lib/utils/base'
 import { logError } from '#lib/utils/logs'
 import { federatedMode } from '#server/config'
 
-const imagesAssetsFolder = absolutePath('server', 'assets/images')
+const imagesAssetsDirectory = absolutePath('server', 'assets/images')
 
-async function createLocalImageStorageSubFolder (container: string) {
-  const folderPath = `${localStorageFolder}/${container}`
-  await mkdirp(folderPath)
+async function createLocalImageStorageSubDirectory (container: string) {
+  const directoryPath = `${localStorageDirectory}/${container}`
+  await mkdirp(directoryPath)
 }
 
-await Promise.all(uploadContainersNames.map(createLocalImageStorageSubFolder))
+await Promise.all(uploadContainersNames.map(createLocalImageStorageSubDirectory))
 
 export default {
   get: (req, res) => {
@@ -56,9 +56,9 @@ export default {
 
     let filepath
     if (container === 'assets') {
-      filepath = `${imagesAssetsFolder}/${filename}`
+      filepath = `${imagesAssetsDirectory}/${filename}`
     } else {
-      filepath = `${localStorageFolder}/${container}/${filename}`
+      filepath = `${localStorageDirectory}/${container}/${filename}`
     }
 
     res.sendFile(filepath, options, err => {

@@ -63,7 +63,7 @@ export type Config = ReadonlyDeep<{
     }
     /** logs CouchDB requests parameters */
     debug: boolean
-    backupFolder: Path
+    backupDirectory: Path
   }
 
   leveldb: {
@@ -102,7 +102,7 @@ export type Config = ReadonlyDeep<{
   i18n: {
     // enable the api/i18n endpoint and its i18nMissingKeys controller
     autofix: boolean
-    srcFolderPath: Path
+    srcDirectoryPath: Path
   }
 
   mailer: {
@@ -145,7 +145,7 @@ export type Config = ReadonlyDeep<{
     }
     mode: 'local' | 'swift'
     local: {
-      folder?: Path
+      directory?: Path
     }
     swift: {
       username: string

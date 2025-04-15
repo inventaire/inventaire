@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url'
 
 export const projectRoot = fileURLToPath(new URL('../..', import.meta.url))
 
-const folders = {
+const directories = {
   root: projectRoot.replace(/\/$/, ''),
   client: `${projectRoot}client`,
   server: `${projectRoot}server`,
@@ -11,16 +11,16 @@ const folders = {
   db: `${projectRoot}server/db`,
 }
 
-export function absolutePath (folderAlias: keyof typeof folders, filePath: string) {
-  const folder = folders[folderAlias]
-  if (!folder) throw new Error(`folder not found: ${folderAlias}`)
-  return `${folder}/${filePath}`
+export function absolutePath (directoryAlias: keyof typeof directories, filePath: string) {
+  const directory = directories[directoryAlias]
+  if (!directory) throw new Error(`directory not found: ${directoryAlias}`)
+  return `${directory}/${filePath}`
 }
 
 // Allow to be called from scripts as:
-//   node server/lib/absolute_path.js folderAlias filePath
+//   node server/lib/absolute_path.js directoryAlias filePath
 if (import.meta.url.includes(process.argv[1])) {
-  const [ folderAlias, filePath ] = process.argv.slice(2)
+  const [ directoryAlias, filePath ] = process.argv.slice(2)
   // @ts-expect-error
-  console.log(absolutePath(folderAlias, filePath))
+  console.log(absolutePath(directoryAlias, filePath))
 }

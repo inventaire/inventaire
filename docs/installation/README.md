@@ -69,7 +69,7 @@ cd inventaire
 npm install
 ```
 
-You also may setup the root folder variable:
+You also may setup the root directory variable:
 
 ```sh
 PROJECT_ROOT=$PWD

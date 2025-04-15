@@ -11,7 +11,7 @@ rm -rf ./dist/server
 # Always use the same directory to find the previous tsbuildinfo file
 tmpdir="/tmp/inv-pre-dist"
 
-# Use a temporay pre-dist folder to avoid rm -rf symlinks defined hereafter
+# Use a temporay pre-dist directory to avoid rm -rf symlinks defined hereafter
 # as that could mess with currently running LevelDB operations
 tsc  --project ./tsconfig.build.json --diagnostics --outDir "$tmpdir"
 # .hbs files are not copied by tsc

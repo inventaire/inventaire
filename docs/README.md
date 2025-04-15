@@ -1,6 +1,6 @@
 # Documentation
 
-This folder hosts the main **technical documentation** about Inventaire, including how to set up a development or a production environment.
+This directory hosts the main **technical documentation** about Inventaire, including how to set up a development or a production environment.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -24,8 +24,8 @@ For details on how to install all of those:
 
 ### Configure
 
-See [configuration]https://git.inventaire.io/inventaire/tree/main/docs/configuration) folder.
+See [configuration]https://git.inventaire.io/inventaire/tree/main/docs/configuration) directory.
 
 ### Administrate
 
-See [administration]https://git.inventaire.io/inventaire/tree/main/docs/administration) folder.
+See [administration]https://git.inventaire.io/inventaire/tree/main/docs/administration) directory.

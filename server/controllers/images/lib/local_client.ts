@@ -4,9 +4,9 @@ import { mv, rm } from '#lib/fs'
 import config from '#server/config'
 
 const { local: localStorage } = config.mediaStorage
-export const localStorageFolder = resolve(projectRoot, localStorage.folder)
+export const localStorageDirectory = resolve(projectRoot, localStorage.directory)
 
-const filePath = (container, filename) => `${localStorageFolder}/${container}/${filename}`
+const filePath = (container, filename) => `${localStorageDirectory}/${container}/${filename}`
 
 export default {
   putImage: async (container, path, filename) => {

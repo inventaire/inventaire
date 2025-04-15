@@ -4,16 +4,16 @@ An inventaire instance is storing uploaded images (from users profile pictures a
 
 ## Local storage
 
-By default, Inventaire is configured to store object locally in a default folder, defined by config `mediaStorage.local.folder`.
+By default, Inventaire is configured to store object locally in a default directory, defined by config `mediaStorage.local.directory`.
 
-To override this folder, you may add to `config/local.cjs`:
+To override this directory, you may add to `config/local.cjs`:
 
 ```js
 module.exports = {
   mediaStorage: {
     local: {
       // Storage path relative to the project root
-      folder: './storage'
+      directory: './storage'
     }
   },
 }
@@ -36,7 +36,7 @@ source ./openrc_ovh.sh
 # List containers in the ENV REGIONS
 swift list
 
-# Create a container with the content of the current folder
+# Create a container with the content of the current directory
 swift upload users .
 
 # Make that new container public

@@ -19,7 +19,7 @@ import { authReq, getUser } from './utils.js'
 
 const { mediaStorage } = config
 mediaStorage.mode.should.equal('local')
-const localStorageFolder = mediaStorage.local.folder
+const localStorageDirectory = mediaStorage.local.directory
 
 const uploadImageFromUrl = async ({ container, url }) => {
   return authReq('post', '/api/images?action=convert-url', { container, url })
@@ -66,7 +66,7 @@ export async function uploadSomeImage ({ container, imageFilePath, preventAutoRe
 export function localContainerHasImage ({ container, hash, url }) {
   if (url) [ container, hash ] = url.split('/').slice(2)
   assertString(hash)
-  const localImagePath = `${localStorageFolder}/${container}/${hash}`
+  const localImagePath = `${localStorageDirectory}/${container}/${hash}`
   try {
     // Using the sync method so that consumers can chain this function with ".shoud.be.true()"
     const res = fs.statSync(localImagePath)

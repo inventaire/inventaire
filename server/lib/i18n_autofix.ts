@@ -8,27 +8,27 @@ import config from '#server/config'
 import type { WdPropertyId } from '#types/entity'
 import { wait } from './promises.js'
 
-const { autofix, srcFolderPath } = config.i18n
+const { autofix, srcDirectoryPath } = config.i18n
 
-const missingSrcFolderPathMessage = 'Set config.i18n.srcFolderPath in config/local-dev.cjs to automatically add missing i18n keys to your local inventaire-i18n repository'
+const missingSrcDirectoryPathMessage = 'Set config.i18n.srcDirectoryPath in config/local-dev.cjs to automatically add missing i18n keys to your local inventaire-i18n repository'
 export let appendToClientKeys = (keys: string[]) => {
-  warn(keys, missingSrcFolderPathMessage)
+  warn(keys, missingSrcDirectoryPathMessage)
 }
 
 export let appendToServerKeys = (key: string) => {
-  warn(key, missingSrcFolderPathMessage)
+  warn(key, missingSrcDirectoryPathMessage)
 }
 
-let resolvedSrcFolderPath
+let resolvedSrcDirectoryPath
 if (autofix) {
   try {
-    resolvedSrcFolderPath = resolve(process.cwd(), srcFolderPath)
-    await stat(resolvedSrcFolderPath)
+    resolvedSrcDirectoryPath = resolve(process.cwd(), srcDirectoryPath)
+    await stat(resolvedSrcDirectoryPath)
 
-    const clientSourceFile = `${resolvedSrcFolderPath}/client/en.json`
-    const clientWikidataIdsFile = `${resolvedSrcFolderPath}/client/keys_translated_from_wikidata`
-    const serverSourceFile = `${resolvedSrcFolderPath}/server/en.json`
-    const serverWikidataIdsFile = `${resolvedSrcFolderPath}/server/keys_translated_from_wikidata`
+    const clientSourceFile = `${resolvedSrcDirectoryPath}/client/en.json`
+    const clientWikidataIdsFile = `${resolvedSrcDirectoryPath}/client/keys_translated_from_wikidata`
+    const serverSourceFile = `${resolvedSrcDirectoryPath}/server/en.json`
+    const serverWikidataIdsFile = `${resolvedSrcDirectoryPath}/server/keys_translated_from_wikidata`
 
     // Using _ as the convention to identify short keys: ex: awesome_title
     // (that is, keys with an English value different than the key itself)
@@ -89,7 +89,7 @@ if (autofix) {
       }
     }
   } catch (err) {
-    err.context = { resolvedSrcFolderPath, srcFolderPath }
-    warn(err, missingSrcFolderPathMessage)
+    err.context = { resolvedSrcDirectoryPath, srcDirectoryPath }
+    warn(err, missingSrcDirectoryPathMessage)
   }
 }

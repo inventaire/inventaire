@@ -9,7 +9,7 @@ Environment:
 # Used to determine
 # - CouchDB host, credentials, and databases names
 # - Elasticsearch host, and indexes names
-# - LevelDB folder (relevant for document formatters relying on cached values)
+# - LevelDB directory (relevant for document formatters relying on cached values)
 # Any of those values can be overwritten by setting the corresponding parameter in config/local.cjs
 export NODE_ENV=production
 ```

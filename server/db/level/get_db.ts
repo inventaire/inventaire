@@ -5,15 +5,15 @@ import { exists } from '#lib/fs'
 import { info } from '#lib/utils/logs'
 import config from '#server/config'
 
-const dbFolder = absolutePath('root', 'db')
-if (!(await exists(dbFolder))) {
-  throw newError('can not find db folder', 500, { dbFolder })
+const dbDirectory = absolutePath('root', 'db')
+if (!(await exists(dbDirectory))) {
+  throw newError('can not find db directory', 500, { dbDirectory })
 }
 
 const { suffix } = config.db
 const { inMemoryLRUCacheSize } = config.leveldb
-const generalDbPathBase = `${dbFolder}/leveldb`
-const generalDbFolderPath = suffix ? `${generalDbPathBase}-${suffix}` : generalDbPathBase
+const generalDbPathBase = `${dbDirectory}/leveldb`
+const generalDbDirectoryPath = suffix ? `${generalDbPathBase}-${suffix}` : generalDbPathBase
 
 // See https://github.com/Level/leveldown#options
 const leveldownOptions = {
@@ -34,5 +34,5 @@ const leveldownOptions = {
   maxOpenFiles: Infinity,
 }
 
-info(generalDbFolderPath, 'leveldb path')
-export const generalDb = level(generalDbFolderPath, leveldownOptions)
+info(generalDbDirectoryPath, 'leveldb path')
+export const generalDb = level(generalDbDirectoryPath, leveldownOptions)
