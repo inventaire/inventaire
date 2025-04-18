@@ -36,8 +36,9 @@ function genericSubclassesQuery (primaryP31Values: WdEntityUri[], denylist: WdEn
 
 // Those have too many subclasses, some with large irrelevant subgraphs (ex: song (wd:Q7366), software (wd:Q7397))
 const noRecursionWorkP31Values = [
-  'wd:Q7725634',
-  'wd:Q47461344',
+  'wd:Q13136', // reference work
+  'wd:Q7725634', // literary work
+  'wd:Q47461344', // written work
 ] as WdEntityUri[]
 const tailoredWellknownWorkTypes = difference(workP31Values, [
   'wd:Q571', // book

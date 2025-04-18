@@ -80,11 +80,14 @@ async function makeQueries (type: PluralizedEntityType, sparqlRequests: string[]
       logError(err, `failed query: ${sparql}`)
     }
   }
+  const filteredIds = []
   // This check is prohibitively expensive to do within queries, but quite cheap when using limit
   // TODO: find a way to bundle those requests while preserving the fast response
-  const filteredIds = await Promise.all(uniq(ids).map(async id => {
-    if (await hasInstance(id)) return id
-  }))
+  for (const id of uniq(ids)) {
+    // Making requests sequentially to avoid building up a huge request queue in front of the http sockets,
+    // which would result in timeouts
+    if (await hasInstance(id)) filteredIds.push(id)
+  }
   return compact(filteredIds).map(prefixifyWd)
 }
 
