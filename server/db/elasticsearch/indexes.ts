@@ -35,20 +35,22 @@ export const syncIndexesList = indexesData
 
 export type IndexedCouchDoc = InvEntityDoc | Item | Group | User | Shelf | Listing
 
-export const indexedEntitiesTypes = [
-  // inventaire and wikidata entities
+export const wdAndInvEntitiesTypes = [
   'works',
   'humans',
   'genres',
   'publishers',
   'series',
   'collections',
+] as const
 
-  // wikidata entities only
+export const wdOnlyEntitiesTypes = [
   'genres',
   'movements',
   'languages',
 ] as const
+
+export const indexedEntitiesTypes = [ ...wdAndInvEntitiesTypes, ...wdOnlyEntitiesTypes ] as const
 
 export const socialTypes = [
   'users',

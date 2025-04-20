@@ -10,6 +10,7 @@ import { getAuthorWorksData } from '#controllers/tasks/lib/get_author_works_data
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { forceArray, someMatch } from '#lib/utils/base'
 import config from '#server/config'
+import type { PropertyUri } from '#types/entity'
 import { automerge, validateAndAutomerge } from './automerge.js'
 import { findAuthorWithMatchingIsbnInWikipediaArticles } from './find_authors_with_isbns_in_wikipedia_articles.js'
 
@@ -97,7 +98,7 @@ function getExternalIdsClaims (claims) {
     }
   }
 
-  return externalIdsClaims
+  return externalIdsClaims as Record<PropertyUri, string[]>
 }
 
 const filterGoodEnoughNewSuggestions = existingTasks => suggestions => {

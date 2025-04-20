@@ -3,6 +3,7 @@ import {
   indexedTypes,
   indexedEntitiesTypes,
   socialTypes,
+  wdAndInvEntitiesTypes,
 } from '#db/elasticsearch/indexes'
 import { elasticReqOptions, formatError, getHitsAndTotal } from '#lib/elasticsearch'
 import { newError } from '#lib/error/error'
@@ -50,8 +51,14 @@ export async function typeSearch (params) {
     queryIndexes = types.map(type => indexes[type])
     body = socialQueryBuilder({ search, limit, minScore })
   } else {
-    queryIndexes = filter ? entitiesIndexesPerFilter[filter] : allEntitiesIndexes
-    if (queryIndexes == null) throw newError('invalid filter', 500, { filter })
+    if (filter) {
+      if (!(filter in entitiesIndexesPerFilter)) throw newError('invalid filter', 500, { filter })
+      queryIndexes = entitiesIndexesPerFilter[filter]
+    } else if (!someMatch(types, wdAndInvEntitiesTypes)) {
+      queryIndexes = entitiesIndexesPerFilter.wd
+    } else {
+      queryIndexes = allEntitiesIndexes
+    }
     body = entitiesQueryBuilder({ lang, types, search, limit, offset, exact, minScore, claim, safe })
   }
 

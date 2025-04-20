@@ -77,7 +77,7 @@ export function getHashCode (str: string) {
   return Math.abs(hash)
 }
 
-export function someMatch (arrayA, arrayB) {
+export function someMatch (arrayA: string[] | readonly string[], arrayB: string[] | readonly string[]) {
   if (!isArray(arrayA) || !isArray(arrayB)) return false
   for (const valueA of arrayA) {
     for (const valueB of arrayB) {
