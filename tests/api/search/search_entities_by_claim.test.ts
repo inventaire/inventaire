@@ -89,4 +89,10 @@ describe('search:entities:by-claim', async () => {
     foundIdsB.should.containEql(workWithAuthor._id)
     foundIdsB.should.not.containEql(anotherWorkWithThatSameAuthor._id)
   })
+
+  it('should accept a property alone', async () => {
+    const results = await search({ types: 'languages', claim: 'wdt:P424', lang: 'en', search: 'catalan' })
+    const foundIds = map(results, 'id')
+    foundIds.should.containEql('Q7026')
+  })
 })

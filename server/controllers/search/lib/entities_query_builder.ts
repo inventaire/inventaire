@@ -1,4 +1,4 @@
-import { trim } from 'lodash-es'
+import { partition, trim } from 'lodash-es'
 import { languageCodePattern, languagesCodesProperties } from '#controllers/entities/lib/languages'
 import { prefixifyWdProperty } from '#controllers/entities/lib/prefix'
 import { propertiesValuesConstraints as properties } from '#controllers/entities/lib/properties/properties_values_constraints'
@@ -7,6 +7,7 @@ import { newError } from '#lib/error/error'
 import { getSingularTypes } from '#lib/wikidata/aliases'
 import { allowlistedProperties } from '#lib/wikidata/allowlisted_properties'
 import type { PropertyUri } from '#types/entity'
+import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 const prefixedAllowlistedProperties: PropertyUri[] = allowlistedProperties.map(prefixifyWdProperty)
 
@@ -93,7 +94,7 @@ function matchEntities (search, userLang, exact, safe) {
   return shoulds
 }
 
-function exactMatchEntitiesFields (userLang) {
+function exactMatchEntitiesFields (userLang: WikimediaLanguageCode) {
   const fields = [
     'fullLabels.*^2',
     'fullAliases.*',
@@ -107,7 +108,7 @@ function exactMatchEntitiesFields (userLang) {
   return fields
 }
 
-function autoCompleteEntitiesFields (userLang) {
+function autoCompleteEntitiesFields (userLang: WikimediaLanguageCode) {
   const fields = [
     'labels.*^2',
     'aliases.*',
@@ -126,21 +127,45 @@ function autoCompleteEntitiesFields (userLang) {
   return fields
 }
 
-function getClaimFilters (claimParameter) {
+function getClaimFilters (claimParameter: string) {
   return claimParameter
   .split(' ')
-  .map(andCondition => {
+  .flatMap(andCondition => {
     const orConditions = andCondition.split('|').map(trim)
     orConditions.forEach(validatePropertyAndValue)
+    const [ propertiesOnly, propertiesAndValues ] = partition(orConditions, isPropertyUri)
+    return [
+      ...getPropertiesAndValuesFilter(propertiesAndValues as string[]),
+      ...getPropertiesOnlyFilter(propertiesOnly),
+    ]
+  })
+}
+
+function getPropertiesAndValuesFilter (propertiesAndValues: string[]) {
+  if (propertiesAndValues.length > 0) {
+    return [
+      {
+        terms: {
+          claim: propertiesAndValues,
+        },
+      },
+    ]
+  } else {
+    return []
+  }
+}
+
+function getPropertiesOnlyFilter (properties: PropertyUri[]) {
+  return properties.map(property => {
     return {
-      terms: {
-        claim: orConditions,
+      prefix: {
+        claim: `${property}=`,
       },
     }
   })
 }
 
-function validatePropertyAndValue (condition) {
+function validatePropertyAndValue (condition: string) {
   const [ property, value ] = condition.split('=')
   if (!isPropertyUri(property)) {
     throw newError('invalid property', 400, { property })
@@ -148,6 +173,7 @@ function validatePropertyAndValue (condition) {
   if (!allowedProperties.has(property)) {
     throw newError('unknown property', 400, { property, value })
   }
+  if (!value) return
   // Using a custom validation for wdt:P31, to avoid having to pass an entityType
   if (property === 'wdt:P31') {
     if (!isWdEntityUri(value)) {
@@ -163,7 +189,7 @@ function validatePropertyAndValue (condition) {
   }
 }
 
-function matchLanguageCode (search) {
+function matchLanguageCode (search: string) {
   search = search.toLowerCase()
   const claimTerms = languagesCodesProperties.map(property => `${property}=${search}`)
   return {
