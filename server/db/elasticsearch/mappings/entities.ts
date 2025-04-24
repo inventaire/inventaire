@@ -26,5 +26,9 @@ export default {
     updated: date,
     popularity: integer,
     claim: keyword,
+    // Indexing properties separately allows to make `terms` requests
+    // which are cheaper than `prefix` requests, and don't require to set index_prefixes
+    // See https://www.elastic.co/docs/reference/query-languages/query-dsl/query-dsl-prefix-query
+    claimProperty: keyword,
   },
 }

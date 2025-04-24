@@ -22,14 +22,13 @@ export default params => {
     // At least one type should match
     // See https://www.elastic.co/guide/en/elasticsearch/reference/7.10/query-dsl-terms-query.html
     { terms: { type: types } },
+    ...(claim ? getClaimFilters(claim) : []),
   ]
-
-  if (claim) filters.push(...getClaimFilters(claim))
 
   if (!search) minScore = 0
 
   const shoulds = matchEntities(search, userLang, exact, safe)
-  if (types.includes('language') && languageCodePattern.test(search)) {
+  if (types.includes('language') && search && languageCodePattern.test(search)) {
     shoulds.push(matchLanguageCode(search))
   }
 
@@ -130,38 +129,14 @@ function autoCompleteEntitiesFields (userLang: WikimediaLanguageCode) {
 function getClaimFilters (claimParameter: string) {
   return claimParameter
   .split(' ')
-  .flatMap(andCondition => {
+  .map(andCondition => {
     const orConditions = andCondition.split('|').map(trim)
     orConditions.forEach(validatePropertyAndValue)
     const [ propertiesOnly, propertiesAndValues ] = partition(orConditions, isPropertyUri)
-    return [
-      ...getPropertiesAndValuesFilter(propertiesAndValues as string[]),
-      ...getPropertiesOnlyFilter(propertiesOnly),
-    ]
-  })
-}
-
-function getPropertiesAndValuesFilter (propertiesAndValues: string[]) {
-  if (propertiesAndValues.length > 0) {
-    return [
-      {
-        terms: {
-          claim: propertiesAndValues,
-        },
-      },
-    ]
-  } else {
-    return []
-  }
-}
-
-function getPropertiesOnlyFilter (properties: PropertyUri[]) {
-  return properties.map(property => {
-    return {
-      prefix: {
-        claim: `${property}=`,
-      },
-    }
+    const bool = { should: [], minimum_should_match: 1 }
+    if (propertiesAndValues.length > 0) bool.should.push({ terms: { claim: propertiesAndValues as string[] } })
+    if (propertiesOnly.length > 0) bool.should.push({ terms: { claimProperty: propertiesOnly } })
+    return { bool }
   })
 }
 

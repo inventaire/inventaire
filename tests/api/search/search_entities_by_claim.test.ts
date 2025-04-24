@@ -8,7 +8,7 @@ import { shouldNotBeCalled } from '#tests/unit/utils/utils'
 import type { WdEntityUri } from '#types/entity'
 
 const someOtherAuthorUri = 'inv:00000000000000000000000000000000'
-const wikidataUris = [ 'wd:Q1345582', 'wd:Q18120925' ] as WdEntityUri[]
+const wikidataUris = [ 'wd:Q1345582', 'wd:Q18120925', 'wd:Q7026' ] as WdEntityUri[]
 
 describe('search:entities:by-claim', async () => {
   let workAuthor, workWithAuthor
@@ -90,8 +90,20 @@ describe('search:entities:by-claim', async () => {
     foundIdsB.should.not.containEql(anotherWorkWithThatSameAuthor._id)
   })
 
-  it('should accept a property alone', async () => {
+  it('should accept a has-property (aka property-only) condition', async () => {
     const results = await search({ types: 'languages', claim: 'wdt:P424', lang: 'en', search: 'catalan' })
+    const foundIds = map(results, 'id')
+    foundIds.should.containEql('Q7026')
+  })
+
+  it('should accept a has-property condition AND another condition', async () => {
+    const results = await search({ types: 'languages', claim: 'wdt:P424 wdt:P244=sh85020782', lang: 'en' })
+    const foundIds = map(results, 'id')
+    foundIds.should.deepEqual([ 'Q7026' ])
+  })
+
+  it('should accept a has-property condition OR another condition', async () => {
+    const results = await search({ types: 'languages', claim: 'wdt:P50=wd:Q1|wdt:P424', lang: 'en', search: 'catalan' })
     const foundIds = map(results, 'id')
     foundIds.should.containEql('Q7026')
   })

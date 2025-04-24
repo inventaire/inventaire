@@ -14,6 +14,7 @@ import { indexedEntitiesTypes } from '#db/elasticsearch/indexes'
 import { isWdEntityId } from '#lib/boolean_validations'
 import { objectEntries } from '#lib/utils/base'
 import { warn } from '#lib/utils/logs'
+import { objectKeys } from '#lib/utils/types'
 import { getSingularTypes } from '#lib/wikidata/aliases'
 import { formatClaims } from '#lib/wikidata/format_claims'
 import type { Claims, EntityUri, PropertyUri, SerializedEntity, WdRawClaims } from '#types/entity'
@@ -127,6 +128,7 @@ export default async function (entity, options: EntityFormatterOptions = {}) {
   entity.relationsTerms = await getRelationsTerms(entity)
 
   entity.claim = getFlattenedClaims(claims)
+  entity.claimProperty = objectKeys(claims)
 
   // Those don't need to be indexed
   delete entity.claims
