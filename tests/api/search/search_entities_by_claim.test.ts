@@ -107,4 +107,11 @@ describe('search:entities:by-claim', async () => {
     const foundIds = map(results, 'id')
     foundIds.should.containEql('Q7026')
   })
+
+  it('should include the claims for the requested claim properties', async () => {
+    const results = await search({ types: 'languages', claim: 'wdt:P424', lang: 'en', search: 'catalan' })
+    const result = results.find(result => result.id === 'Q7026')
+    result.should.be.ok()
+    result.claims.should.deepEqual({ 'wdt:P424': [ 'ca' ] })
+  })
 })

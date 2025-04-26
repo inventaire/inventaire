@@ -11,7 +11,7 @@ import type { ControllerInputSanitization } from '#types/controllers_input_sanit
 import type { IndexedTypes } from '#types/search'
 import type { Req, Res, Sanitized } from '#types/server'
 import type { UserId } from '#types/user'
-import normalizeResult from './lib/normalize_result.js'
+import { normalizeResult } from './lib/normalize_result.js'
 import { typeSearch } from './lib/type_search.js'
 
 const sanitization = {
@@ -103,7 +103,7 @@ async function entitiesSearch (params: Sanitized<SearchParams>) {
   const { hits, total } = await typeSearch(params)
   const continu = limit + offset
   return {
-    results: hits.map(normalizeResult(lang)),
+    results: hits.map(normalizeResult(lang, claim)),
     total,
     continue: continu < total ? continu : undefined,
   }
