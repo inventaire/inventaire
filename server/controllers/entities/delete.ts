@@ -22,8 +22,8 @@ async function controller (params: SanitizedParameters, req: AuthentifiedReq | R
   const invUris: InvEntityUri[] = await replaceIsbnUrisByInvUris(uris)
   const isDataadmin = hasDataadminAccess(user)
 
+  await verifyThatEntitiesCanBeRemoved(invUris)
   if (isDataadmin) {
-    await verifyThatEntitiesCanBeRemoved(invUris)
     await removeEntitiesByInvId(user, invUris)
   } else {
     await removeOrCreateOrUpdateTasks(user, invUris)
