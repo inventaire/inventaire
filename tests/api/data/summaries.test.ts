@@ -11,7 +11,7 @@ import type { SerializedWdEntity } from '#types/entity'
 
 const endpoint = '/api/data?action=summaries'
 
-describe('summaries', () => {
+describe('data:summaries', () => {
   it('should reject without uri', async () => {
     await publicReq('get', endpoint)
     .then(shouldNotBeCalled)

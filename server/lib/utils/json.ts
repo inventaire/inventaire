@@ -17,8 +17,9 @@ export function writeJsonFile (path, data) {
   return writeFile(path, json)
 }
 
-// Importing JSON is still experimental in Node v18 https://nodejs.org/api/esm.html#import-assertions
+// Importing JSON is experimental until Node v23.1.0 https://nodejs.org/api/esm.html#import-assertions
 // so ESlint doesn't support it and complains with "Parsing error: Unexpected token assert"
 // thus this work around to require json files the old CommonJS way
 // See https://www.stefanjudis.com/snippets/how-to-import-json-files-in-es-modules-node-js/
+// Expects an absolute path
 export const requireJson = createRequire(import.meta.url)

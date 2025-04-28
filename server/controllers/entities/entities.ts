@@ -1,3 +1,4 @@
+import languages from '#controllers/entities/languages'
 import removeLabel from '#controllers/entities/remove_label'
 import { methodAndActionsControllersFactory } from '#lib/actions_controllers'
 import { buildProxiedControllers } from '#lib/federation/build_proxied_controllers'
@@ -33,6 +34,7 @@ const localEntitiesControllersParams = {
       'publisher-publications': publisherPublications,
       images,
       popularity,
+      languages,
     },
     semipublic: {
       // Those endpoints will respect anonymization preference for non-admin users

@@ -119,7 +119,7 @@
     "typescript": "^5.8.2",
     "wikibase-edit": "^7.2.2",
     "wikibase-sdk": "^10.2.2",
-    "wikidata-lang": "^4.1.2"
+    "wikidata-lang": "^5.0.0"
   },
   "devDependencies": {
     "@stylistic/eslint-plugin-ts": "^2.10.1",
