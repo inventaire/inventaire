@@ -1,4 +1,5 @@
 import { map } from 'lodash-es'
+import { hasValidWikimediaLanguageCode } from '#controllers/search/lib/languages_search_helpers'
 import { indexedTypes, socialTypes } from '#db/elasticsearch/indexes'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { controllerWrapperFactory } from '#lib/controller_wrapper'
@@ -102,8 +103,23 @@ async function entitiesSearch (params: Sanitized<SearchParams>) {
 
   const { hits, total } = await typeSearch(params)
   const continu = limit + offset
+
+  let results = hits.map(normalizeResult(lang, claim))
+
+  // Setting claim="wdt:P424" is used by the client to select an entity
+  // label language to update or remove. Returning invalid Wikimedia language codes
+  // would leave the filtering work to the client or leaves the user exposed to "invalid language" errors,
+  // so it's done here instead, at the cost of breaking behavior consistency
+  // (some languages that can be found with claim="wdt:P424 wdt:P218" will disappear with claim="wdt:P424")
+  // and pagination (the following post-search filter breaks the `total` and `continue` counts)
+  // Example of an invalid Wikimedia language code: wd:Q13198 (Réunion Creole) has wdt:P424=rcf
+  // That's a valid value https://codelookup.toolforge.org/rcf but it isn't currently an accepted Wikidata term language code
+  if (claim === 'wdt:P424') {
+    results = results.filter(hasValidWikimediaLanguageCode)
+  }
+
   return {
-    results: hits.map(normalizeResult(lang, claim)),
+    results,
     total,
     continue: continu < total ? continu : undefined,
   }

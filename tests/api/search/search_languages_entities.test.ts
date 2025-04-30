@@ -1,10 +1,10 @@
+import should from 'should'
 import { federatedMode } from '#server/config'
 import { findOrIndexEntities } from '#tests/api/utils/entities'
 import { search } from '#tests/api/utils/search'
 import type { WdEntityUri } from '#types/entity'
-import 'should'
 
-const wikidataUris = [ 'wd:Q10134', 'wd:Q19852850', 'wd:Q33111', 'wd:Q42365', 'wd:Q1860' ] as WdEntityUri[]
+const wikidataUris = [ 'wd:Q10134', 'wd:Q19852850', 'wd:Q33111', 'wd:Q42365', 'wd:Q1860', 'wd:Q13198' ] as WdEntityUri[]
 
 describe('entities:languages:search', () => {
   before(async function () {
@@ -49,5 +49,11 @@ describe('entities:languages:search', () => {
     results.should.be.an.Array()
     const language = results[0]
     language.uri.should.equal('wd:Q19852850')
+  })
+
+  it('should filter-out invalid Wikimedia language code results when requested with a wdt:P424 claim', async () => {
+    const results = await search({ types: 'languages', claim: 'wdt:P424', search: 'rcf' })
+    const result = results.find(result => result.id === 'Q13198')
+    should(result).not.be.ok()
   })
 })
