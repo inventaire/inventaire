@@ -1,5 +1,5 @@
+import type { TermLanguageCode } from '#types/entity'
 import { activeI18nLangs } from '../helpers.js'
-import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
 // See https://www.elastic.co/guide/en/elasticsearch/reference/7.10/mapping-types.html
 
@@ -22,9 +22,8 @@ const fullText = {
   analyzer: 'standard_full',
 }
 
-type PropertiesKeys = WikimediaLanguageCode | 'fromclaims'
 function getTermsProperties (datatype) {
-  const properties: Partial<Record<PropertiesKeys, string>> = {}
+  const properties: Partial<Record<TermLanguageCode, string>> = {}
   activeI18nLangs.forEach(lang => {
     properties[lang] = datatype
   })
