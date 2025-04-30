@@ -10,7 +10,7 @@ import { updateWdLabel } from './lib/update_wd_label.js'
 const sanitization = {
   uri: { optional: true },
   id: { optional: true },
-  lang: {},
+  lang: { type: 'wikimedia' },
   value: { type: 'string' },
 }
 

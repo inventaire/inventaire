@@ -6,7 +6,7 @@ import type { AuthentifiedReq, RemoteUserAuthentifiedReq } from '#types/server'
 
 const sanitization = {
   uri: {},
-  lang: {},
+  lang: { type: 'wikimedia' },
 }
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq | RemoteUserAuthentifiedReq) {
