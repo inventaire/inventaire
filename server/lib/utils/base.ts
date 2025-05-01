@@ -122,6 +122,24 @@ export function mapKeysValues <T> (obj: T, fn: ((key: keyof T, value: T[keyof T]
   return Object.keys(obj).reduce(aggregateMappedKeysValues(obj, fn), {})
 }
 
+const aggregateMappedKeysValues = (obj, fn) => (newObj, key) => {
+  const value = obj[key]
+  const newKeyValue = fn(key, value)
+
+  if (!isArray(newKeyValue)) {
+    const errMessage = `function should return a [ key, value ] array (got ${newKeyValue})`
+    throw new Error(errMessage)
+  }
+
+  const [ newKey, newValue ] = newKeyValue
+
+  if (newKey == null) throw new Error(`missing new key (old key: ${key})`)
+  if (newValue == null) throw new Error(`missing new value (old value: ${value})`)
+
+  newObj[newKey] = newValue
+  return newObj
+}
+
 export function deepCompact (arrays) {
   return chain(arrays)
   .flatten()
@@ -153,24 +171,6 @@ export function isNotEmpty <T> (value: T): value is (Exclude<T, undefined | null
 }
 
 export const normalizeString = (str: string) => str.trim().normalize()
-
-const aggregateMappedKeysValues = (obj, fn) => (newObj, key) => {
-  const value = obj[key]
-  const newKeyValue = fn(key, value)
-
-  if (!isArray(newKeyValue)) {
-    const errMessage = `function should return a [ key, value ] array (got ${newKeyValue})`
-    throw new Error(errMessage)
-  }
-
-  const [ newKey, newValue ] = newKeyValue
-
-  if (newKey == null) throw new Error(`missing new key (old key: ${key})`)
-  if (newValue == null) throw new Error(`missing new value (old value: ${value})`)
-
-  newObj[newKey] = newValue
-  return newObj
-}
 
 // Work around the TS2345 error when using Array include method
 // https://stackoverflow.com/questions/55906553/typescript-unexpected-error-when-using-includes-with-a-typed-array/70532727#70532727
