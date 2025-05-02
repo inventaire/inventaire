@@ -1,4 +1,5 @@
 import { getTaskById, updateTasks } from '#controllers/tasks/lib/tasks'
+import { log } from '#lib/utils/logs'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import updateRelationScore from './lib/relation_score.js'
 
@@ -17,6 +18,7 @@ async function controller ({ id, attribute, value }: SanitizedParameters) {
 
   const task = await getTaskById(id)
   await updateRelationScore(task.suspectUri)
+  log({ id, attribute, value, task }, 'task updated')
 
   return { ok: true }
 }
