@@ -3,6 +3,7 @@ import { getPendingGroupInvitationsCount, getPendingGroupRequestsCount } from '#
 import { getUnreadNotificationsCount } from '#controllers/notifications/lib/notifications'
 import { getPendingFriendsRequestsCount } from '#controllers/relations/lib/queries'
 import { getUserActiveTransactionsCount } from '#controllers/transactions/lib/transactions'
+import { getEmailUnsubscribeUrl } from '#lib/emails/unsubscribe'
 import { objectPromise } from '#lib/promises'
 import { shortLang } from '#lib/utils/base'
 import config, { publicOrigin } from '#server/config'
@@ -90,9 +91,16 @@ const spreadEmailData = (user: User) => results => {
   lastFriendsBooks.lang = lang
   lastNearbyPublicBooks.lang = lang
 
+  const unsubscribeUrl = getEmailUnsubscribeUrl(user._id, 'inventories_activity_summary')
+
   return {
     to: email,
     subject: i18n(lang, 'activity_summary_title'),
+    headers: {
+      // See https://www.twilio.com/docs/sendgrid/ui/sending-email/list-unsubscribe
+      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      'List-Unsubscribe': `<${unsubscribeUrl}>`,
+    },
     template: 'activity_summary',
     context: {
       user,
@@ -111,6 +119,9 @@ const spreadEmailData = (user: User) => results => {
       news,
       didYouKnowKey: getDidYouKnowKey(),
       hasActivities: countTotal > 0,
+      unsubscribe: {
+        url: unsubscribeUrl,
+      },
     },
   }
 }
