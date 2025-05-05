@@ -166,6 +166,10 @@ export const _properties: Record<PropertyUri, Partial<PropertyConfig>> = {
   'wdt:P675': {
     subjectTypes: [ 'edition' ],
   },
+  // pseudonym
+  'wdt:P742': {
+    subjectTypes: [ 'human' ],
+  },
   // influenced by
   'wdt:P737': {
     subjectTypes: [ 'human' ],

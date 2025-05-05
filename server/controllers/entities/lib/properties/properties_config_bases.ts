@@ -19,12 +19,16 @@ export const remoteEntity = {
   remoteEntityOnly: true,
 } as const
 
-export const uniqueString = {
+export const string = {
   datatype: 'string',
   primitiveType: 'string',
   format: trim,
   // Aligning max length on Wikidata's limit
   validate: ({ value }) => boundedString(value, 1, 1500),
+} as const
+
+export const uniqueString = {
+  ...string,
   uniqueValue: true,
 } as const
 

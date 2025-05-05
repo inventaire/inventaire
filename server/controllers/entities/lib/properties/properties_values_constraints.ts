@@ -14,7 +14,7 @@ import { objectKeys } from '#lib/utils/types'
 import type { AbsoluteUrl, OmitNever } from '#types/common'
 import type { PropertyUri } from '#types/entity'
 import type { PropertyValueConstraints } from '#types/property'
-import { collectionEntity, entity, entityType, genreEntity, humanEntity, imageHash, languageEntity, movementEntity, positiveInteger, positiveIntegerString, publisherEntity, remoteEntity, serieEntity, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
+import { collectionEntity, entity, entityType, genreEntity, humanEntity, imageHash, languageEntity, movementEntity, positiveInteger, positiveIntegerString, publisherEntity, remoteEntity, serieEntity, string, uniqueSimpleDay, uniqueString, url, workEntity, workOrSerieEntity } from './properties_config_bases.js'
 // Builders are functions to generate config objects tailored as closely
 // as possible to the property exact needs
 import { isbnProperty, externalId, typedExternalId, allowedPropertyValues, externalIdWithFormatter, caseInsensitiveExternalId } from './properties_config_builders.js'
@@ -117,6 +117,8 @@ export const propertiesValuesConstraints = {
   'wdt:P655': humanEntity,
   // Google Books ID
   'wdt:P675': externalId(/^[\w-]{12}$/),
+  // pseudonym
+  'wdt:P742': string,
   // influenced by
   'wdt:P737': humanEntity,
   // parent organization
