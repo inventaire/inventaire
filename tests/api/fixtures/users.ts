@@ -12,9 +12,8 @@ import { shellExec } from '#scripts/scripts_utils'
 import { federatedMode, localOrigin, remoteEntitiesOrigin } from '#server/config'
 import { makeFriends } from '#tests/api/utils/relations'
 import { request, rawRequest } from '#tests/api/utils/request'
-import type { Awaitable } from '#tests/api/utils/types'
 import { deleteUser } from '#tests/api/utils/users'
-import type { LatLng, Origin } from '#types/common'
+import type { Awaitable, LatLng, Origin } from '#types/common'
 import type { User, UserId, UserRole } from '#types/user'
 
 export type CustomUserData = Record<string, string | number | boolean | number[]>

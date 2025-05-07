@@ -53,3 +53,5 @@ export type SortFunction<T> = (a: T, b: T) => number
 export type OmitNever<T> = {
   [K in keyof T as T[K] extends never ? never : K]: T[K]
 }
+
+export type Awaitable <T> = T | Promise<T>
