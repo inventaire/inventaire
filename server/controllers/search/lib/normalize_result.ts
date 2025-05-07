@@ -28,10 +28,10 @@ export function normalizeResult (lang: string, claim?: string) {
 }
 
 function parseProperties (claim: string) {
-  return claim.match(/wdt:P\d+/g)
+  return claim.match(/wdt:P\d+/g) as (PropertyUri[] | null)
 }
 
-function entityFormatter (result, _source, lang: string, properties: PropertyUri[]) {
+function entityResultFormatter (result, _source, lang: string, properties?: PropertyUri[]) {
   return {
     id: result._id,
     type: _source.type,
@@ -63,7 +63,8 @@ function getShortDescription (descriptions, lang) {
 
 const getUri = id => id[0] === 'Q' ? `wd:${id}` : `inv:${id}`
 
-function parseClaims (_source, properties: PropertyUri[]) {
+function parseClaims (_source, properties?: PropertyUri[]) {
+  if (!properties) return {}
   return _source.claim.reduce((claims, claimStr) => {
     const [ property, value ] = claimStr.split('=')
     if (properties.includes(property)) {
@@ -89,14 +90,14 @@ function pluralizeType (singularType) {
 }
 
 const formatters = {
-  works: entityFormatter,
-  humans: entityFormatter,
-  series: entityFormatter,
-  publishers: entityFormatter,
-  collections: entityFormatter,
-  genres: entityFormatter,
-  movements: entityFormatter,
-  languages: entityFormatter,
+  works: entityResultFormatter,
+  humans: entityResultFormatter,
+  series: entityResultFormatter,
+  publishers: entityResultFormatter,
+  collections: entityResultFormatter,
+  genres: entityResultFormatter,
+  movements: entityResultFormatter,
+  languages: entityResultFormatter,
   users: socialDocsFormatter('username', 'bio'),
   groups: socialDocsFormatter('name', 'description'),
   shelves: socialDocsFormatter('name', 'description'),
