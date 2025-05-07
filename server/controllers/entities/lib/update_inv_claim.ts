@@ -45,8 +45,6 @@ async function _updateInvClaim (user: UserWithAcct, id: InvEntityId, property: P
 
   await inferredClaimUpdates(updatedDoc as InvEntity, property, oldVal)
 
-  await emit('entity:update:claim', updatedDoc)
-
   if (property === 'invp:P2' && oldVal != null) {
     await emit('image:needs:check', { container: 'entities', hash: oldVal, context: 'update' })
   }

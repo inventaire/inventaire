@@ -1,6 +1,5 @@
 import { getEntityById, putInvEntityUpdate } from '#controllers/entities/lib/entities'
 import { getPatchById } from '#controllers/entities/lib/patches/patches'
-import { emit } from '#lib/radio'
 import { retryOnConflict } from '#lib/retry_on_conflict'
 import { revertPatch } from '#models/patch'
 import type { Patch, PatchId } from '#types/patch'
@@ -13,9 +12,7 @@ async function _revertFromPatchDoc (patch: Patch, userAcct: UserAccountUri) {
   const updatedDoc = revertPatch(currentDoc, patch)
   await validateInvEntity(updatedDoc)
   const context = { revertPatch: patch._id }
-  const docAfterUpdate = await putInvEntityUpdate({ userAcct, currentDoc, updatedDoc, context })
-  await emit('entity:revert:edit', updatedDoc)
-  return docAfterUpdate
+  return putInvEntityUpdate({ userAcct, currentDoc, updatedDoc, context })
 }
 
 export async function revertFromPatchId (patchId: PatchId, userAcct: UserAccountUri) {

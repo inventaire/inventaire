@@ -128,25 +128,18 @@ async function getCachedEnrichedEntities ({ wdIds, refresh, dry, noSideEffects }
 
 async function getCachedEnrichedEntity ({ wdId, refresh, dry, noSideEffects }: { wdId: WdEntityId, refresh?: boolean, dry?: boolean, noSideEffects?: boolean }) {
   const key = `wd:enriched:${wdId}`
-  const fn = getEnrichedEntity.bind(null, wdId, refresh, noSideEffects)
+  const fn = getEnrichedEntity.bind(null, wdId, noSideEffects)
   return cache_.get({ key, fn, refresh, dry })
 }
 
 type MissingWdEntity = { id: WdEntityId, missing: true }
 
-async function getEnrichedEntity (wdId: WdEntityId, refresh = false, noSideEffects = false) {
+async function getEnrichedEntity (wdId: WdEntityId, noSideEffects = false) {
   const entity = await getWdEntity(wdId)
   const preFormatWdEntity = entity || ({ id: wdId, missing: true } as MissingWdEntity)
   const formattedEntity = await format(preFormatWdEntity)
   if (!noSideEffects) {
     addWdEntityToIndexationQueue(wdId)
-    // Restrict 'wikidata:entity:refreshed' event to explict refresh request
-    // to avoid triggering snowballing item snapshot refreshes
-    if (refresh) {
-      // Do not await for this emit, as the listeners might call getEntitiesByUris
-      // which would trigger a hanging loop
-      emit('wikidata:entity:refreshed', formattedEntity)
-    }
   }
   return formattedEntity
 }
