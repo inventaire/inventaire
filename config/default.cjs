@@ -52,9 +52,6 @@ const config = {
   // Instance specifics
   // ~~~~~~~
 
-  // Displayed in userAgent and in local logs
-  softwareName: 'inventaire',
-
   // Only http is supported: in production, TLS is delegated to Nginx
   // See http://github.com/inventaire/inventaire-deploy
   protocol: 'http',
