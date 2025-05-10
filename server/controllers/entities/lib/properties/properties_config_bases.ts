@@ -44,7 +44,7 @@ export const languageEntity = { ...entity, entityValueTypes: [ 'language' ] } as
 export const uniqueEntity = { ...entity, uniqueValue: true } as const
 
 export const concurrentAndUniqueString = { ...uniqueString, concurrency: true } as const
-export const concurrentAndUniqueExternalId = { ...concurrentAndUniqueString, datatype: 'external-id' } as const
+export const concurrentExternalId = { ...string, concurrency: true, datatype: 'external-id' } as const
 
 export const url = {
   datatype: 'url',

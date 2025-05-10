@@ -330,7 +330,13 @@ export const propertiesValuesConstraints = {
   'wdt:P13137': externalId(strictlyPositiveIntegerPattern),
 } as const satisfies Readonly<Record<PropertyUri, PropertyValueConstraints>>
 
-export const getPropertyDatatype = property => propertiesValuesConstraints[property]?.datatype
+export function getPropertyDatatype (property: PropertyUri) {
+  return propertiesValuesConstraints[property]?.datatype
+}
+
+export function isExternaIdProperty (property: PropertyUri) {
+  return getPropertyDatatype(property) === 'external-id'
+}
 
 export type PropertiesValuesConstraints = typeof propertiesValuesConstraints
 
@@ -340,18 +346,4 @@ type ExternalIdPropertiesValuesConstraints = OmitNever<{
 
 export type ExternalIdProperty = keyof ExternalIdPropertiesValuesConstraints
 
-export const externalIdsProperties = objectKeys(propertiesValuesConstraints).filter(property => {
-  return propertiesValuesConstraints[property].datatype === 'external-id'
-}) as ExternalIdProperty[]
-
-type ConcurrentIdPropertiesValuesConstraints = OmitNever<{
-  [P in keyof PropertiesValuesConstraints]: PropertiesValuesConstraints[P] & { concurrency: true }
-}>
-
-export type ConcurrentIdProperty = keyof ConcurrentIdPropertiesValuesConstraints
-
-/** concurrentIdsProperties extends externalIdsProperties by including concurrent string properties such as ISBNs */
-export const concurrentIdsProperties = objectKeys(propertiesValuesConstraints).filter(property => {
-  const prop = propertiesValuesConstraints[property]
-  return 'concurrency' in prop && prop.concurrency === true
-}) as ConcurrentIdProperty[]
+export const externalIdsProperties = objectKeys(propertiesValuesConstraints).filter(isExternaIdProperty) as ExternalIdProperty[]
