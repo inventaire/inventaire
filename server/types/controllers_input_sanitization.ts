@@ -7,9 +7,7 @@ export type GenericParameterName = keyof typeof genericParameters
 type GenericSanitizationParameter = typeof genericParameters[GenericParameterName]
 export type SanitizationParameter = WellknownSanitizationParameter | GenericSanitizationParameter
 
-type ParameterNamePrefix = 'new' | 'old'
-type PrefixedParameterName = `${ParameterNamePrefix}-${ParameterName}`
-type OtherParameterName = Exclude<string, ParameterName | PrefixedParameterName>
+type OtherParameterName = Exclude<string, WellknownParameterName>
 
 export type ParameterPlace = 'query' | 'body'
 
@@ -39,7 +37,7 @@ type ControllerInputSanitizationOptions = {
 }
 
 type WellknownControllerInputSanitization = {
-  [key in ParameterName | PrefixedParameterName]: ControllerSanitizationParameterConfig
+  [key in WellknownParameterName]: ControllerSanitizationParameterConfig
 }
 type GenericControllerInputSanitization = Record<OtherParameterName, GenericControllerSanitizationParameterConfig>
 

@@ -93,9 +93,6 @@ function getParameterFunctions (name: string, generic?: GenericParameterName) {
   let parameter
   if (generic) {
     parameter = generics[generic]
-  } else if (prefixedParameterPattern.test(name)) {
-    const unprefixedName = name.replace(prefixedParameterPattern, '')
-    parameter = sanitizationParameters[unprefixedName]
   } else {
     parameter = sanitizationParameters[name]
   }
@@ -123,8 +120,6 @@ function validateSanitizationParameter (name: string, config: ControllerSanitiza
     }
   }
 }
-
-const prefixedParameterPattern = /^(old|new|current)-/
 
 function getPlace (method: string, configs: ControllerInputSanitization) {
   let place = 'query'

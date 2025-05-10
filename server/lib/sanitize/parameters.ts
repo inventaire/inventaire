@@ -192,6 +192,11 @@ const langs = {
   validate: arrayOfAType(lang.validate),
 }
 
+const password = {
+  secret: true,
+  validate: validations.user.password,
+}
+
 const user = {
   format: (value, name, config) => {
     if (config.type === 'acct' && isUserId(value)) return buildLocalUserAcct(value)
@@ -210,6 +215,22 @@ const user = {
     } else {
       return `${name}Id`
     }
+  },
+}
+
+// Endpoints accepting a 'value' can specify a type
+// or have to do their own validation
+// as a value can be anything, including null
+const value = {
+  validate: (value, name, config) => {
+    const { type: expectedType } = config
+    if (expectedType) {
+      const valueType = typeOf(value)
+      if (valueType !== expectedType) {
+        throw newError(`invalid value type: ${valueType} (expected ${expectedType})`, 400, { value })
+      }
+    }
+    return true
   },
 }
 
@@ -304,6 +325,8 @@ export const sanitizationParameters = {
       return true
     },
   },
+  // TODO: rename to old-password
+  'current-password': password,
   'entities-type': allowlistedString,
   email: { validate: validations.common.email },
   emails,
@@ -328,15 +351,15 @@ export const sanitizationParameters = {
   lists: couchUuids,
   message: nonEmptyString,
   name: nonEmptyString,
+  'new-password': password,
+  'new-value': value,
   object: nonEmptyString,
   offset: Object.assign({}, positiveInteger, { default: 0 }),
+  'old-value': value,
   options: allowlistedStrings,
   ordinal: positiveInteger,
   owners: couchUuids,
-  password: {
-    secret: true,
-    validate: validations.user.password,
-  },
+  password,
   patch: {
     validate: isPatchId,
     rename: renameId,
@@ -400,21 +423,7 @@ export const sanitizationParameters = {
   usernames,
   relatives: allowlistedStrings,
   requester: couchUuid,
-  // Endpoints accepting a 'value' can specify a type
-  // or have to do their own validation
-  // as a value can be anything, including null
-  value: {
-    validate: (value, name, config) => {
-      const { type: expectedType } = config
-      if (expectedType) {
-        const valueType = typeOf(value)
-        if (valueType !== expectedType) {
-          throw newError(`invalid value type: ${valueType} (expected ${expectedType})`, 400, { value })
-        }
-      }
-      return true
-    },
-  },
+  value,
   visibility: {
     validate: validations.visibility,
   },
