@@ -7,7 +7,7 @@ import { moveInvEntityToWikidata } from './lib/move_to_wikidata.js'
 
 const sanitization = {
   uri: {},
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq | RemoteUserAuthentifiedReq) {
   const { uri } = params

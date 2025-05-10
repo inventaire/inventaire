@@ -8,7 +8,7 @@ const sanitization = {
   uris: {},
   limit: { optional: true },
   offset: { optional: true },
-}
+} as const
 
 async function controller (params: SanitizedParameters) {
   const { uris, limit, offset, reqUserId } = params

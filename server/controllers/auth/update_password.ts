@@ -16,7 +16,7 @@ const sanitization = {
     optional: true,
   },
   'new-password': {},
-}
+} as const
 
 async function controller (params, req: AuthentifiedReq) {
   const { user } = req

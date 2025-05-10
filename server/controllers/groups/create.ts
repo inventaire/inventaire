@@ -15,7 +15,7 @@ const sanitization = {
     optional: true,
     generic: 'boolean',
   },
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   const { name, description, position, open, reqUserId } = params

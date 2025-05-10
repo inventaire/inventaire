@@ -5,7 +5,7 @@ import { md5 } from '#lib/crypto'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { AuthentifiedReq } from '#types/server'
 
-const sanitization = {}
+const sanitization = {} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   const { email } = req.user

@@ -12,7 +12,7 @@ const sanitization = {
     generic: 'boolean',
     default: false,
   },
-}
+} as const
 
 async function controller (params: SanitizedParameters) {
   const { ids, limit, offset, reqUserId } = params

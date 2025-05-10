@@ -8,7 +8,7 @@ const sanitization = {
   description: { optional: true },
   visibility: { optional: true },
   name: { optional: true },
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   const { user } = req

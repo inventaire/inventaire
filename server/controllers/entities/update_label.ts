@@ -12,7 +12,7 @@ const sanitization = {
   id: { optional: true },
   lang: {},
   value: { type: 'string' },
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq | RemoteUserAuthentifiedReq) {
   let { uri, id, value, lang } = params

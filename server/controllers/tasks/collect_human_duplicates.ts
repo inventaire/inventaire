@@ -16,7 +16,7 @@ const batchLength = 1000
 
 const sanitization = {
   refresh: { optional: true },
-}
+} as const
 
 async function controller ({ refresh }: SanitizedParameters) {
   addEntitiesToQueueSequentially(refresh)

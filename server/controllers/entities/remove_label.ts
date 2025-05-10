@@ -7,7 +7,7 @@ import type { AuthentifiedReq, RemoteUserAuthentifiedReq } from '#types/server'
 const sanitization = {
   uri: {},
   lang: {},
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq | RemoteUserAuthentifiedReq) {
   const { uri, lang } = params

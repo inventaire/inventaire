@@ -3,7 +3,7 @@ import type { SanitizedParameters } from '#types/controllers_input_sanitization_
 
 const sanitization = {
   item: {},
-}
+} as const
 
 async function controller ({ itemId, reqUserId }: SanitizedParameters) {
   const transactions = await getTransactionsByUserAndItem(reqUserId, itemId)

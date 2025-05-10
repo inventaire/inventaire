@@ -3,7 +3,7 @@ import type { SanitizedParameters } from '#types/controllers_input_sanitization_
 
 const sanitization = {
   transaction: {},
-}
+} as const
 
 async function controller ({ transactionId }: SanitizedParameters) {
   const messages = await comments_.byTransactionId(transactionId)

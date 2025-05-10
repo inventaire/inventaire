@@ -11,7 +11,7 @@ const sanitization = {
   state: {
     allowlist: transactionStatesList,
   },
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: Req) {
   const { transactionId, state, reqUserId } = params

@@ -9,7 +9,7 @@ const sanitization = {
   uri: {},
   refresh: { optional: true },
   langs: { optional: true },
-}
+} as const
 
 async function controller ({ uri, refresh, langs }: SanitizedParameters) {
   const entity = await getEntityByUri({ uri, refresh })

@@ -14,7 +14,7 @@ const sanitization = {
     optional: true,
     generic: 'boolean',
   },
-}
+} as const
 
 async function controller ({ ids, withItems, reqUserId }: SanitizedParameters, req: Req, res: Res) {
   const getShelves = withItems ? getShelvesByIdsWithItems : getShelvesByIds

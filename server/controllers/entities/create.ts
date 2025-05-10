@@ -18,7 +18,7 @@ const sanitization = {
     allowlist: [ 'inv', 'wd' ],
     default: 'inv',
   },
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq | RemoteUserAuthentifiedReq) {
   const { prefix, labels, claims, reqUserAcct } = params

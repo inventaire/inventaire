@@ -25,7 +25,7 @@ const sanitization = {
     generic: 'allowlist',
     allowlist: uploadContainersNames,
   },
-}
+} as const
 
 async function controller (params, req: AuthentifiedReq | RemoteUserAuthentifiedReq, res: Res) {
   const contentType = req.headers['content-type']

@@ -3,7 +3,7 @@ import { restoreVersion } from './lib/restore_version.js'
 
 const sanitization = {
   patch: {},
-}
+} as const
 
 async function controller ({ patchId, reqUserAcct }: SanitizedParameters) {
   await restoreVersion(patchId, reqUserAcct)

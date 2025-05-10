@@ -7,6 +7,6 @@ const sanitization = {
     generic: 'allowlist',
     allowlist: uploadContainersNames,
   },
-}
+} as const
 
 export default { sanitization, controller: convertAndCleanupImageUrl }

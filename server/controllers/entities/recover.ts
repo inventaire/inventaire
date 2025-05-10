@@ -8,7 +8,7 @@ import type { AuthentifiedReq, RemoteUserAuthentifiedReq } from '#types/server'
 
 const sanitization = {
   uris: {},
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq | RemoteUserAuthentifiedReq) {
   const user = parseReqLocalOrRemoteUser(req)

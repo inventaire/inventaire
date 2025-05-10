@@ -12,7 +12,7 @@ const sanitization = {
     optional: true,
     generic: 'boolean',
   },
-}
+} as const
 
 async function controller ({ ids, withElements, reqUserId }: SanitizedParameters, req: Req, res: Res) {
   const getListings = withElements ? getListingsByIdsWithElements : getListingsByIds

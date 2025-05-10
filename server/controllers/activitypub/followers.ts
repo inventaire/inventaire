@@ -23,7 +23,7 @@ const sanitization = {
     optional: true,
     generic: 'boolean',
   },
-}
+} as const
 
 async function controller (params, req: Req, res: Res) {
   const { name: paramsName, offset, limit, withActorsInfo } = params

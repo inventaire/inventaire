@@ -9,7 +9,7 @@ const sanitization = {
   owners: {},
   limit: { optional: true },
   offset: { optional: true },
-}
+} as const
 
 async function controller (params: SanitizedParameters) {
   const { reqUserId, owners } = params

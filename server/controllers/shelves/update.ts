@@ -9,7 +9,7 @@ const sanitization = {
   visibility: { optional: true },
   name: { optional: true },
   color: { optional: true },
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   await checkSpamContent(req.user, params.description)

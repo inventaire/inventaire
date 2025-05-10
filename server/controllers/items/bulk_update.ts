@@ -8,7 +8,7 @@ const sanitization = {
   ids: {},
   attribute: {},
   value: {},
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   const { ids, attribute, value, reqUserId } = params

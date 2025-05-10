@@ -15,7 +15,7 @@ const sanitization = {
   context: {
     optional: true,
   },
-}
+} as const
 
 async function controller ({ users, offset, limit, context, withElements, reqUserId }: SanitizedParameters) {
   const foundListings = await getListingsByCreators(users)

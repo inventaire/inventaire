@@ -13,7 +13,7 @@ import { verifyThatEntitiesCanBeRemoved } from './lib/verify_that_entities_can_b
 
 const sanitization = {
   uris: {},
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq | RemoteUserAuthentifiedReq) {
   const user = parseReqLocalOrRemoteUser(req)

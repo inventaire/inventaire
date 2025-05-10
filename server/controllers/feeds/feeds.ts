@@ -30,7 +30,7 @@ const sanitization = {
     // Set the defaults manually after having checked req.headers
     default: null,
   },
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: Req, res: Res) {
   const headersLang = getLangFromHeaders(req.headers)

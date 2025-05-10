@@ -7,7 +7,7 @@ const sanitization = {
     generic: 'positiveInteger',
     optional: true,
   },
-}
+} as const
 
 async function controller ({ period }: { period?: number }) {
   if (period != null) {

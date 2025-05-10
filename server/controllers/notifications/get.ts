@@ -4,7 +4,7 @@ import type { SanitizedParameters } from '#types/controllers_input_sanitization_
 const sanitization = {
   limit: { optional: true, default: 10 },
   offset: { optional: true },
-}
+} as const
 
 async function controller (params: SanitizedParameters) {
   const notifications = await getNotificationsByUserId(params.reqUserId)

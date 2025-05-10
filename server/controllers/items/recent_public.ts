@@ -18,7 +18,7 @@ const sanitization = {
   limit: {
     default: 15,
   },
-}
+} as const
 
 async function controller ({ assertImage, lang, limit, reqUserId }: SanitizedParameters) {
   let items = await getPublicItemsByDate(itemsQueryLimit, offset, assertImage, reqUserId)

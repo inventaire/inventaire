@@ -11,7 +11,7 @@ const sanitization = {
   value: {
     canBeNull: true,
   },
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   const { group: groupId, reqUserId, attribute, value } = params

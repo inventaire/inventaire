@@ -6,7 +6,7 @@ import deduplicateWork from './lib/deduplicate_works.js'
 const sanitization = {
   uri: {},
   isbn: {},
-}
+} as const
 
 async function controller ({ uri, isbn }: SanitizedParameters, req: AuthentifiedReq | RemoteUserAuthentifiedReq) {
   const user = parseReqLocalOrRemoteUser(req)

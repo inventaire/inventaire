@@ -5,7 +5,7 @@ import type { Req } from '#types/server'
 
 const sanitization = {
   usernames: {},
-}
+} as const
 
 async function controller ({ usernames, reqUserId }: SanitizedParameters, req: Req) {
   const reqUserHasAdminAccess = reqHasAdminAccess(req)

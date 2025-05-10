@@ -31,7 +31,7 @@ const sanitization = {
     ] as const,
     optional: true,
   },
-}
+} as const
 
 export interface GetEntitiesParams {
   uris: EntityUri[]

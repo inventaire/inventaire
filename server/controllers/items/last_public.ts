@@ -14,7 +14,7 @@ const sanitization = {
     generic: 'boolean',
     default: false,
   },
-}
+} as const
 
 async function controller ({ limit, offset, assertImage, reqUserId }: SanitizedParameters) {
   const items = await getPublicItemsByDate(limit, offset, assertImage, reqUserId)

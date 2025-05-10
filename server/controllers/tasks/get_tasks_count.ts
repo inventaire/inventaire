@@ -1,6 +1,6 @@
 import { getTasksCount } from '#controllers/tasks/lib/tasks'
 
-const sanitization = {}
+const sanitization = {} as const
 
 async function controller () {
   const tasksCount = await getTasksCount()

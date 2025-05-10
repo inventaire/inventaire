@@ -17,7 +17,7 @@ const sanitization = {
   lang: {
     default: 'en',
   },
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: Req) {
   const { bbox, limit, lang, reqUserId } = params

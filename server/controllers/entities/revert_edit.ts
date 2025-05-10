@@ -3,7 +3,7 @@ import { revertFromPatchId } from './lib/revert_edit.js'
 
 const sanitization = {
   patch: {},
-}
+} as const
 
 async function controller ({ patchId, reqUserAcct }: SanitizedParameters) {
   await revertFromPatchId(patchId, reqUserAcct)

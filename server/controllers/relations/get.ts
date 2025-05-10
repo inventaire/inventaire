@@ -10,7 +10,7 @@ interface UserRelations {
   network: UserId[]
 }
 
-const sanitization = {}
+const sanitization = {} as const
 
 async function controller ({ reqUserId }: SanitizedParameters) {
   const [ relations, networkIds ] = await Promise.all([

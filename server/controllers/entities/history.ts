@@ -18,7 +18,7 @@ const sanitization = {
   uri: {
     optional: true,
   },
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq | RemoteUserAuthentifiedReq) {
   const { uri, reqUserAcct } = params

@@ -10,7 +10,7 @@ const sanitization = {
   // Elements pagination
   limit: { optional: true },
   offset: { optional: true },
-}
+} as const
 
 async function controller ({ id, reqUserId }: SanitizedParameters, req: Req) {
   const listing = await getListingWithElements(id)

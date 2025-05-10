@@ -18,7 +18,7 @@ const sanitization = {
     optional: true,
     default: 'work',
   },
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   await checkSpamContent(req.user, params.description)

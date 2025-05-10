@@ -8,7 +8,7 @@ const sanitization = {
     optional: true,
     generic: 'boolean',
   },
-}
+} as const
 
 async function controller ({ ids, reqUserId, withItems }: SanitizedParameters) {
   const shelvesRes = await getShelvesByIdsWithItems(ids, reqUserId)

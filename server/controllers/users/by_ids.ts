@@ -6,7 +6,7 @@ import type { AuthentifiedReq } from '#types/server'
 
 const sanitization = {
   ids: {},
-}
+} as const
 
 async function controller ({ ids, reqUserId }: SanitizedParameters, req: AuthentifiedReq) {
   let extraAttribute: UserExtraAttribute

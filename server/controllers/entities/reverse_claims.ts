@@ -11,7 +11,7 @@ const sanitization = {
     generic: 'boolean',
     default: false,
   },
-}
+} as const
 
 async function controller (params: SanitizedParameters) {
   const { property, value, refresh, sort } = params

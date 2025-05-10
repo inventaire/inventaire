@@ -20,7 +20,7 @@ const sanitization = {
     generic: 'string',
     optional: true,
   },
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq | RemoteUserAuthentifiedReq) {
   const { userAcct, limit, offset, filter, reqUserAcct } = params

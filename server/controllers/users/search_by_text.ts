@@ -4,7 +4,7 @@ import type { SanitizedParameters } from '#types/controllers_input_sanitization_
 
 const sanitization = {
   search: {},
-}
+} as const
 
 async function controller ({ search }: SanitizedParameters) {
   const { hits: users } = await searchByText({ search })

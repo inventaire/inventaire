@@ -4,7 +4,7 @@ import { getEntitiesPopularities } from './lib/popularity.js'
 const sanitization = {
   uris: {},
   refresh: { optional: true },
-}
+} as const
 
 async function controller ({ uris, refresh }: SanitizedParameters) {
   const scores = await getEntitiesPopularities({ uris, refresh })

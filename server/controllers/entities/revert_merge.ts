@@ -8,7 +8,7 @@ import revertMerge from './lib/revert_merge.js'
 
 const sanitization = {
   from: {},
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   const { from: fromUri } = params

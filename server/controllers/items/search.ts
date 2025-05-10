@@ -17,7 +17,7 @@ const sanitization = {
   search: {},
   limit: {},
   offset: {},
-}
+} as const
 
 export interface ItemsSearchQuery {
   user?: GroupId

@@ -7,7 +7,7 @@ import { verifyRightToInteractWithTransaction } from './lib/rights_verification.
 const sanitization = {
   transaction: {},
   message: {},
-}
+} as const
 
 async function controller ({ transactionId, message, reqUserId }: SanitizedParameters) {
   const transaction = await getTransactionById(transactionId)

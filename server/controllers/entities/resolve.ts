@@ -46,7 +46,7 @@ const sanitization = {
     optional: true,
     default: true,
   },
-}
+} as const
 
 export interface ResolverParams {
   entries: ResolverEntry[]

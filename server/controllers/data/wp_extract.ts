@@ -8,7 +8,7 @@ const sanitization = {
   lang: {
     type: 'wikimedia',
   },
-}
+} as const
 
 async function controller ({ lang, title }: SanitizedParameters) {
   lang = normalizeWikimediaLang(lang)

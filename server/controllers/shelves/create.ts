@@ -10,7 +10,7 @@ const sanitization = {
   visibility: { optional: true },
   color: { optional: true },
   items: { optional: true },
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   const { items: itemsIds, reqUserId } = params

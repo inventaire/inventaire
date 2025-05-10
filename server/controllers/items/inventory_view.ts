@@ -13,7 +13,7 @@ const sanitization = {
   group: { optional: true },
   shelf: { optional: true },
   'without-shelf': { optional: true, generic: 'boolean' },
-}
+} as const
 
 async function controller (params: SanitizedParameters) {
   validateUserOrGroup(params)

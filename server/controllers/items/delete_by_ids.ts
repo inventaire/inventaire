@@ -6,7 +6,7 @@ import type { SanitizedParameters } from '#types/controllers_input_sanitization_
 
 const sanitization = {
   ids: {},
-}
+} as const
 
 async function controller ({ ids, reqUserId }: SanitizedParameters) {
   await getItemsByIds(ids)

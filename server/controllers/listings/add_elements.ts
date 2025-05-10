@@ -6,7 +6,7 @@ import type { ListingWithElements } from '#types/listing'
 const sanitization = {
   id: {},
   uris: {},
-}
+} as const
 
 async function controller ({ id, uris, reqUserId }: SanitizedParameters) {
   const listing: ListingWithElements = await getListingWithElements(id)

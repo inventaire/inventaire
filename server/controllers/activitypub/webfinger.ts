@@ -10,7 +10,7 @@ import { validateUser, validateShelf } from './lib/validations.js'
 
 const sanitization = {
   resource: {},
-}
+} as const
 
 async function controller ({ resource }: SanitizedParameters) {
   const name = getActorName(resource)

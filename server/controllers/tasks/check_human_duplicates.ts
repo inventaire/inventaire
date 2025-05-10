@@ -4,7 +4,7 @@ import checkHumanDuplicate from './lib/check_human_duplicate.js'
 
 const sanitization = {
   uris: {},
-}
+} as const
 
 async function controller ({ uris }: SanitizedParameters) {
   const tasks = await Promise.all(uris.map(checkHumanDuplicate))

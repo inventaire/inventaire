@@ -26,7 +26,7 @@ const sanitization = {
     // override couchUuid validation
     generic: 'string',
   },
-}
+} as const
 
 async function controller ({ id }: ActivityArgs) {
   if (isEntityActivityId(id)) {

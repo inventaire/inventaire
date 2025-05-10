@@ -9,7 +9,7 @@ import { verifyRightToRequest } from './lib/rights_verification.js'
 const sanitization = {
   item: {},
   message: {},
-}
+} as const
 
 async function controller ({ item, message, reqUserId }: SanitizedParameters) {
   log([ item, message ], 'item request')

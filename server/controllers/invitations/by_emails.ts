@@ -17,7 +17,7 @@ const sanitization = {
   emails: {},
   message: { optional: true },
   group: { optional: true },
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   const { emails, groupId, reqUserId } = params

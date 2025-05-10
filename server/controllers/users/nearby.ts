@@ -5,7 +5,7 @@ import type { Req } from '#types/server'
 
 const sanitization = {
   range: {},
-}
+} as const
 
 async function controller ({ reqUserId, range }: SanitizedParameters, req: Req) {
   const usersIds = await getUsersNearby(reqUserId, range)

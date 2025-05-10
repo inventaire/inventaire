@@ -7,7 +7,7 @@ import type { Req, Res } from '#types/server'
 
 const sanitization = {
   name: {},
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: Req, res: Res) {
   const { name } = params

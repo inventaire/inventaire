@@ -11,7 +11,7 @@ const sanitization = {
   limit: { optional: true },
   offset: { optional: true },
   context: { optional: true },
-}
+} as const
 
 async function controller ({ uris, lists, offset, limit, context, reqUserId }: SanitizedParameters) {
   let foundElements

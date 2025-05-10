@@ -14,7 +14,7 @@ const sanitization = {
     // the requester already knows the users
     default: false,
   },
-}
+} as const
 
 async function controller ({ users: usersIds, limit, offset, context, includeUsers, reqUserId }: SanitizedParameters) {
   return getItemsByUsers({ usersIds, limit, offset, context, includeUsers, reqUserId })

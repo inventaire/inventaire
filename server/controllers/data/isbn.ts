@@ -9,7 +9,7 @@ import type { SanitizedParameters } from '#types/controllers_input_sanitization_
 const sanitization = {
   isbn: {},
   refresh: { optional: true },
-}
+} as const
 
 async function controller ({ isbn, refresh }: SanitizedParameters) {
   const data: IsbnData & { query?: string } = parseIsbn(isbn)

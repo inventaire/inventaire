@@ -46,7 +46,7 @@ const sanitization = {
   signer: { generic: 'ignore' },
   to: { generic: 'ignore' },
   url: { generic: 'ignore' },
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: SignedReq, res: Res) {
   setActivityPubContentType(res)

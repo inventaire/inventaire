@@ -7,7 +7,7 @@ const sanitization = {
   id: {},
   attribute: {},
   value: {},
-}
+} as const
 
 async function controller ({ id, attribute, value }: SanitizedParameters) {
   await updateTasks({

@@ -20,7 +20,7 @@ const sanitization = {
   },
   ordinal: { optional: true },
   list: { optional: true },
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   const { id, reqUserId, ordinal, comment, list } = params

@@ -22,7 +22,7 @@ const sanitization = {
   value: {
     canBeNull: true,
   },
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq) {
   const { attribute, value } = params

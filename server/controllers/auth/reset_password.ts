@@ -5,7 +5,7 @@ import type { SanitizedParameters } from '#types/controllers_input_sanitization_
 
 const sanitization = {
   email: {},
-}
+} as const
 
 async function controller ({ email }: SanitizedParameters) {
   const user = await findUserByEmail(email)

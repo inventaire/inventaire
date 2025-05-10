@@ -10,7 +10,7 @@ import type { Req, Res } from '#types/server'
 const sanitization = {
   id: {},
   uris: {},
-}
+} as const
 
 async function controller ({ id, uris, reqUserId }: SanitizedParameters, req: Req, res: Res) {
   const listing = await getListingWithElements(id)

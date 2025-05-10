@@ -19,7 +19,7 @@ const sanitization = {
   property: {},
   'old-value': { optional: true },
   'new-value': { optional: true },
-}
+} as const
 
 async function controller (params: SanitizedParameters, req: AuthentifiedReq | RemoteUserAuthentifiedReq) {
   let { id, uri, property, oldValue, newValue } = params
