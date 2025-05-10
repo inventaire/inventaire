@@ -27,6 +27,7 @@ module.exports = {
   ],
   rules: {
     'array-bracket-spacing': [ 'error', 'always' ],
+    'array-callback-return': 'off',
     'arrow-parens': [ 'error', 'as-needed' ],
     'comma-dangle': [ 'error', {
       arrays: 'always-multiline',

@@ -28,7 +28,6 @@ const langProperties = [
   'wdt:P2439', // language (general)
 ]
 
-// eslint-disable-next-line array-callback-return
 const wdIdAndLabelEntries = objectEntries(wdLang).map(([ wdId, { label } ]) => {
   if (label) return [ wdId, label ] as [ WdEntityId, string ]
 })
