@@ -7,28 +7,16 @@ export type GenericParameterName = keyof typeof genericParameters
 type GenericSanitizationParameter = typeof genericParameters[GenericParameterName]
 export type SanitizationParameter = WellknownSanitizationParameter | GenericSanitizationParameter
 
-type OtherParameterName = Exclude<string, WellknownParameterName>
-
 export type ParameterPlace = 'query' | 'body'
 
-interface CommonControllerSanitizationParameterConfig extends Record<string, unknown> {
-  allowlist?: string[]
+export interface ControllerSanitizationParameterConfig {
+  allowlist?: readonly string[]
   canBeNull?: boolean
-  default?: boolean | string | number
+  default?: unknown
   drop?: boolean
   max?: number
   optional?: boolean
   type?: string
-}
-
-interface GenericControllerSanitizationParameterConfig extends CommonControllerSanitizationParameterConfig {
-  generic: GenericParameterName
-}
-
-// ControllerSanitizationParameterConfig would better be written like this, but then errors appear on sanitization configs missing the generic attribute
-// type WellknownControllerSanitizationParameterConfig = (CommonControllerSanitizationParameterConfig | EmptyObject) & { generic: never }
-// export type ControllerSanitizationParameterConfig = WellknownControllerSanitizationParameterConfig | GenericControllerSanitizationParameterConfig
-export type ControllerSanitizationParameterConfig = CommonControllerSanitizationParameterConfig & {
   generic?: GenericParameterName
 }
 
@@ -36,12 +24,7 @@ type ControllerInputSanitizationOptions = {
   nonJsonBody: boolean
 }
 
-type WellknownControllerInputSanitization = {
-  [key in WellknownParameterName]: ControllerSanitizationParameterConfig
-}
-type GenericControllerInputSanitization = Record<OtherParameterName, GenericControllerSanitizationParameterConfig>
-
-export type ControllerInputSanitization = Partial<WellknownControllerInputSanitization & GenericControllerInputSanitization & ControllerInputSanitizationOptions>
+export type ControllerInputSanitization = Record<string, ControllerSanitizationParameterConfig> & Partial<ControllerInputSanitizationOptions>
 
 export type FormatFunction = (value: string, name: ParameterName, config: ControllerSanitizationParameterConfig) => unknown
 export type RenameFunction = (name: ParameterName, config: ControllerSanitizationParameterConfig) => string
