@@ -7,6 +7,9 @@ export type LatLng = [ number, number ]
 export type BBox = [ number, number, number, number ]
 
 export type HttpMethod = 'get' | 'post' | 'put' | 'delete' | 'options' | 'head'
+export type HttpMethodLowerCased = HttpMethod
+export type HttpMethodUpperCased = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS' | 'HEAD'
+
 export type HttpHeaderKey =
   'accept' |
   'authorization' |

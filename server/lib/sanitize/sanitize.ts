@@ -7,6 +7,7 @@ import { addWarning } from '#lib/responses'
 import { assertObject } from '#lib/utils/assert_types'
 import { obfuscate } from '#lib/utils/base'
 import { typeOf } from '#lib/utils/types'
+import type { HttpMethod, HttpMethodUpperCased } from '#types/common'
 import type { ControllerInputSanitization, FormatFunction, GenericParameterName, ParameterName, ParameterPlace, ControllerSanitizationParameterConfig, SanitizationParameter, RenameFunction } from '#types/controllers_input_sanitization'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { AuthentifiedReq, RemoteUserAuthentifiedReq, Req, Res } from '#types/server'
@@ -121,12 +122,12 @@ function validateSanitizationParameter (name: string, config: ControllerSanitiza
   }
 }
 
-function getPlace (method: string, configs: ControllerInputSanitization) {
-  let place = 'query'
-  if (method === 'POST' || method === 'PUT') {
-    if (!configs.nonJsonBody) place = 'body'
+export function getPlace (method: HttpMethod | HttpMethodUpperCased, configs: ControllerInputSanitization) {
+  const normalizedMethod = method.toLowerCase() as HttpMethod
+  if (normalizedMethod === 'post' || normalizedMethod === 'put') {
+    if (!configs.nonJsonBody) return 'body'
   }
-  return place as ParameterPlace
+  return 'query'
 }
 
 function removeUnexpectedParameter (input: unknown, name: string, configs: ControllerInputSanitization, res: Res) {

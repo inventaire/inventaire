@@ -24,7 +24,4 @@ export type ActionsControllers = {
   [K in AccessLevel]?: AccessLevelControllers
 }
 
-export type HttpMethod = 'get' | 'post' | 'put' | 'delete'
-export type LowerCasedHttpMethod = HttpMethod
-
 export type MethodsAndActionsControllers = Partial<Record<HttpMethod, ActionsControllers>>

@@ -11,8 +11,7 @@ import { arrayIncludes } from '#lib/utils/base'
 import { logError, warn } from '#lib/utils/logs'
 import config from '#server/config'
 import type { ActorKeyId } from '#types/activity'
-import type { AbsoluteUrl, HttpHeaders, Origin, RelativeUrl } from '#types/common'
-import type { LowerCasedHttpMethod } from '#types/controllers'
+import type { AbsoluteUrl, HttpHeaders, HttpMethodLowerCased, HttpMethodUpperCased, Origin, RelativeUrl } from '#types/common'
 import type { MaybeSignedReq, SignedReq } from '#types/server'
 
 interface Signature {
@@ -27,7 +26,7 @@ const { sanitizeUrls } = config.activitypub
 interface SignParams {
   keyId: ActorKeyId
   privateKey: string
-  method: LowerCasedHttpMethod
+  method: HttpMethodLowerCased | HttpMethodUpperCased
   path: RelativeUrl
   reqHeaders: HttpHeaders
 }
@@ -93,7 +92,7 @@ async function attemptToVerifySignature (req: MaybeSignedReq, signature: Signatu
   const signedString = buildSignatureString({
     reqHeaders: reqHeaders as HttpHeaders,
     signedHeadersNames,
-    method: method.toLowerCase() as LowerCasedHttpMethod,
+    method,
     path: path as RelativeUrl,
   })
   verifier.update(signedString)
@@ -104,7 +103,7 @@ async function attemptToVerifySignature (req: MaybeSignedReq, signature: Signatu
 
 interface SignRequestParams {
   url: AbsoluteUrl
-  method: LowerCasedHttpMethod
+  method: HttpMethodLowerCased | HttpMethodUpperCased
   keyId: ActorKeyId
   privateKey: string
   body: unknown
@@ -138,13 +137,13 @@ interface BuildSignatureStringParams {
   reqHeaders: HttpHeaders
   signedHeadersNames: string
   path: RelativeUrl
-  method: LowerCasedHttpMethod
+  method: HttpMethodLowerCased | HttpMethodUpperCased
 }
 function buildSignatureString (params: BuildSignatureStringParams) {
   const { reqHeaders, signedHeadersNames, path } = params
   let { method } = params
   // 'method' must be lowercased
-  method = method.toLowerCase() as LowerCasedHttpMethod
+  method = method.toLowerCase() as HttpMethodLowerCased
   let signatureString = ''
   const orderedSignedHeadersKeys = signedHeadersNames.trim().split(' ')
   // Keys order matters, so we can't just loop over reqHeaders keys
