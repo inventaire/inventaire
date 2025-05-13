@@ -198,9 +198,9 @@ describe('entity model', () => {
       it('should keep the target claim in case of claim uniqueness restrictions', () => {
         const entityA = workDoc()
         const entityB = workDoc()
-        createEntityDocClaim(entityA, 'wdt:P648', 'OL123456W')
-        createEntityDocClaim(entityB, 'wdt:P648', 'OL123457W')
-        mergeEntitiesDocs(entityA, entityB).claims['wdt:P648'].should.deepEqual([ 'OL123457W' ])
+        createEntityDocClaim(entityA, 'wdt:P577', '2025-05-13')
+        createEntityDocClaim(entityB, 'wdt:P577', '2025-05')
+        mergeEntitiesDocs(entityA, entityB).claims['wdt:P577'].should.deepEqual([ '2025-05' ])
       })
     })
 
@@ -208,17 +208,17 @@ describe('entity model', () => {
       it('should keep the target claim in case of claim uniqueness restrictions (claim object to simple claim)', () => {
         const entityA = workDoc()
         const entityB = workDoc()
-        createEntityDocClaim(entityA, 'wdt:P648', { value: 'OL123456W', references: [ someReference ] })
-        createEntityDocClaim(entityB, 'wdt:P648', 'OL123457W')
-        mergeEntitiesDocs(entityA, entityB).claims['wdt:P648'].should.deepEqual([ 'OL123457W' ])
+        createEntityDocClaim(entityA, 'wdt:P577', { value: '2025-05-13', references: [ someReference ] })
+        createEntityDocClaim(entityB, 'wdt:P577', '2025-05')
+        mergeEntitiesDocs(entityA, entityB).claims['wdt:P577'].should.deepEqual([ '2025-05' ])
       })
 
       it('should keep the target claim in case of claim uniqueness restrictions (simple claim to claim object )', () => {
         const entityA = workDoc()
         const entityB = workDoc()
-        createEntityDocClaim(entityA, 'wdt:P648', 'OL123457W')
-        createEntityDocClaim(entityB, 'wdt:P648', { value: 'OL123456W', references: [ someReference ] })
-        mergeEntitiesDocs(entityA, entityB).claims['wdt:P648'].should.deepEqual([ { value: 'OL123456W', references: [ someReference ] } ])
+        createEntityDocClaim(entityA, 'wdt:P577', '2025-05')
+        createEntityDocClaim(entityB, 'wdt:P577', { value: '2025-05-13', references: [ someReference ] })
+        mergeEntitiesDocs(entityA, entityB).claims['wdt:P577'].should.deepEqual([ { value: '2025-05-13', references: [ someReference ] } ])
       })
     })
   })
