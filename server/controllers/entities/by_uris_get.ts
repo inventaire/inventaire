@@ -6,6 +6,10 @@ import { getPossiblyExpandedEntitiesByUris } from './lib/get_entities_by_uris.js
 import { entitiesAttributes, pickAttributes, pickLanguages } from './lib/pick_attributes.js'
 import type { WikimediaLanguageCode } from 'wikibase-sdk'
 
+const metadata = {
+  summary: 'get entities by uris',
+}
+
 const sanitization = {
   uris: {},
   attributes: {
@@ -61,6 +65,6 @@ async function controller ({ uris, attributes, lang, refresh, relatives, autocre
   return results
 }
 
-export default { sanitization, controller }
+export default { sanitization, controller, metadata }
 
 export type GetEntitiesByUrisResponse = Awaited<ReturnType<typeof controller>>

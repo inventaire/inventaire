@@ -11,6 +11,8 @@ import common from '#models/validations/common'
 import userValidations from '#models/validations/user'
 import { isVisibilityKey, isVisibilityKeyArray } from '#models/validations/visibility'
 import { publicHost, publicOrigin } from '#server/config'
+import type { ControllerInputSanitization, ControllerSanitizationParameterConfig } from '#types/controllers_input_sanitization'
+import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 
 // Parameters attributes:
 // - format (optional)
@@ -198,22 +200,34 @@ const password = {
 }
 
 const user = {
-  format: (value, name, config) => {
+  format: (value, name, config: ControllerInputSanitization) => {
     if (config.type === 'acct' && isUserId(value)) return buildLocalUserAcct(value)
     else return value
   },
-  validate: (value, name, config) => {
+  validate: (value, name, config: ControllerInputSanitization) => {
     if (config.type === 'acct') {
       return isUserAcct(value)
     } else {
       return isCouchUuid(value)
     }
   },
-  rename: (name, config) => {
+  rename: (name, config: ControllerInputSanitization) => {
     if (config.type === 'acct') {
       return `${name}Acct`
     } else {
       return `${name}Id`
+    }
+  },
+  metadata: (config: ControllerInputSanitization) => {
+    if (config.type === 'acct') {
+      return {
+        description: 'A user account URI',
+        example: `9f25f75dba901ddb9817c3e4bf001d85@${publicHost}`,
+      }
+    } else {
+      return {
+        description: 'A user account URI',
+      }
     }
   },
 }
@@ -275,13 +289,49 @@ export const genericParameters = {
   },
 } as const
 
-export const sanitizationParameters = {
-  '@context': allowlistedStrings,
+type SanitizationParameterMetadata = Omit<OpenAPIV3.ParameterObject, 'name' | 'in' | 'required'>
+
+interface SanitizationParameter {
+  format: (value: unknown, name: string, config: ControllerSanitizationParameterConfig) => unknown
+  validate: (value: unknown, name: string, config: ControllerSanitizationParameterConfig) => boolean
+  metadata?: SanitizationParameterMetadata | ((config: ControllerSanitizationParameterConfig) => SanitizationParameterMetadata)
+}
+
+export const sanitizationParameters: Record<string, SanitizationParameter> = {
+  '@context': {
+    ...allowlistedStrings,
+    metadata: {
+      description: 'JSONLD context array',
+      schema: {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+      },
+    },
+  },
   accts: {
     format: arrayOrPipedString,
     validate: arrayOfAType(isUserAcct),
+    metadata: {
+      description: 'User account URIs',
+      schema: {
+        type: 'array',
+        items: {
+          type: 'string',
+        },
+      },
+    },
   },
-  actor: nonEmptyString,
+  actor: {
+    ...nonEmptyString,
+    metadata: {
+      description: 'Actor URL',
+      schema: {
+        type: 'string',
+      },
+    },
+  },
   attribute: nonEmptyString,
   attributes: allowlistedStrings,
   bbox: {

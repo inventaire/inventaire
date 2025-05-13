@@ -1,15 +1,18 @@
 import type { AccessLevel } from '#lib/user_access_levels'
+import type { HttpMethod } from '#types/common'
+import type { ControllerInputSanitization } from '#types/controllers_input_sanitization'
 import type { Req, Res } from '#types/server'
-
-type SanitizationObject = Record<string, unknown>
 
 export type StandaloneControllerFunction <Response = unknown | void> = (req: Req, res: Res) => Response
 export type SanitizedControllerFunction <Response = unknown | void> = (params: unknown, req: Req, res: Res) => Response
 
 export interface ActionControllerObject {
-  sanitization: SanitizationObject
+  sanitization: ControllerInputSanitization
   controller: SanitizedControllerFunction
   track?: string[]
+  metadata?: {
+    summary: string
+  }
 }
 
 export type ActionController = StandaloneControllerFunction | ActionControllerObject

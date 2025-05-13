@@ -4,9 +4,10 @@ import { absolutePath } from '#lib/absolute_path'
 import { requireJson } from '#lib/utils/json'
 
 const execAsync = promisify(exec)
-const pkg = requireJson(absolutePath('root', 'package.json'))
+export const pkg = requireJson(absolutePath('root', 'package.json'))
 
 export const softwareName = pkg.name
+
 export const version = pkg.version
 
 export const gitHeadRev = await execAsync('git rev-parse --short HEAD').then(({ stdout }) => stdout.trim())

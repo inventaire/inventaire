@@ -78,3 +78,5 @@ const localEntitiesControllersParams = {
 
 export const localEntitiesControllers = methodAndActionsControllersFactory(localEntitiesControllersParams)
 export const federatedEntitiesControllers = buildProxiedControllers('/api/entities', localEntitiesControllersParams)
+
+export const specs = localEntitiesControllersParams
