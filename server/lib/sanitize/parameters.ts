@@ -200,25 +200,25 @@ const password = {
 }
 
 const user = {
-  format: (value, name, config: ControllerInputSanitization) => {
+  format: (value, name, config: ControllerSanitizationParameterConfig) => {
     if (config.type === 'acct' && isUserId(value)) return buildLocalUserAcct(value)
     else return value
   },
-  validate: (value, name, config: ControllerInputSanitization) => {
+  validate: (value, name, config: ControllerSanitizationParameterConfig) => {
     if (config.type === 'acct') {
       return isUserAcct(value)
     } else {
       return isCouchUuid(value)
     }
   },
-  rename: (name, config: ControllerInputSanitization) => {
+  rename: (name: string, config: ControllerSanitizationParameterConfig) => {
     if (config.type === 'acct') {
       return `${name}Acct`
     } else {
       return `${name}Id`
     }
   },
-  metadata: (config: ControllerInputSanitization) => {
+  metadata: (config: ControllerSanitizationParameterConfig) => {
     if (config.type === 'acct') {
       return {
         description: 'A user account URI',
@@ -230,7 +230,7 @@ const user = {
       }
     }
   },
-}
+} as const
 
 // Endpoints accepting a 'value' can specify a type
 // or have to do their own validation
@@ -336,10 +336,14 @@ export const sanitizationParameters: Record<string, SanitizationParameter> = {
   attributes: allowlistedStrings,
   bbox: {
     format: value => {
-      return JSON.parse(value)
+      if (typeof value === 'string') {
+        return JSON.parse(value)
+      } else {
+        return value
+      }
     },
     validate: bbox => {
-      if (typeOf(bbox) !== 'array') return false
+      if (!isArray(bbox)) return false
       if (bbox.length !== 4) return false
       for (const coordinate of bbox) {
         if (typeOf(coordinate) !== 'number') return false
@@ -359,6 +363,7 @@ export const sanitizationParameters: Record<string, SanitizationParameter> = {
     format: hash => {
       if (typeof hash === 'string') {
         if (hash[0] !== '#') hash = `#${hash}`
+        // @ts-expect-error
         return hash.toLowerCase()
       } else {
         return hash

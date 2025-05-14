@@ -14,6 +14,7 @@ export interface ControllerSanitizationParameterConfig {
   canBeNull?: boolean
   default?: unknown
   drop?: boolean
+  length?: number
   max?: number
   optional?: boolean
   type?: string
