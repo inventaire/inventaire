@@ -20,3 +20,4 @@ config/.sessions_keys
 *.tsbuildinfo
 dist/
 .eslintcache
+server/assets/api_specs.json

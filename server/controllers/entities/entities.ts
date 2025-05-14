@@ -1,6 +1,7 @@
 import removeLabel from '#controllers/entities/remove_label'
 import { methodAndActionsControllersFactory } from '#lib/actions_controllers'
 import { buildProxiedControllers } from '#lib/federation/build_proxied_controllers'
+import type { EndpointSpecs } from '#types/api/specifications'
 import type { MethodsAndActionsControllers } from '#types/controllers'
 import byUrisGet from './by_uris_get.js'
 import contributions from './contributions.js'
@@ -79,4 +80,12 @@ const localEntitiesControllersParams = {
 export const localEntitiesControllers = methodAndActionsControllersFactory(localEntitiesControllersParams)
 export const federatedEntitiesControllers = buildProxiedControllers('/api/entities', localEntitiesControllersParams)
 
-export const specs = localEntitiesControllersParams
+export const specs: EndpointSpecs = {
+  name: 'entities',
+  description: 'An entity can be an Edition, a Work, a Serie, a Human (a.k.a. "author"), a Publisher, a Collection',
+  externalDocs: {
+    description: 'wiki',
+    url: 'https://wiki.inventaire.io/wiki/Entities_data',
+  },
+  controllers: localEntitiesControllersParams,
+}

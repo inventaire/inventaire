@@ -11,9 +11,7 @@ import type { HttpMethod, HttpMethodUpperCased } from '#types/common'
 import type { ControllerInputSanitization, FormatFunction, GenericParameterName, ParameterName, ParameterPlace, ControllerSanitizationParameterConfig, SanitizationParameter, RenameFunction } from '#types/controllers_input_sanitization'
 import type { SanitizedParameters } from '#types/controllers_input_sanitization_parameters'
 import type { AuthentifiedReq, RemoteUserAuthentifiedReq, Req, Res } from '#types/server'
-import { sanitizationParameters } from './parameters.js'
-
-const { generics } = sanitizationParameters
+import { sanitizationParameters, genericParameters } from './parameters.js'
 
 // The sanitize function doesn't need to be async
 // but has been used that way to be able to start promise chains
@@ -93,7 +91,7 @@ function sanitizeParameter (input: unknown, name: ParameterName, config: Control
 function getParameterFunctions (name: string, generic?: GenericParameterName) {
   let parameter
   if (generic) {
-    parameter = generics[generic]
+    parameter = genericParameters[generic]
   } else {
     parameter = sanitizationParameters[name]
   }
@@ -129,6 +127,8 @@ export function getPlace (method: HttpMethod | HttpMethodUpperCased, configs: Co
   }
   return 'query'
 }
+
+export type RequestParametersPlace = ReturnType<typeof getPlace>
 
 function removeUnexpectedParameter (input: unknown, name: string, configs: ControllerInputSanitization, res: Res) {
   if (configs[name] == null) {

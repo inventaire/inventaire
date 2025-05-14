@@ -137,7 +137,7 @@ export const isNonNegativeInteger = (num: number) => Number.isInteger(num) && nu
 export const isExtendedUrl = (str: string) => isUrl(str) || isLocalImg(str)
 export const isCollection = array => isArray(array) && array.every(isPlainObject)
 
-export function isLocalActivityPubActorUrl (url: string): url is LocalActorUrl {
+export function isLocalActivityPubActorUrl (url: unknown): url is LocalActorUrl {
   if (!isUrl(url)) return false
   const { origin, pathname, searchParams } = new URL(url)
   if (origin !== publicOrigin) return false

@@ -4,6 +4,8 @@ import { newError } from '#lib/error/error'
 import { buildLocalUserAcct } from '#lib/federation/remote_user'
 import { truncateLatLng } from '#lib/geo'
 import { isValidIsbn } from '#lib/isbn/isbn'
+import type { RequestParametersPlace } from '#lib/sanitize/sanitize'
+import { stringArraySchema } from '#lib/sanitize/schemas'
 import { normalizeString, parseBooleanString } from '#lib/utils/base'
 import { typeOf } from '#lib/utils/types'
 import { isWikimediaLanguageCode } from '#lib/wikimedia'
@@ -11,14 +13,20 @@ import common from '#models/validations/common'
 import userValidations from '#models/validations/user'
 import { isVisibilityKey, isVisibilityKeyArray } from '#models/validations/visibility'
 import { publicHost, publicOrigin } from '#server/config'
-import type { ControllerInputSanitization, ControllerSanitizationParameterConfig } from '#types/controllers_input_sanitization'
+import type { ControllerSanitizationParameterConfig, RenameFunction } from '#types/controllers_input_sanitization'
 import type { OpenAPIV3 } from 'express-openapi-validator/dist/framework/types.js'
 
-// Parameters attributes:
-// - format (optional)
-// - validate (required): throws a custom error or returns a boolean.
-//   In the case it returns false, the sanitize function will create
-//   an error object with an `invalid #{paramName}` message and throw it
+type SanitizationParameterMetadata = Omit<OpenAPIV3.ParameterObject, 'name' | 'in' | 'required'>
+
+interface SanitizationParameter {
+  format?: (value: unknown, name: string, config: ControllerSanitizationParameterConfig) => unknown
+  // Throws a custom error or returns a boolean.
+  // In the case it returns false, the sanitize function will create
+  // an error object with an `invalid #{paramName}` message and throw it
+  validate: (value: unknown, name: string, config: ControllerSanitizationParameterConfig) => boolean
+  rename?: RenameFunction
+  metadata?: SanitizationParameterMetadata | ((config: ControllerSanitizationParameterConfig, place: RequestParametersPlace) => SanitizationParameterMetadata)
+}
 
 const validations = {
   common,
@@ -123,9 +131,16 @@ const entityUri = {
 
 const isbn = { validate: isValidIsbn }
 
-const entityUris = {
+const entityUris: SanitizationParameter = {
   format: arrayOrPipedString,
   validate: arrayOfAType(validations.common.entityUri),
+  metadata: (config: ControllerSanitizationParameterConfig, place: RequestParametersPlace) => {
+    return {
+      description: 'Entities uris',
+      style: place === 'query' ? 'pipedDelimited' : undefined,
+      schema: stringArraySchema,
+    }
+  },
 }
 
 const emails = {
@@ -289,14 +304,6 @@ export const genericParameters = {
   },
 } as const
 
-type SanitizationParameterMetadata = Omit<OpenAPIV3.ParameterObject, 'name' | 'in' | 'required'>
-
-interface SanitizationParameter {
-  format: (value: unknown, name: string, config: ControllerSanitizationParameterConfig) => unknown
-  validate: (value: unknown, name: string, config: ControllerSanitizationParameterConfig) => boolean
-  metadata?: SanitizationParameterMetadata | ((config: ControllerSanitizationParameterConfig) => SanitizationParameterMetadata)
-}
-
 export const sanitizationParameters: Record<string, SanitizationParameter> = {
   '@context': {
     ...allowlistedStrings,
@@ -389,7 +396,6 @@ export const sanitizationParameters: Record<string, SanitizationParameter> = {
   filter: allowlistedString,
   format: allowlistedStrings,
   from: entityUri,
-  generics: genericParameters,
   group: couchUuid,
   id: couchUuidWithoutRenaming,
   ids: couchUuids,
