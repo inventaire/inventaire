@@ -78,9 +78,11 @@ const collectionsAliasesQuery = genericSubclassesQuery(collectionP31Values, coll
 
 const genresDenylist = [
   ...serieP31Values,
+  'wd:Q214609', // material
   'wd:Q1980247', // chapter
   'wd:Q16743958', // genre of painting
-  'wd:Q214609', // material
+  'wd:Q17155032', // software category
+  'wd:Q21481766', // scholarly chapter
 ] as WdEntityUri[]
 const genresAliasesQuery = genericSubclassesQuery(genreP31Values, genresDenylist)
 
