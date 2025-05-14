@@ -7,7 +7,7 @@ import oauthServer from '#controllers/auth/oauth_server'
 import authToken from '#controllers/auth/token'
 import configEndpoint from '#controllers/config'
 import { federatedDataControllers, localDataControllers } from '#controllers/data/data'
-import { AddRoute } from '#controllers/endpoint'
+import { AddRoute, type EndpointKey } from '#controllers/endpoint'
 import { localEntitiesControllers, federatedEntitiesControllers } from '#controllers/entities/entities'
 import extensionsRedirections from '#controllers/extensions_redirections'
 import feedback from '#controllers/feedback'
@@ -33,12 +33,13 @@ import transactions from '#controllers/transactions/transactions'
 import user from '#controllers/user/user'
 import users from '#controllers/users/users'
 import config, { federatedMode } from '#server/config'
+import type { StandaloneControllerFunction } from '#types/controllers'
 
 // Routes structure:
 // 1 - api is the default prefix for server-side routes
 // 2 - the controller / module name
 
-export const routes = {}
+export const routes: Record<string, Record<EndpointKey, StandaloneControllerFunction>> = {}
 
 const addRoute = AddRoute(routes)
 

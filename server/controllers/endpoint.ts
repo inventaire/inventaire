@@ -1,7 +1,9 @@
 import { log } from '#lib/utils/logs'
 import validateObject from '#lib/validate_object'
 
-const validEndpointKeys = [ 'get', 'post', 'put', 'delete', 'all' ]
+export const validEndpointKeys = [ 'get', 'post', 'put', 'delete', 'all' ] as const
+
+export type EndpointKey = typeof validEndpointKeys[number]
 
 // Basic validation of controllers objects to ease debugging
 export const AddRoute = routes => (route, controllerObj) => {
