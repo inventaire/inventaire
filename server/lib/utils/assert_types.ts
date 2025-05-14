@@ -9,7 +9,7 @@ export function assertType (type: string, obj: unknown) {
   }
 }
 
-export function assertTypes (types: string | string[], args: unknown[]) {
+export function assertTypes (types: string | string[], args: unknown) {
   if (isArguments(args)) {
     args = Array.from(args)
     if (!isArray(types)) {
@@ -22,6 +22,8 @@ export function assertTypes (types: string | string[], args: unknown[]) {
     assertType('array', args)
     assertType('array', types)
   }
+
+  assertArray(args)
 
   if (args.length !== types.length) {
     throw newError("arguments and types length don't match", 500, { args, types })
@@ -77,18 +79,18 @@ export function assertPromise (promise: unknown): asserts promise is Promise<unk
   assertType('promise', promise)
 }
 
-export function assertStrings (strings: unknown[]): asserts strings is string[] {
+export function assertStrings (strings: unknown): asserts strings is string[] {
   assertTypes('strings...', strings)
 }
 
-export function assertNumbers (numbers: unknown[]): asserts numbers is number[] {
+export function assertNumbers (numbers: unknown): asserts numbers is number[] {
   assertTypes('numbers...', numbers)
 }
 
-export function assertArrays (arrays: unknown[]): asserts arrays is unknown[][] {
+export function assertArrays (arrays: unknown): asserts arrays is unknown[][] {
   assertTypes('arrays...', arrays)
 }
 
-export function assertObjects (objects: unknown[]): asserts objects is object[] {
+export function assertObjects (objects: unknown): asserts objects is object[] {
   assertTypes('objects...', objects)
 }
