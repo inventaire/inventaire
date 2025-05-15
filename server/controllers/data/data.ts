@@ -1,5 +1,6 @@
 import { methodAndActionsControllersFactory } from '#lib/actions_controllers'
 import { buildProxiedControllers } from '#lib/federation/build_proxied_controllers'
+import type { EndpointSpecs } from '#types/api/specifications'
 import isbn from './isbn.js'
 import { propertyValues, propertiesMetadata } from './properties_metadata.js'
 import summaries from './summaries.js'
@@ -19,3 +20,8 @@ const localDataControllersParams = {
 
 export const localDataControllers = methodAndActionsControllersFactory(localDataControllersParams)
 export const federatedDataControllers = buildProxiedControllers('/api/tasks', localDataControllersParams)
+
+export const specs: EndpointSpecs = {
+  name: 'data',
+  controllers: localDataControllersParams,
+}

@@ -1,12 +1,13 @@
-import { actionsControllersFactory } from '#lib/actions_controllers'
+import { methodAndActionsControllersFactory } from '#lib/actions_controllers'
+import type { EndpointSpecs } from '#types/api/specifications'
 import create from './create.js'
 import getUserGroups from './get_user_groups.js'
 import membersActions from './members_actions.js'
 import publicActions from './public_actions.js'
 import updateSettings from './update_settings.js'
 
-export default {
-  get: actionsControllersFactory({
+const methodsAndActionsControllers = {
+  get: {
     public: {
       'by-id': publicActions.byId,
       'by-slug': publicActions.bySlug,
@@ -16,15 +17,15 @@ export default {
     authentified: {
       default: getUserGroups,
     },
-  }),
+  },
 
-  post: actionsControllersFactory({
+  post: {
     authentified: {
       create,
     },
-  }),
+  },
 
-  put: actionsControllersFactory({
+  put: {
     authentified: {
       invite: membersActions('invite'),
       accept: membersActions('accept'),
@@ -38,5 +39,17 @@ export default {
       leave: membersActions('leave'),
       'update-settings': updateSettings,
     },
-  }),
+  },
+}
+
+export default methodAndActionsControllersFactory(methodsAndActionsControllers)
+
+export const specs: EndpointSpecs = {
+  name: 'groups',
+  description: 'Read and edit users groups data',
+  externalDocs: {
+    url: 'https://wiki.inventaire.io/wiki/Glossary#Group',
+    description: 'Glossary',
+  },
+  controllers: methodsAndActionsControllers,
 }

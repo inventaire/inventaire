@@ -8,27 +8,36 @@
 // - users: finding users by their usernames, positions, etc
 
 import { keepSnapshotItemsCountsUpdated } from '#controllers/user/lib/keep_snapshot_items_counts_updated'
-import { actionsControllersFactory } from '#lib/actions_controllers'
+import { methodAndActionsControllersFactory } from '#lib/actions_controllers'
+import type { EndpointSpecs } from '#types/api/specifications'
 import delet from './delete.js'
 import get from './get.js'
 import update from './update.js'
 
-export default {
-  get: actionsControllersFactory({
+const methodsAndActionsControllers = {
+  get: {
     authentified: {
       default: get,
     },
-  }),
-  put: actionsControllersFactory({
+  },
+  put: {
     authentified: {
       default: update,
     },
-  }),
-  delete: actionsControllersFactory({
+  },
+  delete: {
     authentified: {
       default: delet,
     },
-  }),
+  },
 }
 
 keepSnapshotItemsCountsUpdated()
+
+export default methodAndActionsControllersFactory(methodsAndActionsControllers)
+
+export const specs: EndpointSpecs = {
+  name: 'user',
+  description: 'Read and edit authentified user data',
+  controllers: methodsAndActionsControllers,
+}

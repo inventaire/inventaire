@@ -1,4 +1,5 @@
-import { actionsControllersFactory } from '#lib/actions_controllers'
+import { methodAndActionsControllersFactory } from '#lib/actions_controllers'
+import type { EndpointSpecs } from '#types/api/specifications'
 import bulkUpdate from './bulk_update.js'
 import byBbox from './by_bbox.js'
 import byEntities from './by_entities.js'
@@ -15,8 +16,8 @@ import recentPublic from './recent_public.js'
 import search from './search.js'
 import update from './update.js'
 
-export default {
-  get: actionsControllersFactory({
+const methodsAndActionsControllers = {
+  get: {
     public: {
       'by-bbox': byBbox,
       'by-ids': byIds,
@@ -32,19 +33,31 @@ export default {
       nearby,
       export: exportt,
     },
-  }),
+  },
 
-  post: actionsControllersFactory({
+  post: {
     authentified: {
       default: create,
       'delete-by-ids': deleteByIds,
     },
-  }),
+  },
 
-  put: actionsControllersFactory({
+  put: {
     authentified: {
       default: update,
       'bulk-update': bulkUpdate,
     },
-  }),
+  },
+}
+
+export default methodAndActionsControllersFactory(methodsAndActionsControllers)
+
+export const specs: EndpointSpecs = {
+  name: 'items',
+  description: "Items are what users' inventories are made of",
+  externalDocs: {
+    url: 'https://wiki.inventaire.io/wiki/Glossary#Item',
+    description: 'Glossary',
+  },
+  controllers: methodsAndActionsControllers,
 }

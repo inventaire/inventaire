@@ -1,4 +1,5 @@
-import { actionsControllersFactory } from '#lib/actions_controllers'
+import { methodAndActionsControllersFactory } from '#lib/actions_controllers'
+import type { EndpointSpecs } from '#types/api/specifications'
 import addElements from './add_elements.js'
 import byCreators from './by_creators.js'
 import byElementId from './by_element_id.js'
@@ -11,8 +12,8 @@ import removeElements from './remove_elements.js'
 import update from './update.js'
 import updateElement from './update_element.js'
 
-export default {
-  get: actionsControllersFactory({
+const methodsAndActionsControllers = {
+  get: {
     public: {
       'by-id': byId,
       'by-element-id': byElementId,
@@ -20,8 +21,8 @@ export default {
       'by-entities': byEntities,
       'by-creators': byCreators,
     },
-  }),
-  post: actionsControllersFactory({
+  },
+  post: {
     authentified: {
       create,
       'add-elements': addElements,
@@ -29,10 +30,17 @@ export default {
       'remove-elements': removeElements,
       'update-element': updateElement,
     },
-  }),
-  put: actionsControllersFactory({
+  },
+  put: {
     authentified: {
       default: update,
     },
-  }),
+  },
+}
+
+export default methodAndActionsControllersFactory(methodsAndActionsControllers)
+
+export const specs: EndpointSpecs = {
+  name: 'lists',
+  controllers: methodsAndActionsControllers,
 }

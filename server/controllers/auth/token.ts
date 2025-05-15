@@ -1,9 +1,10 @@
 import { tokenLength, confirmEmailTokenValidity } from '#controllers/user/lib/token'
-import { actionsControllersFactory } from '#lib/actions_controllers'
+import { methodAndActionsControllersFactory } from '#lib/actions_controllers'
 import { newError } from '#lib/error/error'
 import passport_ from '#lib/passport/passport'
 import { sanitize, validateSanitization } from '#lib/sanitize/sanitize'
 import { logError } from '#lib/utils/logs'
+import type { EndpointSpecs } from '#types/api/specifications'
 import setLoggedInCookie from './lib/set_logged_in_cookie.js'
 
 const sanitization = validateSanitization({
@@ -51,11 +52,18 @@ function assertGetReq ({ method }) {
   }
 }
 
-export default {
-  get: actionsControllersFactory({
+const methodsAndActionsControllers = {
+  get: {
     public: {
       'validation-email': confirmEmailValidity,
       'reset-password': allowPasswordReset,
     },
-  }),
+  },
+}
+
+export default methodAndActionsControllersFactory(methodsAndActionsControllers)
+
+export const specs: EndpointSpecs = {
+  name: 'token',
+  controllers: methodsAndActionsControllers,
 }

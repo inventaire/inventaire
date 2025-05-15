@@ -1,11 +1,12 @@
 import onlineReport from '#controllers/reports/online_report'
-import { actionsControllersFactory } from '#lib/actions_controllers'
+import { methodAndActionsControllersFactory } from '#lib/actions_controllers'
 import { isNonEmptyString } from '#lib/boolean_validations'
 import { newError } from '#lib/error/error'
 import { bundleMissingBodyError } from '#lib/error/pre_filled'
 import { isBotRequest } from '#lib/incoming_requests'
 import { responses_ } from '#lib/responses'
 import { logError } from '#lib/utils/logs'
+import type { EndpointSpecs } from '#types/api/specifications'
 import type { Req, Res } from '#types/server'
 
 function cspReport (req: Req, res: Res) {
@@ -64,12 +65,19 @@ function getErrStack (err) {
   return stack
 }
 
-export default {
-  post: actionsControllersFactory({
+const methodsAndActionsControllers = {
+  post: {
     public: {
       'csp-report': cspReport,
       'error-report': errorReport,
       online: onlineReport,
     },
-  }),
+  },
+}
+
+export default methodAndActionsControllersFactory(methodsAndActionsControllers)
+
+export const specs: EndpointSpecs = {
+  name: 'reports',
+  controllers: methodsAndActionsControllers,
 }

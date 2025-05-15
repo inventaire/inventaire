@@ -2,6 +2,7 @@ import { initTasksHooks } from '#controllers/tasks/hooks'
 import { methodAndActionsControllersFactory } from '#lib/actions_controllers'
 import { buildProxiedControllers } from '#lib/federation/build_proxied_controllers'
 import { federatedMode } from '#server/config'
+import type { EndpointSpecs } from '#types/api/specifications'
 import type { MethodsAndActionsControllers } from '#types/controllers'
 import byEntitiesType from './by_entities_type.js'
 import { bySuspectUris, bySuggestionUris } from './by_entity_uris.js'
@@ -48,3 +49,8 @@ export const localTasksControllers = methodAndActionsControllersFactory(localTas
 export const federatedTasksControllers = buildProxiedControllers('/api/tasks', localTasksControllersParams)
 
 if (!federatedMode) initTasksHooks()
+
+export const specs: EndpointSpecs = {
+  name: 'tasks',
+  controllers: localTasksControllersParams,
+}

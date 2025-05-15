@@ -1,5 +1,6 @@
 import { initSideEffects } from '#controllers/transactions/lib/side_effects'
-import { actionsControllersFactory } from '#lib/actions_controllers'
+import { methodAndActionsControllersFactory } from '#lib/actions_controllers'
+import type { EndpointSpecs } from '#types/api/specifications'
 import get from './get.js'
 import getByItem from './get_by_item.js'
 import getMessages from './get_messages.js'
@@ -8,28 +9,40 @@ import postMessage from './post_message.js'
 import request from './request.js'
 import updateState from './update_state.js'
 
-export default {
-  get: actionsControllersFactory({
+const methodsAndActionsControllers = {
+  get: {
     authentified: {
       default: get,
       'get-messages': getMessages,
       'by-item': getByItem,
     },
-  }),
+  },
 
-  post: actionsControllersFactory({
+  post: {
     authentified: {
       request,
       message: postMessage,
     },
-  }),
+  },
 
-  put: actionsControllersFactory({
+  put: {
     authentified: {
       'update-state': updateState,
       'mark-as-read': markAsRead,
     },
-  }),
+  },
 }
 
 initSideEffects()
+
+export default methodAndActionsControllersFactory(methodsAndActionsControllers)
+
+export const specs: EndpointSpecs = {
+  name: 'transactions',
+  description: 'When users request each others items',
+  externalDocs: {
+    url: 'https://wiki.inventaire.io/wiki/Glossary#Transaction',
+    description: 'Glossary',
+  },
+  controllers: methodsAndActionsControllers,
+}

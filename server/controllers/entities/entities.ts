@@ -84,7 +84,7 @@ export const specs: EndpointSpecs = {
   name: 'entities',
   description: 'An entity can be an Edition, a Work, a Serie, a Human (a.k.a. "author"), a Publisher, a Collection',
   externalDocs: {
-    description: 'wiki',
+    description: 'Wiki',
     url: 'https://wiki.inventaire.io/wiki/Entities_data',
   },
   controllers: localEntitiesControllersParams,

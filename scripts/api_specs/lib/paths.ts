@@ -20,13 +20,13 @@ export function buildEndpointPaths (endpointSpecs: EndpointSpecs) {
   for (const [ method, actionsControllersByAccessLevel ] of objectEntries(methodsAndActionsControllers)) {
     for (const actionsControllers of objectValues(actionsControllersByAccessLevel)) {
       for (const [ action, controllerObject ] of objectEntries(actionsControllers)) {
-        const path = `/${name}?action=${action}`
+        const path = action === 'default' ? `/${name}` : `/${name}?action=${action}`
         if (typeof controllerObject === 'object') {
           const { metadata, sanitization } = controllerObject
           if (!controllerObject.metadata) warn(`no metadata found for ${path}`)
           const summary = metadata ? metadata.summary : undefined
-          endpointPaths[`/${name}?action=${action}`] ??= {}
-          endpointPaths[`/${name}?action=${action}`][method] = {
+          endpointPaths[path] ??= {}
+          endpointPaths[path][method] = {
             tags: [ name ],
             summary,
             parameters: getParametersSpecs(method, sanitization, { method, name, action: action as string }),

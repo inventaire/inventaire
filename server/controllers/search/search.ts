@@ -1,12 +1,13 @@
 import { map } from 'lodash-es'
 import { indexedTypes, socialTypes } from '#db/elasticsearch/indexes'
+import { methodAndActionsControllersFactory } from '#lib/actions_controllers'
 import { isNonEmptyString } from '#lib/boolean_validations'
-import { controllerWrapperFactory } from '#lib/controller_wrapper'
 import { newMissingError } from '#lib/error/pre_filled'
 import { addWarning } from '#lib/responses'
 import { someMatch } from '#lib/utils/base'
 import { filterVisibleDocs } from '#lib/visibility/filter_visible_docs'
 import { userIsGroupMember } from '#models/group'
+import type { EndpointSpecs } from '#types/api/specifications'
 import type { ControllerInputSanitization } from '#types/controllers_input_sanitization'
 import type { IndexedTypes } from '#types/search'
 import type { Req, Res, Sanitized } from '#types/server'
@@ -140,10 +141,21 @@ async function removeUnauthorizedDocs (results, reqUserId) {
   })
 }
 
-export default {
-  get: controllerWrapperFactory({
-    access: 'public',
-    sanitization,
-    controller,
-  }),
+const methodsAndActionsControllers = {
+  get: {
+    public: {
+      default: {
+        sanitization,
+        controller,
+      },
+    },
+  },
+}
+
+export default methodAndActionsControllersFactory(methodsAndActionsControllers)
+
+export const specs: EndpointSpecs = {
+  name: 'search',
+  description: 'The generalist search endpoint',
+  controllers: methodsAndActionsControllers,
 }
