@@ -1,6 +1,6 @@
 # Indexation
 
-By default, the server keeps documents in Elasticsearch in sync with the documents in CouchDB (by [`server/db/elasticsearch/reindex_on_change.ts`](https://git.inventaire.io/inventaire/tree/main/server/db/elasticsearch/reindex_on_change.ts)). But if for some reason, you Elasticsearch and CouchDB got out-of-sync, you can always force a reindexation using the following scripts
+By default, the server keeps documents in Elasticsearch in sync with the documents in CouchDB (by [`server/db/elasticsearch/reindex_on_change.ts`](https://git.inventaire.io/inventaire/tree/main/server/db/elasticsearch/reindex_on_change.ts)). But if for some reason, Elasticsearch and CouchDB got out-of-sync, you can always force a reindexation using the following scripts
 
 
 Environment:

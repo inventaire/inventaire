@@ -37,6 +37,7 @@ export const serieEntity = { ...entity, entityValueTypes: [ 'serie' ] } as const
 export const workOrSerieEntity = { ...entity, entityValueTypes: [ 'work', 'serie' ] } as const
 export const humanEntity = { ...entity, entityValueTypes: [ 'human' ] } as const
 export const publisherEntity = { ...entity, entityValueTypes: [ 'publisher' ] } as const
+export const humanOrPublisherEntity = { ...entity, entityValueTypes: [ 'human', 'publisher' ] } as const
 export const collectionEntity = { ...entity, entityValueTypes: [ 'collection' ] } as const
 export const movementEntity = { ...entity, entityValueTypes: [ 'movement' ] } as const
 export const genreEntity = { ...entity, entityValueTypes: [ 'genre' ] } as const
