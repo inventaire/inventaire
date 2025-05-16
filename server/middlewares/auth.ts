@@ -24,7 +24,7 @@ const cookieSessionParams = {
 
   // See https://developer.mozilla.org/docs/Web/HTTP/Headers/Set-Cookie/SameSite
   // and https://web.dev/samesite-cookies-explained/
-  // Using sameSite=strict would break Wikidata OAuth redirection, see https://github.com/inventaire/inventaire/issues/467
+  // Using sameSite=strict would break Wikidata OAuth redirection, see https://git.inventaire.io/inventaire/issues/467
   sameSite: 'lax',
 
   // Expliciting the default values

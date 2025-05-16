@@ -63,7 +63,7 @@ See [./install_elasticsearch.md](./install_elasticsearch.md)
 ### Inventaire
 
 ```sh
-git clone http://github.com/inventaire/inventaire
+git clone https://codeberg.org/inventaire/inventaire
 cd inventaire
 # In production, you can pass the option --omit=dev
 npm install
@@ -98,14 +98,14 @@ For a setup with systemd, see https://git.inventaire.io/inventaire-deploy/instal
 
 ## Install in Docker
 
-See [Inventaire Suite in Docker](https://github.com/inventaire/docker-inventaire).
+See [Inventaire Suite in Docker](https://git.inventaire.io/docker-inventaire).
 
-Note that while this [`docker-compose.yml`](https://github.com/inventaire/docker-inventaire/blob/main/docker-compose.yml) is optimized for production, a popular setup for development is to use it with only the `couchdb` and `elasticsearch` services up, while having the server and client installed outside of Docker. This has the advantage to let you get exactly the desired CouchDB and Elasticsearch version, while still being able to run the Inventaire server and client in dev mode, make git commits, etc, outside of Docker.
+Note that while this [`docker-compose.yml`](https://git.inventaire.io/docker-inventaire/blob/main/docker-compose.yml) is optimized for production, a popular setup for development is to use it with only the `couchdb` and `elasticsearch` services up, while having the server and client installed outside of Docker. This has the advantage to let you get exactly the desired CouchDB and Elasticsearch version, while still being able to run the Inventaire server and client in dev mode, make git commits, etc, outside of Docker.
 
 
 ## Install on other operating systems
 
 The above installation documentation is primarily centered around Debian-based systems, but people have tried to install Inventaire on other systems. We won't host the documentation for those alternative setups in this repository, as it tends to get outdated in absence of maintainers; but you are welcome to link to it:
 
-* [Install on FreeBSD 10-RELEASE amd64](https://github.com/inventaire/inventaire/issues/59)
+* [Install on FreeBSD 10-RELEASE amd64](https://git.inventaire.io/inventaire/issues/59)
 * [Inventaire NixOS flake](https://github.com/ngi-nix/inventaire)

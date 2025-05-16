@@ -40,7 +40,7 @@ async function setFoundValue (entryData, property, value, expectedEntityType) {
     return
   }
   // Wikidata edition entities should not be used until
-  // https://github.com/inventaire/inventaire/issues/182 is resolved
+  // https://git.inventaire.io/inventaire/issues/182 is resolved
   if (expectedEntityType === 'edition') return
   const uri = value
   const { type } = await getEntityByUri({ uri })

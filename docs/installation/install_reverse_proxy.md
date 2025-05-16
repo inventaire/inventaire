@@ -19,7 +19,7 @@ You may prefer to set up a "light" Nginx setup done for the Docker repository.
 wget https://git.inventaire.io/docker-inventaire/blob/main/nginx/templates/default.conf.template
 ```
 
-(for information, inventaire.io is using a more complicated version available in the [inventaire-deploy](https://github.com/inventaire/inventaire-deploy/blob/main/nginx/inventaire.original.nginx) repository.)
+(for information, inventaire.io is using a more complicated version available in the [inventaire-deploy](https://git.inventaire.io/inventaire-deploy/blob/main/nginx/inventaire.original.nginx) repository.)
 
 Add the snippets:
 

@@ -3,7 +3,7 @@
 CouchDB is Inventaire primary database. Other databases are used as secondary indexes (Elasticsearch), or data cache (LevelDB). Consequently, only CouchDB needs to be [backed up](../administration/couchdb_backup_and_restore.md).
 
 ## in Docker
-See [docker-inventaire](https://github.com/inventaire/docker-inventaire).
+See [docker-inventaire](https://git.inventaire.io/docker-inventaire).
 
 ## on Debian-based systems
 

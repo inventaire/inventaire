@@ -14,7 +14,7 @@ const config = {
   publicProtocol: 'https',
   publicPort: null,
   // Let Nginx serve the static files
-  // https://github.com/inventaire/inventaire-deploy/blob/main/nginx/inventaire.original.nginx
+  // https://git.inventaire.io/inventaire-deploy/blob/main/nginx/inventaire.original.nginx
   serveStaticFiles: false,
   db: {
     username: 'OVERRIDE',

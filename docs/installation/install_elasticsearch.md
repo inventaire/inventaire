@@ -1,11 +1,11 @@
 # Install Elasticsearch
 
 ## in Docker
-See [docker-inventaire](https://github.com/inventaire/docker-inventaire).
+See [docker-inventaire](https://git.inventaire.io/docker-inventaire).
 
 ## on Debian-based systems
 
-Inventaire use Elasticsearch `v7`. For the exact version, you can check the one used in the [docker-compose file](https://github.com/inventaire/docker-inventaire/blob/main/docker-compose.yml), and follow the corresponding official install guide. ie. for version 7.17: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/install-elasticsearch.html . But if your repository gives you some `v7` version, that should be fine.
+Inventaire use Elasticsearch `v7`. For the exact version, you can check the one used in the [docker-compose file](https://git.inventaire.io/docker-inventaire/blob/main/docker-compose.yml), and follow the corresponding official install guide. ie. for version 7.17: https://www.elastic.co/guide/en/elasticsearch/reference/7.17/install-elasticsearch.html . But if your repository gives you some `v7` version, that should be fine.
 
 ## Configure
 

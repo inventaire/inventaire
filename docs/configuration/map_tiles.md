@@ -2,7 +2,7 @@
 
 Inventaire displays maps by using the [Leaflet](https://leafletjs.com/) library and [Mapbox](https://www.mapbox.com/) tiles service.
 
-[Mapbox tiles URL is currently hardcoded in the client](https://github.com/inventaire/inventaire-client/blob/da7e2bf/app/modules/map/lib/config.ts#L24), but we are much open to consider alternatives, in particular open and/or self-hostable (such as [OpenMapTiles](https://openmaptiles.org/)): [let us know in this issue](https://github.com/inventaire/inventaire-client/issues/535) if you have insight or opinions on the matter.
+[Mapbox tiles URL is currently hardcoded in the client](https://git.inventaire.io/inventaire-client/blob/main/app/modules/map/lib/config.ts#L24), but we are much open to consider alternatives, in particular open and/or self-hostable (such as [OpenMapTiles](https://openmaptiles.org/)): [let us know in this issue](https://git.inventaire.io/inventaire-client/issues/535) if you have insight or opinions on the matter.
 
 ## Setup a mapbox account
 

@@ -57,7 +57,7 @@ function buildEntryFromFormattedRows (rows, isbn) {
         isbn,
         // Resolving the edition to a Wikidata entity won't be possible
         // use until they are removed from quarantine
-        // See https://github.com/inventaire/inventaire/issues/182
+        // See https://git.inventaire.io/inventaire/issues/182
         uri: itemUri,
         claims: {
           'wdt:P1476': title || item.label || work.label,

@@ -156,7 +156,7 @@ export const removeUserDocRole = (role: UserRole) => (user: User) => {
 }
 
 // We need a stable username for services that use the username as unique user id
-// such as wiki.inventaire.io (https://github.com/inventaire/inventaire-mediawiki)
+// such as wiki.inventaire.io (https://git.inventaire.io/inventaire-mediawiki)
 export function setUserDocStableUsername (user: User) {
   user.stableUsername = user.stableUsername || user.username
   return user

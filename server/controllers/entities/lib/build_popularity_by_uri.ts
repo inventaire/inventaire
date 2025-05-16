@@ -42,7 +42,7 @@ async function getItemsCount (uri) {
 }
 
 // Limit request to local entities as Wikidata editions entities are currently ignored
-// see https://github.com/inventaire/inventaire/issues/182
+// see https://git.inventaire.io/inventaire/issues/182
 const getEditionsScores = property => uri => {
   return getReverseClaims({ property, value: uri, dry: true })
   .then(editonsUris => {
