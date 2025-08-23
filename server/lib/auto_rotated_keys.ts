@@ -8,6 +8,7 @@
 // just make sure that both use the same config.cookieMaxAge value to avoid outdated keys errors
 
 import { readFile, writeFile } from 'node:fs/promises'
+import Keygrip from 'keygrip'
 import { absolutePath } from '#lib/absolute_path'
 import { getRandomBytes } from '#lib/crypto'
 import { newError } from '#lib/error/error'
@@ -174,5 +175,5 @@ const outdatedKeysError = () => newError(`found outdated session keys: ${fixMess
 await recoverKeysFromFile()
 await checkState()
 
-// Share the keys array to be able to update it by mutation
-export default keys
+// For a list of available algorithms, run `openssl list -digest-algorithms`
+export const autoRotatedKeys = new Keygrip(keys, 'sha256', 'base64')
